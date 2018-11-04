@@ -4,8 +4,9 @@
   "description": "",
   "dependencies": {
     "egg": "2.10.0",
+    "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.0.2",
-    "egg-scripts": "^2.5.0"
+    "egg-validate": "^2.0.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -25,12 +26,20 @@
     "lint": "eslint .",
     "test": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && NODE_ENV=test npx sequelize db:migrate && npm run cov"
+    "ci": "npm run lint && NODE_ENV=test npx sequelize db:migrate && npm run cov",
+    "test-local": "egg-bin test",
+    "start": "egg-scripts start --daemon --title=egg-server-example",
+    "stop": "egg-scripts stop --title=egg-server-example",
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug"
   },
   "ci": {
     "version": "8"
   },
-  "eslintIgnore": [ "coverage", "dist" ],
+  "eslintIgnore": [
+    "coverage",
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": ""

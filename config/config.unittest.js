@@ -7,3 +7,4 @@
 //   port: 3306,
 //   database: 'egg-sequelize-unittest',
 // };
+

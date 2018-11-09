@@ -261,7 +261,7 @@ module.exports = {
     'prefer-const': 2,
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     'object-curly-spacing': [
-      2,
+      0,
       'always',
       {
         objectsInObjects: false

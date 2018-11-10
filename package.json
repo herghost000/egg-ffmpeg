@@ -5,8 +5,9 @@
   "dependencies": {
     "egg": "2.10.0",
     "egg-scripts": "^2.5.0",
-    "egg-sequelize": "^4.0.2",
-    "egg-validate": "^2.0.2"
+    "egg-sequelize": "^4.1.0",
+    "egg-validate": "^2.0.2",
+    "mysql2": "^1.6.4"
   },
   "devDependencies": {
     "autod": "^3.0.1",

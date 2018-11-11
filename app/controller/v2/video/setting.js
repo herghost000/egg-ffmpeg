@@ -10,7 +10,10 @@ function toInt(str) {
 class VideoSettingController extends Controller {
   async index() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.VideoSetting.findOne();
+    ctx.body = {
+      code: 200,
+      data: (await ctx.model.VideoSetting.findOne()) || {},
+    };
   }
 
   async create() {

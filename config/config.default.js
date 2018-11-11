@@ -21,10 +21,9 @@ module.exports = appInfo => {
     port: 3306,
     database: 'database_development',
     username: 'root',
-    password: 'root',
+    password: 'luotian520',
     operatorsAliases: Sequelize.Op,
   };
-
 
   return config;
 };

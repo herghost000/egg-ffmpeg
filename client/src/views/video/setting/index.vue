@@ -71,6 +71,9 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
+import { deepClone } from '@/utils/index'
+
 export default {
   data () {
     return {
@@ -85,7 +88,14 @@ export default {
       }
     }
   },
+  created() {
+    this.GetSetting().then(res => {
+        this.form = deepClone(res.data)
+        console.log(this.form)
+      })
+  },
   methods: {
+    ...mapActions(['GetSetting']),
     handleRemove (file, fileList) {
       console.log(file, fileList)
     },
@@ -99,6 +109,7 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
     onSubmit () {
+      console.log(this.form)
       this.$message('submit!')
     }
   }

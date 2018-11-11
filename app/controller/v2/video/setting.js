@@ -8,6 +8,7 @@ class SettingController extends Controller {
     } = this;
     ctx.body = await ctx.model.VideoSetting.findAll();
     // this.ctx.helper.urlFor('video-settings');
+    console.log(888);
   }
   async new() {}
   async create() {}

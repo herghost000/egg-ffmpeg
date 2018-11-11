@@ -10,13 +10,13 @@ function toInt(str) {
 class VideoSettingController extends Controller {
   async index() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.VideoSetting.findById(1);
+    ctx.body = await ctx.model.VideoSetting.findOne();
   }
 
   async create() {
     const ctx = this.ctx;
-    const first = ctx.model.VideoSetting.findById(1);
-    if (first) {
+    const one = ctx.model.VideoSetting.count();
+    if (one) {
       ctx.status = 204;
       return void 0;
     }

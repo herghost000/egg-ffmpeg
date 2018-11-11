@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -11,23 +11,32 @@ module.exports = {
     */
     const {
       INTEGER,
-      DATE,
       STRING,
+      DATE,
+      BOOLEAN,
     } = Sequelize;
-    await queryInterface.createTable('users', {
+    return queryInterface.createTable('video_settings', {
       id: {
         type: INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      name: STRING(30),
-      age: INTEGER,
+      host: STRING(30),
+      ratio: STRING,
+      miaoqie: STRING,
+      antiwhite: STRING,
+      antiurl: STRING,
+      antikey: STRING,
+      screenshots: INTEGER,
+      tsencry: BOOLEAN,
+      openapi: BOOLEAN,
+      watermark: STRING,
       created_at: DATE,
       updated_at: DATE,
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: (queryInterface, Sequelize) => {
     /*
       Add reverting commands here.
       Return a promise to correctly handle asynchronicity.
@@ -35,6 +44,6 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
-    await queryInterface.dropTable('users');
+    return queryInterface.dropTable('video_settings');
   },
 };

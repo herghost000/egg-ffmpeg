@@ -9,37 +9,29 @@ function toInt(str) {
 
 class VideoSettingController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: toInt(ctx.query.offset) || 0,
       limit: toInt(ctx.query.limit) || 10,
     };
     ctx.body = {
       code: 200,
-      data: await ctx.model.VideoType.findAll(query),
+      data: await ctx.model.VideoType.findAndCountAll(query),
       message: '类型查询成功',
     };
   }
 
-  async create() { // post posts
+  async create() {
+    // post posts
     const ctx = this.ctx;
-    const {
-      name,
-    } = ctx.request.body;
+    const { name } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
     const type = await ctx.model.VideoType.create({
@@ -54,7 +46,8 @@ class VideoSettingController extends Controller {
     };
   }
 
-  async update() { // put posts/:id
+  async update() {
+    // put posts/:id
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
     const type = await ctx.model.VideoType.findById(id);
@@ -67,9 +60,7 @@ class VideoSettingController extends Controller {
       return;
     }
 
-    const {
-      name,
-    } = ctx.request.body;
+    const { name } = ctx.request.body;
     const updated_at = new Date();
     await type.update({
       name,
@@ -79,6 +70,27 @@ class VideoSettingController extends Controller {
       code: 201,
       data: type || {},
       message: '类型编辑成功！',
+    };
+  }
+
+  async destroy() {
+    const ctx = this.ctx;
+    const id = toInt(ctx.params.id);
+    let type = await ctx.model.VideoType.findById(id);
+    if (!type) {
+      ctx.body = {
+        code: 404,
+        data: {},
+        message: '未找到该条数据！',
+      };
+      return;
+    }
+
+    type = await type.destroy();
+    ctx.body = {
+      code: 200,
+      data: type,
+      message: '删除成功！',
     };
   }
 }

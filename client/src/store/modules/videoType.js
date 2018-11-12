@@ -1,7 +1,8 @@
 import {
   queryType,
   createType,
-  updateType
+  updateType,
+  destoryType
 } from '@/api/video/type'
 
 const app = {
@@ -14,13 +15,10 @@ const app = {
     }
   },
   actions: {
-    QueryType: ({
-      commit
-    }, playload) => {
+    QueryType: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         queryType(playload)
           .then(response => {
-            commit('SET_TYPE', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -28,13 +26,10 @@ const app = {
           })
       })
     },
-    CreateType: ({
-      commit
-    }, playload) => {
+    CreateType: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         createType(playload)
           .then(response => {
-            commit('SET_TYPE', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -42,13 +37,21 @@ const app = {
           })
       })
     },
-    UpdateType: ({
-      commit
-    }, playload) => {
+    UpdateType: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         updateType(playload.id, playload)
           .then(response => {
-            commit('SET_TYPE', response.data)
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    DestoryType: ({ commit }, playload) => {
+      return new Promise((resolve, reject) => {
+        destoryType(playload.id)
+          .then(response => {
             resolve(response)
           })
           .catch(error => {

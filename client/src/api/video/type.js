@@ -22,3 +22,10 @@ export function updateType(id, data) {
     data
   })
 }
+
+export function destoryType(id) {
+  return request({
+    url: `/api/v2/video/type/${id}`,
+    method: 'DELETE'
+  })
+}

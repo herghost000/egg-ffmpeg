@@ -16,9 +16,11 @@ class VideoSettingController extends Controller {
     };
   }
 
-  async create() { // post posts
+  async create() {
+    // post posts
     const ctx = this.ctx;
-    const one = ctx.model.VideoSetting.count();
+    const one = await ctx.model.VideoSetting.count();
+    console.log(one);
     if (one) {
       ctx.body = {
         code: 202,
@@ -62,7 +64,8 @@ class VideoSettingController extends Controller {
     };
   }
 
-  async update() { // put posts/:id
+  async update() {
+    // put posts/:id
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
     const user = await ctx.model.VideoSetting.findById(id);

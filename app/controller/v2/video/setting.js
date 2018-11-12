@@ -16,11 +16,15 @@ class VideoSettingController extends Controller {
     };
   }
 
-  async create() {
+  async create() { // post posts
     const ctx = this.ctx;
     const one = ctx.model.VideoSetting.count();
     if (one) {
-      ctx.status = 204;
+      ctx.body = {
+        code: 202,
+        data: (await ctx.model.VideoSetting.findOne()) || {},
+        message: '转码设置已创建！',
+      };
       return void 0;
     }
     const {
@@ -51,16 +55,23 @@ class VideoSettingController extends Controller {
       created_at,
       updated_at,
     });
-    ctx.status = 201;
-    ctx.body = user;
+    ctx.body = {
+      code: 200,
+      data: user || {},
+      message: '转码设置创建成功！',
+    };
   }
 
-  async update() {
+  async update() { // put posts/:id
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
     const user = await ctx.model.VideoSetting.findById(id);
     if (!user) {
-      ctx.status = 404;
+      ctx.status = {
+        code: 404,
+        data: user,
+        message: '未找到需要保存数据的用户！',
+      };
       return;
     }
 
@@ -90,7 +101,11 @@ class VideoSettingController extends Controller {
       watermark,
       updated_at,
     });
-    ctx.body = user;
+    ctx.body = {
+      code: 201,
+      data: user || {},
+      message: '转码设置保存成功！',
+    };
   }
 }
 

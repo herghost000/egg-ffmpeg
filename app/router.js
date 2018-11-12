@@ -11,5 +11,6 @@ module.exports = app => {
 
   const checktoken = app.middleware.checktoken();
   router.get('/', controller.home.index);
-  router.resources('video-settings', '/api/v2/video/setting', controller.v2.video.setting); // app/controller/v1/users.js
+  router.resources('video-setting', '/api/v2/video/setting', controller.v2.video.setting);
+  router.resources('video-type', '/api/v2/video/type', controller.v2.video.type);
 };

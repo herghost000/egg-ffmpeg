@@ -5,6 +5,7 @@ import user from './modules/user'
 import getters from './getters'
 import tagsView from './modules/tagsView'
 import videoSetting from './modules/videoSetting'
+import videoType from './modules/videoType'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
     app,
     user,
     tagsView,
-    videoSetting
+    videoSetting,
+    videoType
   },
   getters
 })

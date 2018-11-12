@@ -16,7 +16,7 @@ module.exports = app => {
     },
     host: STRING(30),
     ratio: STRING,
-    miaoqie: STRING,
+    miaoqie: BOOLEAN,
     antiwhite: STRING,
     antiurl: STRING,
     antikey: STRING,

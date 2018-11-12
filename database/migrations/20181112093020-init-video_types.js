@@ -13,24 +13,14 @@ module.exports = {
       INTEGER,
       STRING,
       DATE,
-      BOOLEAN,
     } = Sequelize;
-    return queryInterface.createTable('video_settings', {
+    return queryInterface.createTable('video_types', {
       id: {
         type: INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      host: STRING(30),
-      ratio: STRING,
-      miaoqie: BOOLEAN,
-      antiwhite: STRING,
-      antiurl: STRING,
-      antikey: STRING,
-      screenshots: INTEGER,
-      tsencry: BOOLEAN,
-      openapi: BOOLEAN,
-      watermark: STRING,
+      name: STRING,
       created_at: DATE,
       updated_at: DATE,
     });
@@ -44,6 +34,6 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
-    return queryInterface.dropTable('video_settings');
+    return queryInterface.dropTable('video_types');
   },
 };

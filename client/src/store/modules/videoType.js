@@ -1,26 +1,26 @@
 import {
-  querySetting,
-  createSetting,
-  updateSetting
-} from '@/api/video/setting'
+  queryType,
+  createType,
+  updateType
+} from '@/api/video/type'
 
 const app = {
   state: {
-    setting: {}
+    type: {}
   },
   mutations: {
-    SET_SETTING: (state, setting) => {
-      state.setting = setting
+    SET_TYPE: (state, type) => {
+      state.type = type
     }
   },
   actions: {
-    QuerySetting: ({
+    QueryType: ({
       commit
-    }) => {
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        querySetting()
+        queryType(playload)
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_TYPE', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -28,13 +28,13 @@ const app = {
           })
       })
     },
-    CreateSetting: ({
+    CreateType: ({
       commit
     }, playload) => {
       return new Promise((resolve, reject) => {
-        createSetting(playload)
+        createType(playload)
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_TYPE', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -42,13 +42,13 @@ const app = {
           })
       })
     },
-    UpdateSetting: ({
+    UpdateType: ({
       commit
     }, playload) => {
       return new Promise((resolve, reject) => {
-        updateSetting(playload.id, playload)
+        updateType(playload.id, playload)
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_TYPE', response.data)
             resolve(response)
           })
           .catch(error => {

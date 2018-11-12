@@ -78,6 +78,7 @@ export default {
   },
   data () {
     return {
+      currentPage4: 1,
       formInline: {
         user: '',
         region: ''
@@ -126,7 +127,7 @@ export default {
 </script>
 <style scoped>
 .el-pagination {
-  margin-top: 20px;
-  text-align: right;
+    margin-top: 20px;
+    text-align: right;
 }
 </style>

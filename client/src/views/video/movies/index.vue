@@ -10,10 +10,10 @@
       <el-form-item label="类型">
         <el-select v-model="formInline.region"
                    placeholder="请选择类型">
-          <el-option label="区域一"
-                     value="shanghai"></el-option>
-          <el-option label="区域二"
-                     value="beijing"></el-option>
+          <el-option v-for="item in types"
+                     :key="item.id"
+                     :label="item.name"
+                     :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -71,6 +71,7 @@
 <script>
 
 import waves from '@/directive/waves/index.js' // 水波纹指令
+import { mapActions } from 'vuex'
 
 export default {
   directives: {
@@ -78,6 +79,7 @@ export default {
   },
   data () {
     return {
+      types: [],
       currentPage4: 1,
       formInline: {
         user: '',
@@ -106,7 +108,13 @@ export default {
       }]
     }
   },
+  created () {
+    this.queryType().then(res => {
+      this.types = res.data.rows
+    })
+  },
   methods: {
+    ...mapActions({ queryType: 'QueryType' }),
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`);
     },

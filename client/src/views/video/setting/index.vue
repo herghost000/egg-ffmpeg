@@ -48,14 +48,19 @@
         </el-switch>
       </el-form-item>
       <el-form-item label="水印">
+        <img v-show="form.watermark"
+             :src="form.watermark"
+             @error="handleImgError"
+             class="watermark"
+             alt="">
         <el-upload :on-preview="handlePreview"
                    :on-remove="handleRemove"
                    :before-remove="beforeRemove"
                    :on-exceed="handleExceed"
+                   :on-success="handleSuccess"
                    :limit="1"
                    :file-list="fileList"
-                   action="https://jsonplaceholder.typicode.com/posts/"
-                   multiple>
+                   action="/api/v2/upload/uploadAvator">
 
           <div class="pan-btn small primary-btn">点击上传</div>
           <div slot="tip"
@@ -77,7 +82,7 @@ export default {
   data () {
     return {
       initDB: false,
-      fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+      fileList: [],
       form: {
         antikey: null,
         antiurl: null,
@@ -100,21 +105,37 @@ export default {
         this.initDB = true
       }
       this.form = deepClone(res.data)
+      if (this.form.watermark) {
+        var str = this.form.watermark
+        var sps = str.split('/')
+        var fileName = sps[sps.length - 1]
+        this.fileList.push({
+          name: fileName,
+          url: this.form.watermark
+        })
+      }
     })
   },
   methods: {
     ...mapActions({ querySetting: 'QuerySetting', createSetting: 'CreateSetting', updateSetting: 'UpdateSetting' }),
     handleRemove (file, fileList) {
-      console.log(file, fileList)
+      this.form.watermark = null
     },
     handlePreview (file) {
       console.log(file)
     },
     handleExceed (files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
+    handleSuccess (response, file, fileList) {
+      this.form.watermark = file.response
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleImgError () {
+      this.form.watermark = null
+      this.fileList = []
     },
     onSubmit () {
       if (this.initDB) {
@@ -145,4 +166,7 @@ export default {
 }
 </script>
 <style scoped>
+.watermark {
+    max-width: 300px;
+}
 </style>

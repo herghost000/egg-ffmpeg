@@ -15,7 +15,9 @@ const app = {
     }
   },
   actions: {
-    QueryType: ({ commit }, playload) => {
+    QueryType: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         queryType(playload)
           .then(response => {
@@ -26,7 +28,9 @@ const app = {
           })
       })
     },
-    CreateType: ({ commit }, playload) => {
+    CreateType: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         createType(playload)
           .then(response => {
@@ -37,7 +41,9 @@ const app = {
           })
       })
     },
-    UpdateType: ({ commit }, playload) => {
+    UpdateType: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         updateType(playload.id, playload)
           .then(response => {
@@ -48,7 +54,9 @@ const app = {
           })
       })
     },
-    DestoryType: ({ commit }, playload) => {
+    DestoryType: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         destoryType(playload.id)
           .then(response => {

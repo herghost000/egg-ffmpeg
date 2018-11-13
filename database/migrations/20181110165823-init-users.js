@@ -9,12 +9,8 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    const {
-      INTEGER,
-      DATE,
-      STRING,
-    } = Sequelize;
-    await queryInterface.createTable('users', {
+    const { INTEGER, DATE, STRING } = Sequelize;
+    return queryInterface.createTable('users', {
       id: {
         type: INTEGER,
         primaryKey: true,
@@ -35,6 +31,6 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
-    await queryInterface.dropTable('users');
+    return queryInterface.dropTable('users');
   },
 };

@@ -9,25 +9,18 @@ function toInt(str) {
 
 class VideoListController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
-      include: [{
+      include: {
         model: ctx.model.VideoType,
-      }],
+      },
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: toInt(ctx.query.offset) || 0,
       limit: toInt(ctx.query.limit) || 10,
     };
@@ -41,9 +34,7 @@ class VideoListController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const {
-      name,
-    } = ctx.request.body;
+    const { name } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
     const type = await ctx.model.VideoList.create({
@@ -72,9 +63,7 @@ class VideoListController extends Controller {
       return;
     }
 
-    const {
-      name,
-    } = ctx.request.body;
+    const { name } = ctx.request.body;
     const updated_at = new Date();
     await type.update({
       name,

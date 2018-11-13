@@ -1,20 +1,15 @@
 'use strict';
 
 module.exports = app => {
-  const {
-    INTEGER,
-    STRING,
-    DATE,
-  } = app.Sequelize;
+  const { INTEGER, STRING, DATE } = app.Sequelize;
 
-  const Setting = app.model.define('video_list', {
+  const VideoList = app.model.define('video_list', {
     id: {
       type: INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     name: STRING,
-    type_id: INTEGER,
     surface_plot: STRING,
     video_url: STRING,
     decode_id: INTEGER,
@@ -22,6 +17,11 @@ module.exports = app => {
     created_at: DATE,
     updated_at: DATE,
   });
+  VideoList.associate = function() {
+    VideoList.belongsTo(app.model.VideoType, {
+      foreignKey: 'type_id',
+    });
+  };
 
-  return Setting;
+  return VideoList;
 };

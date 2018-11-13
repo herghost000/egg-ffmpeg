@@ -1,13 +1,9 @@
 'use strict';
 
 module.exports = app => {
-  const {
-    INTEGER,
-    STRING,
-    DATE,
-  } = app.Sequelize;
+  const { INTEGER, STRING, DATE } = app.Sequelize;
 
-  const Setting = app.model.define('video_type', {
+  const VideoType = app.model.define('video_type', {
     id: {
       type: INTEGER,
       primaryKey: true,
@@ -17,6 +13,10 @@ module.exports = app => {
     created_at: DATE,
     updated_at: DATE,
   });
-
-  return Setting;
+  VideoType.associate = function() {
+    VideoType.hasMany(app.model.VideoList, {
+      foreignKey: 'type_id',
+    });
+  };
+  return VideoType;
 };

@@ -7,7 +7,7 @@ function toInt(str) {
   return parseInt(str, 10) || 0;
 }
 
-class VideoTypeController extends Controller {
+class VideoListController extends Controller {
   async index() {
     const {
       ctx,
@@ -17,6 +17,9 @@ class VideoTypeController extends Controller {
       Op,
     } = app.Sequelize;
     const query = {
+      include: [{
+        model: ctx.model.VideoType,
+      }],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
@@ -30,8 +33,8 @@ class VideoTypeController extends Controller {
     };
     ctx.body = {
       code: 200,
-      data: await ctx.model.VideoType.findAndCountAll(query),
-      message: '类型查询成功',
+      data: await ctx.model.VideoList.findAndCountAll(query),
+      message: '视频列表查询成功',
     };
   }
 
@@ -43,7 +46,7 @@ class VideoTypeController extends Controller {
     } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
-    const type = await ctx.model.VideoType.create({
+    const type = await ctx.model.VideoList.create({
       name,
       created_at,
       updated_at,
@@ -51,7 +54,7 @@ class VideoTypeController extends Controller {
     ctx.body = {
       code: 200,
       data: type || {},
-      message: '类型创建成功！',
+      message: '视频创建成功！',
     };
   }
 
@@ -59,7 +62,7 @@ class VideoTypeController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const type = await ctx.model.VideoType.findById(id);
+    const type = await ctx.model.VideoList.findById(id);
     if (!type) {
       ctx.status = {
         code: 404,
@@ -87,7 +90,7 @@ class VideoTypeController extends Controller {
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    let type = await ctx.model.VideoType.findById(id);
+    let type = await ctx.model.VideoList.findById(id);
     if (!type) {
       ctx.body = {
         code: 404,
@@ -106,4 +109,4 @@ class VideoTypeController extends Controller {
   }
 }
 
-module.exports = VideoTypeController;
+module.exports = VideoListController;

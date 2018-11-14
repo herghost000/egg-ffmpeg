@@ -14,7 +14,16 @@ module.exports = {
         autoIncrement: true,
       },
       url: STRING,
-      status_id: INTEGER,
+      status_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'video_decode_status',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       created_at: DATE,
       updated_at: DATE,
     });

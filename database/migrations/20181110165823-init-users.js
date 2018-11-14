@@ -9,7 +9,11 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    const { INTEGER, DATE, STRING } = Sequelize;
+    const {
+      INTEGER,
+      DATE,
+      STRING,
+    } = Sequelize;
     return queryInterface.createTable('users', {
       id: {
         type: INTEGER,

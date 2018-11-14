@@ -31,6 +31,10 @@ module.exports = app => {
     dsc: STRING,
     created_at: DATE,
     updated_at: DATE,
+  }, {
+    indexes: [{
+      fields: [ 'type_id' ],
+    }],
   });
   // VideoList.belongsTo(/* app.model.VideoType*/ 'VideoType', {
   //   foreignKey: 'type_id',

@@ -12,6 +12,7 @@ module.exports = app => {
         autoIncrement: true,
       },
       name: STRING,
+      alisa: STRING,
       type_id: INTEGER,
       surface_plot: STRING,
       video_url: STRING,

@@ -12,7 +12,6 @@ module.exports = app => {
         autoIncrement: true,
       },
       name: STRING,
-      alisa: STRING,
       type_id: INTEGER,
       surface_plot: STRING,
       video_url: STRING,
@@ -22,6 +21,8 @@ module.exports = app => {
       updated_at: DATE,
     },
     {
+      deletedAt: 'deleted_at',
+      paranoid: true,
       indexes: [
         {
           fields: [ 'type_id' ],
@@ -36,6 +37,10 @@ module.exports = app => {
   VideoList.associate = function() {
     VideoList.belongsTo(app.model.VideoType, {
       foreignKey: 'type_id',
+      targetKey: 'id',
+    });
+    VideoList.belongsTo(app.model.VideoDecode, {
+      foreignKey: 'decode_id',
       targetKey: 'id',
     });
   };

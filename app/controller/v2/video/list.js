@@ -12,9 +12,18 @@ class VideoListController extends Controller {
     const { ctx, app } = this;
     const { Op } = app.Sequelize;
     const query = {
-      include: {
-        model: ctx.model.VideoType,
-      },
+      include: [
+        {
+          model: ctx.model.VideoType,
+          where: ctx.query.type_id ? { id: ctx.query.type_id } : null,
+        },
+        {
+          model: ctx.model.VideoDecode,
+          include: {
+            model: ctx.model.VideoDecodeStatus,
+          },
+        },
+      ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',

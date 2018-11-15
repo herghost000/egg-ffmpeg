@@ -8,6 +8,7 @@ const getters = {
   name: state => state.user.name,
   roles: state => state.user.roles,
   videoSetting: state => state.videoSetting.setting,
-  videoType: state => state.videoType.type
+  videoType: state => state.videoType.type,
+  videoList: state => state.videoList
 }
 export default getters

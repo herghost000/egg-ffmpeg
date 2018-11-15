@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :inline="true"
-             :model="formInline"
+             :model="form"
              class="demo-form-inline">
       <el-form-item label="名称">
-        <el-input v-model="formInline.user"
+        <el-input v-model="form.name"
                   placeholder="名称"></el-input>
       </el-form-item>
       <el-form-item label="类型">
-        <el-select v-model="formInline.region"
+        <el-select v-model="form.type_id"
                    placeholder="请选择类型">
           <el-option v-for="item in types"
                      :key="item.id"
@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary"
-                   @click="onSubmit">查询</el-button>
+                   @click="onSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData"
@@ -81,10 +81,20 @@ export default {
     return {
       types: [],
       currentPage4: 1,
+      form: {
+        name: '',
+        type_id: ''
+      },
       formInline: {
         user: '',
         region: ''
       },
+      query: {
+        offset: 0,
+        limit: 5,
+        total: 0
+      },
+      listData: [],
       tableData: [{
         id: 1,
         date: '2016-05-02',
@@ -112,9 +122,30 @@ export default {
     this.queryType().then(res => {
       this.types = res.data.rows
     })
+    this.getList()
   },
   methods: {
-    ...mapActions({ queryType: 'QueryType' }),
+    ...mapActions({ queryType: 'QueryType', queryVideoList: 'QueryVideoList' }),
+    getList () {
+      this.listLoading = true
+      console.log(this.form)
+      this.queryVideoList({
+        ...this.query,
+        ...this.form
+      }).then(res => {
+        const { data } = res
+        if (Object.isNotEmpty(data)) {
+          this.listData = Object.deepClone(data.rows)
+          this.query.total = data.count
+          this.listData.map(v => {
+            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+            v.originalName = v.name //  will be used when user click the cancel botton
+            return v
+          })
+        }
+        this.listLoading = false
+      })
+    },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`);
     },
@@ -129,13 +160,16 @@ export default {
     },
     onSubmit () {
       console.log('submit!');
+    },
+    onSearch () {
+      this.getList()
     }
   }
 }
 </script>
 <style scoped>
 .el-pagination {
-    margin-top: 20px;
-    text-align: right;
+  margin-top: 20px;
+  text-align: right;
 }
 </style>

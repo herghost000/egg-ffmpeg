@@ -26,6 +26,9 @@ module.exports = app => {
     watermark: STRING,
     created_at: DATE,
     updated_at: DATE,
+  }, {
+    deletedAt: 'deleted_at',
+    paranoid: true,
   });
 
   return Setting;

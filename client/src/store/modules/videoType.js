@@ -7,11 +7,11 @@ import {
 
 const app = {
   state: {
-    type: {}
+    rows: {}
   },
   mutations: {
-    SET_TYPE: (state, type) => {
-      state.type = type
+    SET_VIDEOTYPE_ROWS: (state, rows) => {
+      state.rows = rows
     }
   },
   actions: {

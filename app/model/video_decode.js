@@ -1,11 +1,14 @@
 'use strict';
 
 module.exports = app => {
-  const { INTEGER, STRING, DATE } = app.Sequelize;
+  const {
+    INTEGER,
+    STRING,
+    DATE,
+  } = app.Sequelize;
 
   const VideoDecode = app.model.define(
-    'video_decode',
-    {
+    'video_decode', {
       id: {
         type: INTEGER,
         primaryKey: true,
@@ -15,13 +18,12 @@ module.exports = app => {
       status_id: INTEGER,
       created_at: DATE,
       updated_at: DATE,
-    },
-    {
-      indexes: [
-        {
-          fields: [ 'status_id' ],
-        },
-      ],
+    }, {
+      deletedAt: 'deleted_at',
+      paranoid: true,
+      indexes: [{
+        fields: [ 'status_id' ],
+      }],
     }
   );
 

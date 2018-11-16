@@ -2,7 +2,11 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    const { INTEGER, STRING, DATE } = Sequelize;
+    const {
+      INTEGER,
+      STRING,
+      DATE,
+    } = Sequelize;
     return queryInterface.createTable('video_decodes', {
       id: {
         type: INTEGER,
@@ -13,6 +17,7 @@ module.exports = {
       status_id: Sequelize.INTEGER,
       created_at: DATE,
       updated_at: DATE,
+      deleted_at: DATE,
     });
   },
 

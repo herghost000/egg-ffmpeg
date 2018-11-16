@@ -9,27 +9,35 @@ function toInt(str) {
 
 class VideoListController extends Controller {
   async index() {
-    const { ctx, app } = this;
-    const { Op } = app.Sequelize;
+    const {
+      ctx,
+      app,
+    } = this;
+    const {
+      Op,
+    } = app.Sequelize;
     const query = {
-      include: [
-        {
-          model: ctx.model.VideoType,
-          where: ctx.query.type_id ? { id: ctx.query.type_id } : null,
+      include: [{
+        model: ctx.model.VideoType,
+        where: ctx.query.type_id ? {
+          id: ctx.query.type_id,
+        } : null,
+      },
+      {
+        model: ctx.model.VideoDecode,
+        include: {
+          model: ctx.model.VideoDecodeStatus,
         },
-        {
-          model: ctx.model.VideoDecode,
-          include: {
-            model: ctx.model.VideoDecodeStatus,
-          },
-        },
+      },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [[ 'id', 'desc' ]],
+      order: [
+        [ 'id', 'desc' ],
+      ],
       offset: toInt(ctx.query.offset) || 0,
       limit: toInt(ctx.query.limit) || 10,
     };
@@ -43,11 +51,19 @@ class VideoListController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const { name } = ctx.request.body;
+    const {
+      name,
+      surface_plot,
+      video_url,
+      dsc,
+    } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
     const type = await ctx.model.VideoList.create({
       name,
+      surface_plot,
+      video_url,
+      dsc,
       created_at,
       updated_at,
     });
@@ -67,12 +83,14 @@ class VideoListController extends Controller {
       ctx.status = {
         code: 404,
         data: type,
-        message: '未找到需要编辑数据的用户！',
+        message: '未找到需要编辑的视频！',
       };
       return;
     }
 
-    const { name } = ctx.request.body;
+    const {
+      name,
+    } = ctx.request.body;
     const updated_at = new Date();
     await type.update({
       name,
@@ -81,27 +99,27 @@ class VideoListController extends Controller {
     ctx.body = {
       code: 201,
       data: type || {},
-      message: '类型编辑成功！',
+      message: '视频编辑成功！',
     };
   }
 
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    let type = await ctx.model.VideoList.findById(id);
-    if (!type) {
+    let list = await ctx.model.VideoList.findById(id);
+    if (!list) {
       ctx.body = {
         code: 404,
         data: {},
-        message: '未找到该条数据！',
+        message: '未找到需要删除的数据！',
       };
       return;
     }
 
-    type = await type.destroy();
+    list = await list.destroy();
     ctx.body = {
       code: 200,
-      data: type,
+      data: list,
       message: '删除成功！',
     };
   }

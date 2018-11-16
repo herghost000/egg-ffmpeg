@@ -51,9 +51,9 @@ async function mkdirs(dir) {
 }
 
 module.exports = {
-  async save(uploadPath, salty, stream) {
+  async save(baseDir, uploadPath, salty, stream) {
     const dateDir = new Date().toLocaleDateString() + '/';
-    const realPath = this.config.upload.baseDir + uploadPath + dateDir;
+    const realPath = baseDir + uploadPath + dateDir;
     if (!fs.existsSync(realPath)) {
       await mkdirs(realPath);
     }

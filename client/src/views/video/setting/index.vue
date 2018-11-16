@@ -60,7 +60,7 @@
                    :on-success="handleSuccess"
                    :limit="1"
                    :file-list="fileList"
-                   action="/api/v2/upload/uploadAvator">
+                   action="/api/v2/upload/uploadPic">
 
           <div class="pan-btn small primary-btn">点击上传</div>
           <div slot="tip"
@@ -104,7 +104,10 @@ export default {
       if (Object.isEmpty(res.data)) {
         this.initDB = true
       }
-      this.form = deepClone(res.data)
+      this.form = {
+        ...this.form,
+        ...deepClone(res.data)
+      }
       if (this.form.watermark) {
         var str = this.form.watermark
         var sps = str.split('/')
@@ -128,12 +131,15 @@ export default {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     handleSuccess (response, file, fileList) {
+      console.log(this, 6)
       this.form.watermark = file.response
+      console.log(this.form, 'form')
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
     handleImgError () {
+      console.log("error???")
       this.form.watermark = null
       this.fileList = []
     },

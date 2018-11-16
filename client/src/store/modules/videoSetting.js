@@ -6,11 +6,11 @@ import {
 
 const app = {
   state: {
-    setting: {}
+    data: {}
   },
   mutations: {
-    SET_SETTING: (state, setting) => {
-      state.setting = setting
+    SET_VIDEOSETTING_DATA: (state, data) => {
+      state.data = data
     }
   },
   actions: {
@@ -20,7 +20,7 @@ const app = {
       return new Promise((resolve, reject) => {
         querySetting()
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_VIDEOSETTING_DATA', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -34,7 +34,7 @@ const app = {
       return new Promise((resolve, reject) => {
         createSetting(playload)
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_VIDEOSETTING_DATA', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -48,7 +48,7 @@ const app = {
       return new Promise((resolve, reject) => {
         updateSetting(playload.id, playload)
           .then(response => {
-            commit('SET_SETTING', response.data)
+            commit('SET_VIDEOSETTING_DATA', response.data)
             resolve(response)
           })
           .catch(error => {

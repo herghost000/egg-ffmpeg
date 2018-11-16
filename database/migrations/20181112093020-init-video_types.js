@@ -23,6 +23,7 @@ module.exports = {
       name: STRING,
       created_at: DATE,
       updated_at: DATE,
+      deleted_at: DATE,
     });
   },
 

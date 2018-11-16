@@ -1,20 +1,26 @@
-import { queryList, createList, updateList } from '@/api/video/list'
+import {
+  queryList,
+  createList,
+  updateList
+} from '@/api/video/list'
 
 const app = {
   state: {
-    list: {}
+    rows: {}
   },
   mutations: {
-    SET_VIDEO_LIST: (state, list) => {
-      state.list = list
+    SET_VIDEOLIST_ROWS: (state, rows) => {
+      state.rows = rows
     }
   },
   actions: {
-    QueryVideoList: ({ commit }, playload) => {
+    QueryVideoList: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         queryList(playload)
           .then(response => {
-            commit('SET_VIDEO_LIST', response.data)
+            commit('SET_VIDEOLIST_ROWS', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -22,11 +28,13 @@ const app = {
           })
       })
     },
-    CreateVideoList: ({ commit }, playload) => {
+    CreateVideoList: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         createList(playload)
           .then(response => {
-            commit('SET_VIDEO_LIST', response.data)
+            commit('SET_VIDEOLIST_ROWS', response.data)
             resolve(response)
           })
           .catch(error => {
@@ -34,11 +42,13 @@ const app = {
           })
       })
     },
-    UpdateVideoList: ({ commit }, playload) => {
+    UpdateVideoList: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         updateList(playload.id, playload)
           .then(response => {
-            commit('SET_VIDEO_LIST', response.data)
+            commit('SET_VIDEOLIST_ROWS', response.data)
             resolve(response)
           })
           .catch(error => {

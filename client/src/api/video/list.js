@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 export function queryList(params) {
-  console.log(params, 'params')
   return request({
     url: '/api/v2/video/list',
     params

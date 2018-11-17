@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
-    <div style="text-align:center;">最近创建</div>
     <el-carousel :interval="4000"
                  type="card"
                  height="200px">
-      <el-carousel-item v-for="item in 6"
-                        :key="item">
-        <h3>{{ item }}</h3>
+      <el-carousel-item v-for="item in banners"
+                        :key="item.id">
+        <img class="banner"
+             :src="item.surface_plot"
+             alt="">
       </el-carousel-item>
     </el-carousel>
     <el-form ref="form"
@@ -95,6 +96,7 @@ export default {
       picFileList: [],
       videoFileList: [],
       types: [],
+      banners: [],
       form: {
         name: '',
         type_id: '',
@@ -108,9 +110,21 @@ export default {
     this.queryType().then(res => {
       this.types = res.data.rows
     })
+    this.getBanners()
   },
   methods: {
-    ...mapActions({ queryType: 'QueryType', createVideoList: 'CreateVideoList' }),
+    ...mapActions({ queryType: 'QueryType', createVideoList: 'CreateVideoList', queryVideoList: 'QueryVideoList' }),
+    getBanners () {
+      this.queryVideoList({
+        offset: 0,
+        limit: 6,
+      }).then(res => {
+        const { data } = res
+        if (Object.isNotEmpty(data)) {
+          this.banners = Object.deepClone(data.rows)
+        }
+      })
+    },
     handlePicRemove (file, fileList) {
       this.form.surface_plot = null
     },
@@ -145,6 +159,7 @@ export default {
       }
     },
     onSubmit () {
+      console.log(this.form)
       this.createVideoList(this.form).then(res => {
         const { code, message, data } = res
         if (Object.isNotEmpty(data)) {
@@ -162,25 +177,34 @@ export default {
 
 <style scoped>
 .line {
-    text-align: center;
+  text-align: center;
 }
 .upload_pic {
-    max-width: 300px;
+  max-width: 300px;
 }
 .el-carousel__item h3 {
-    color: #475669;
-    font-size: 14px;
-    opacity: 0.75;
-    line-height: 200px;
-    margin: 0;
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
 }
 
 .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
+  /* background-color: #99a9bf; */
 }
 
 .el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
+  /* background-color: #d3dce6; */
+}
+.el-form {
+  margin-top: 10px;
+}
+.el-carousel__item {
+  text-align: center;
+}
+.banner {
+  height: 100%;
 }
 </style>
 

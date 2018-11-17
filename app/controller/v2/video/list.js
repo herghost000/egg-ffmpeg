@@ -9,35 +9,31 @@ function toInt(str) {
 
 class VideoListController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
-      include: [{
-        model: ctx.model.VideoType,
-        where: ctx.query.type_id ? {
-          id: ctx.query.type_id,
-        } : null,
-      },
-      {
-        model: ctx.model.VideoDecode,
-        include: {
-          model: ctx.model.VideoDecodeStatus,
+      include: [
+        {
+          model: ctx.model.VideoType,
+          where: ctx.query.type_id
+            ? {
+              id: ctx.query.type_id,
+            }
+            : null,
         },
-      },
+        {
+          model: ctx.model.VideoDecode,
+          include: {
+            model: ctx.model.VideoDecodeStatus,
+          },
+        },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: toInt(ctx.query.offset) || 0,
       limit: toInt(ctx.query.limit) || 10,
     };
@@ -51,18 +47,14 @@ class VideoListController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const {
-      name,
-      surface_plot,
-      video_url,
-      dsc,
-    } = ctx.request.body;
+    const { name, surface_plot, type_id, video_url, dsc } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
     const type = await ctx.model.VideoList.create({
       name,
       surface_plot,
       video_url,
+      type_id,
       dsc,
       created_at,
       updated_at,
@@ -88,9 +80,7 @@ class VideoListController extends Controller {
       return;
     }
 
-    const {
-      name,
-    } = ctx.request.body;
+    const { name } = ctx.request.body;
     const updated_at = new Date();
     await type.update({
       name,

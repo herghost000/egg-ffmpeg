@@ -5,15 +5,20 @@ const util = require('util');
 
 class TransCodeService extends Service {
   async trans() {
-    const ratio = '1080p';
-    const watermark = '';
+    const ctx = this.ctx;
+    const {
+      data: {
+        ratio,
+        miaoqie,
+        watermark,
+      },
+    } = await ctx.service.video.setting.find();
     const srtpath = '';
-    const miaoqie = true;
     const height = +ratio.split('p')[0];
-    const path = 'C:/Users/Administrator/Desktop/s.mp4';
+    const path = 'app/public/s.mp4';
     const des = 'C:/Users/Administrator/Desktop/dest';
     if (!util.isNumber(height)) {
-      throw new Error('未知的转码比率');
+      throw new Error('unknow ratio');
     }
     let size = '',
       bv = '',

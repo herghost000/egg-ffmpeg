@@ -1,8 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :inline="true"
-             :model="form"
-             class="demo-form-inline">
+             :model="form">
       <el-form-item label="名称">
         <el-input v-model="form.name"
                   placeholder="名称"></el-input>
@@ -41,7 +40,7 @@
       <el-table-column label="类型"
                        align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.type_id">
+          <template v-if="scope.row.type_id && scope.row.video_type">
             {{scope.row.video_type.name}}
           </template>
           <template v-else>
@@ -130,10 +129,6 @@ export default {
         name: '',
         type_id: ''
       },
-      formInline: {
-        user: '',
-        region: ''
-      },
       query: {
         offset: 0,
         limit: 5,
@@ -141,27 +136,6 @@ export default {
         currentPage: 1,
       },
       listData: [],
-      tableData: [{
-        id: 1,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        id: 1,
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        id: 1,
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        id: 1,
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
     }
   },
   created () {
@@ -184,8 +158,8 @@ export default {
           this.listData = Object.deepClone(data.rows)
           this.query.total = data.count
           this.listData.map(v => {
-            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-            v.originalName = v.name //  will be used when user click the cancel botton
+            this.$set(v, 'edit', false)
+            v.originalName = v.name
             return v
           })
         }

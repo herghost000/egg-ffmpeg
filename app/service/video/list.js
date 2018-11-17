@@ -2,17 +2,19 @@
 const Service = require('egg').Service;
 
 class VideoListService extends Service {
-  async findAndCountAll(obj = {
-    name: null,
-    type_id: null,
-    offset: null,
-    limit: null,
-  }) {
+  async findAndCountAll(playload) {
 
     const {
       ctx,
       app,
     } = this;
+
+    const {
+      name,
+      type_id,
+      offset,
+      limit,
+    } = playload;
 
     const {
       Op,
@@ -21,8 +23,8 @@ class VideoListService extends Service {
     const query = {
       include: [{
         model: ctx.model.VideoType,
-        where: obj.type_id ? {
-          id: obj.type_id,
+        where: type_id ? {
+          id: type_id,
         } : null,
       },
       {
@@ -34,16 +36,20 @@ class VideoListService extends Service {
       ],
       where: {
         name: {
-          [Op.like]: obj.name ? `%${obj.name}%` : '%%',
+          [Op.like]: name ? `%${name}%` : '%%',
         },
       },
       order: [
         [ 'id', 'desc' ],
       ],
-      offset: ctx.helper.toInt(obj.offset) || 0,
-      limit: ctx.helper.toInt(obj.limit) || 10,
+      offset: ctx.helper.toInt(offset) || 0,
+      limit: ctx.helper.toInt(limit) || 10,
     };
-    return await ctx.model.VideoList.findAndCountAll(query);
+    return {
+      code: 200,
+      data: await ctx.model.VideoList.findAndCountAll(query),
+      message: '视频列表查询成功',
+    };
   }
 
   async create(playload) {
@@ -58,7 +64,7 @@ class VideoListService extends Service {
       video_url,
       dsc,
     } = playload;
-    return await ctx.model.VideoList.create({
+    const list = await ctx.model.VideoList.create({
       name,
       surface_plot,
       video_url,
@@ -66,41 +72,16 @@ class VideoListService extends Service {
       created_at,
       updated_at,
     });
+    return {
+      code: 200,
+      data: list,
+      message: '视频创建成功！',
+    };
   }
 
-  async update(playload) {
-    const {
-      ctx,
-    } = this;
-    let {
-      id,
-      name,
-    } = playload;
-    id = ctx.helper.toInt(id);
-    const type = await ctx.model.VideoList.findById(id);
-    if (!type) {
-      return type;
-    }
+  async update(playload) {}
 
-    const updated_at = new Date();
-    return await type.update({
-      name,
-      updated_at,
-    });
-  }
-
-  async destory(id) {
-    const {
-      ctx,
-    } = this.ctx;
-    id = ctx.helper.toInt(id);
-    const list = await ctx.model.VideoList.findById(id);
-    if (!list) {
-      return list;
-    }
-
-    return await list.destroy();
-  }
+  async destory(id) {}
 }
 
 module.exports = VideoListService;

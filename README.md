@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="320" src="https://raw.githubusercontent.com/herghost000/egg-ffmpeg/77749ed02debe0b749c4c3bd56022fc57f2c56e0/app/public/image/logo.png">
+  <img width="320" src="https://raw.githubusercontent.com/herghost000/egg-ffmpeg/master/app/public/image/logo.png">
 </p>
 
 <p align="center">

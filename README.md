@@ -18,7 +18,7 @@
 
 ## 简介
 
-[egg-ffmpeg](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案
+[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案
 
 ## 前序准备
 

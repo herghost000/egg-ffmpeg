@@ -7,6 +7,12 @@ const {
 } = require('await-stream-ready');
 const fs = require('fs');
 
+function toInt(str) {
+  if (typeof str === 'number') return str;
+  if (!str) return str;
+  return parseInt(str, 10) || 0;
+}
+
 function getStat(path) {
   return new Promise(resolve => {
     fs.stat(path, (err, stats) => {
@@ -74,4 +80,5 @@ module.exports = {
     return `${this.ctx.helper.urlFor()}public/${uploadPath}${dateDir}${filename}`;
   },
   mkdirs,
+  toInt,
 };

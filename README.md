@@ -15,9 +15,6 @@
   <a href="https://github.com/herghost000/egg-ffmpeg/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
   </a>
-  <a href="https://gitter.im/vue-element-admin/discuss">
-    <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
-  </a>
 </p>
 
 简体中文 | [English](./README.md)

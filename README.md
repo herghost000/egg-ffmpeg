@@ -34,6 +34,8 @@
 
 ## 前序准备
 
+waiting
+
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
 ## 功能
@@ -78,9 +80,15 @@ waiting
 
 ## Changelog
 
+waiting
+
 ## Online Demo
 
+waiting
+
 ## Donate
+
+waiting
 
 ## Browsers support
 

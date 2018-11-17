@@ -39,7 +39,7 @@
 ## 功能
 
 ```
-
+waiting
 ```
 
 ## 开发
@@ -67,13 +67,13 @@ npm run dev
 ## 发布
 
 ```
-
+waiting
 ```
 
 ## 其它
 
 ```
-
+waiting
 ```
 
 ## Changelog

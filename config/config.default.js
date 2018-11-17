@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = appInfo => {
   const config = (exports = {});
-
+  console.log(999, appInfo);
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1541178168304_2532';
   config.security = {

@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="320" src="https://raw.githubusercontent.com/herghost000/egg-ffmpeg/77749ed02debe0b749c4c3bd56022fc57f2c56e0/app/public/image/logo.svg">
+  <img width="320" src="https://raw.githubusercontent.com/herghost000/egg-ffmpeg/77749ed02debe0b749c4c3bd56022fc57f2c56e0/app/public/image/logo.png">
 </p>
 
 <p align="center">
@@ -34,12 +34,12 @@
 
 ## 前序准备
 
-
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
 ## 功能
 
 ```
+
 ```
 
 ## 开发
@@ -67,11 +67,13 @@ npm run dev
 ## 发布
 
 ```
+
 ```
 
 ## 其它
 
 ```
+
 ```
 
 ## Changelog
@@ -85,8 +87,8 @@ npm run dev
 Modern browsers and Internet Explorer 10+.
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
-| --------- | --------- | --------- | --------- |
-| IE10, IE11, Edge| last 2 versions| last 2 versions| last 2 versions
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| IE10, IE11, Edge                                                                                                                                                                                                | last 2 versions                                                                                                                                                                                                   | last 2 versions                                                                                                                                                                                               | last 2 versions                                                                                                                                                                                               |
 
 ## License
 

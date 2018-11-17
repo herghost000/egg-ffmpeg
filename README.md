@@ -102,4 +102,4 @@ Modern browsers and Internet Explorer 10+.
 
 [MIT](https://github.com/herghost000/egg-ffmpeg/blob/master/LICENSE)
 
-Copyright (c) 2017-present ZackAddy
+Copyright (c) 2017-present 乄ZackAddy

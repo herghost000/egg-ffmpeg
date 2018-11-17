@@ -1,8 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :inline="true"
-             :model="form"
-             class="demo-form-inline">
+             :model="form">
       <el-form-item label="名称">
         <el-input v-model="form.name"
                   placeholder="名称"></el-input>
@@ -41,7 +40,7 @@
       <el-table-column label="类型"
                        align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.type_id">
+          <template v-if="scope.row.type_id && scope.row.video_type">
             {{scope.row.video_type.name}}
           </template>
           <template v-else>
@@ -57,7 +56,7 @@
                        align="center"
                        prop="dsc">
       </el-table-column>
-      <el-table-column label="地址"
+      <el-table-column label="转码地址"
                        align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.decode_id && scope.row.video_decode.url">
@@ -69,6 +68,28 @@
                          v-clipboard:copy="scope.row.video_decode.url"
                          v-clipboard:success="clipboardSuccess"
                          size="mini"
+                         icon="el-icon-view"
+                         class="operate-btn">复制</el-button>
+            </el-popover>
+          </template>
+          <template v-else>
+            未转码
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column label="切片地址"
+                       align="center">
+        <template slot-scope="scope">
+          <template v-if="scope.row.decode_id && scope.row.video_decode.url">
+            <el-popover placement="top-start"
+                        title="切片地址"
+                        trigger="hover"
+                        :content="scope.row.video_decode.url">
+              <el-button slot="reference"
+                         v-clipboard:copy="scope.row.video_decode.url"
+                         v-clipboard:success="clipboardSuccess"
+                         size="mini"
+                         icon="el-icon-view"
                          class="operate-btn">复制</el-button>
             </el-popover>
           </template>
@@ -84,19 +105,30 @@
             {{scope.row.video_decode.video_decode_statu.name}}
           </template>
           <template v-else>
-            等待
+            等待<i class="el-icon-loading"></i>
           </template>
         </template>
       </el-table-column>
       <el-table-column label="操作"
-                       align="center">
+                       align="center"
+                       width="100px">
         <template slot-scope="scope">
           <el-button size="mini"
                      class="operate-btn"
+                     icon="el-icon-edit"
                      @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini"
+                     class="operate-btn"
+                     icon="el-icon-refresh"
+                     @click="handleEdit(scope.$index, scope.row)">转码</el-button>
+          <el-button size="mini"
+                     class="operate-btn"
+                     icon="el-icon-refresh"
+                     @click="handleEdit(scope.$index, scope.row)">切片</el-button>
           <el-button size="mini"
                      type="danger"
                      class="operate-btn"
+                     icon="el-icon-delete"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -130,10 +162,6 @@ export default {
         name: '',
         type_id: ''
       },
-      formInline: {
-        user: '',
-        region: ''
-      },
       query: {
         offset: 0,
         limit: 5,
@@ -141,27 +169,7 @@ export default {
         currentPage: 1,
       },
       listData: [],
-      tableData: [{
-        id: 1,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        id: 1,
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        id: 1,
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        id: 1,
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      searchInterval: null
     }
   },
   created () {
@@ -169,12 +177,20 @@ export default {
       this.types = res.data.rows
     })
     this.getList()
+    this.searchInterval = setInterval(() => {
+      this.handleQueryVideoList()
+    }, 5000);
+  },
+  destroyed () {
+    clearInterval(this.searchInterval)
   },
   methods: {
     ...mapActions({ queryType: 'QueryType', queryVideoList: 'QueryVideoList' }),
     getList () {
       this.listLoading = true
-      console.log(this.form)
+      this.handleQueryVideoList()
+    },
+    handleQueryVideoList () {
       this.queryVideoList({
         ...this.query,
         ...this.form
@@ -184,8 +200,8 @@ export default {
           this.listData = Object.deepClone(data.rows)
           this.query.total = data.count
           this.listData.map(v => {
-            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-            v.originalName = v.name //  will be used when user click the cancel botton
+            this.$set(v, 'edit', false)
+            v.originalName = v.name
             return v
           })
         }

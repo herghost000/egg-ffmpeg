@@ -37,10 +37,6 @@
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
- <p align="center">
-  <img width="900" src="https://wpimg.wallstcn.com/a5894c1b-f6af-456e-82df-1151da0839bf.png">
-</p>
-
 ## 功能
 
 ```

@@ -4,10 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const {
-    router,
-    controller,
-  } = app;
+  const { router, controller } = app;
 
   // const checktoken = app.middleware.checktoken();
   router.get('/', controller.home.index);
@@ -26,6 +23,11 @@ module.exports = app => {
     '/api/v2/video/list',
     controller.v2.video.list
   );
+  router.post(
+    '/api/v2/video/list/transcode',
+    controller.v2.video.list.transcode
+  );
+
   router.post('/api/v2/upload/uploadAvator', controller.v2.upload.uploadAvator);
   router.post('/api/v2/upload/uploadPic', controller.v2.upload.uploadPic);
   router.post('/api/v2/upload/uploadVideo', controller.v2.upload.uploadVideo);

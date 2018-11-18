@@ -1,12 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  const {
-    STRING,
-    INTEGER,
-    DATE,
-  } = app.Sequelize;
-  console.log(this.ctx, app.model.define);
+  const { STRING, INTEGER, DATE } = app.Sequelize;
   const User = app.model.define('user', {
     id: {
       type: INTEGER,

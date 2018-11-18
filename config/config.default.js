@@ -4,7 +4,6 @@ const path = require('path');
 
 module.exports = appInfo => {
   const config = (exports = {});
-  console.log(999, appInfo);
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1541178168304_2532';
   config.security = {
@@ -19,12 +18,16 @@ module.exports = appInfo => {
       '.tpl': 'nunjucks',
     },
   };
-  const uploadBaseDir = 'app/public/';
   config.upload = {
-    baseDir: uploadBaseDir,
+    baseDir: 'app/public/',
     avatorDir: 'upload/avator/',
     picDir: 'upload/pic/',
     videoDir: 'upload/video/',
+  };
+  config.transcode = {
+    baseDir: 'transcode/',
+    sourceDir: 'source/',
+    targetDir: 'target/',
   };
   config.sequelize = {
     dialect: 'mysql',
@@ -35,6 +38,7 @@ module.exports = appInfo => {
     password: 'luotian520',
     // password: 'root',
     operatorsAliases: Sequelize.Op,
+    benchmark: false,
   };
 
   return config;

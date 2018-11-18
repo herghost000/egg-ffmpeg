@@ -11,7 +11,8 @@
     "egg-view-nunjucks": "^2.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "jsonwebtoken": "^8.3.0",
-    "mysql2": "^1.6.4"
+    "mysql2": "^1.6.4",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",

@@ -2,21 +2,79 @@
 const Service = require('egg').Service;
 const ffmpeg = require('fluent-ffmpeg');
 const util = require('util');
+const path = require('path');
 
 class TransCodeService extends Service {
-  async trans() {
+  async trans(id) {
     const ctx = this.ctx;
     const {
-      data: {
-        ratio,
-        miaoqie,
-        watermark,
-      },
+      data: { ratio, miaoqie, watermark },
     } = await ctx.service.video.setting.find();
+    const listItem = await ctx.service.video.list.find(id);
+    if (!listItem.data) {
+      return {
+        code: 404,
+        data: null,
+        message: '未找到相关视频信息',
+      };
+    }
+    const { video_path, decode_id, video_decode } = listItem.data;
+    if (!decode_id || (decode_id && !video_decode)) {
+      return {
+        code: 404,
+        data: null,
+        message: '未找到转码信息，未生成或被删除',
+      };
+    }
+    const { trans_path, chunk_path, status_id } = video_decode;
+    if (!video_path) {
+      return {
+        code: 404,
+        data: null,
+        message: '未找到视频路径',
+      };
+    }
+    if (!trans_path) {
+      return {
+        code: 404,
+        data: null,
+        message: '未找到转码路径',
+      };
+    }
+    if (!chunk_path) {
+      return {
+        code: 404,
+        data: null,
+        message: '未找到切片路径',
+      };
+    }
+    if (!status_id) {
+      return {
+        code: 404,
+        data: null,
+        message: '未初始化视频转切状态',
+      };
+    }
+    if (status_id === 5) {
+      return {
+        code: 200,
+        data: null,
+        message: '转切已完成，请勿重复处理',
+      };
+    }
+    if (status_id !== 1) {
+      return {
+        code: 404,
+        data: null,
+        message: '视频转切进行中',
+      };
+    }
     const srtpath = '';
     const height = +ratio.split('p')[0];
-    const path = 'app/public/s.mp4';
-    const des = 'C:/Users/Administrator/Desktop/dest';
+    const des = `${this.config.transcode.baseDir}${
+      this.config.transcode.targetDir
+    }`;
+    await ctx.helper.mkdirs(des);
     if (!util.isNumber(height)) {
       throw new Error('unknow ratio');
     }
@@ -42,7 +100,9 @@ class TransCodeService extends Service {
       maxrate = '1000k';
     }
     if (watermark) {
-      vf.push(`movie=${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`);
+      vf.push(
+        `movie=${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`
+      );
     }
     if (srtpath) {
       vf.push(`,subtitles=${srtpath}`);
@@ -52,8 +112,21 @@ class TransCodeService extends Service {
       vf.push(' [out]');
       vf = vf.join('');
     }
-
-    ffmpeg.ffprobe(path, (err, metadata) => {
+    const cbs = {
+      transStart() {
+        video_decode.update({ status_id: 2 });
+      },
+      transEnd() {
+        video_decode.update({ status_id: 3 });
+      },
+      chunkStart() {
+        video_decode.update({ status_id: 4 });
+      },
+      chunkEnd() {
+        video_decode.update({ status_id: 5 });
+      },
+    };
+    ffmpeg.ffprobe(video_path, (err, metadata) => {
       if (err) console.log(err);
       const videometa = metadata.streams[0];
 
@@ -64,23 +137,67 @@ class TransCodeService extends Service {
       if (miaoqie) {
         if (videometa.height <= height && videometa.codec_name === 'h264') {
           if (watermark || srtpath) {
-            transcode(path, des, size, bv, bufsize, maxrate, vf);
+            transcode(
+              video_path,
+              trans_path,
+              chunk_path,
+              size,
+              bv,
+              bufsize,
+              maxrate,
+              vf,
+              cbs
+            );
           } else {
-            chunk(path, des);
+            chunk(trans_path, chunk_path, cbs);
           }
         } else {
-          transcode(path, des, size, bv, bufsize, maxrate, vf);
+          transcode(
+            video_path,
+            trans_path,
+            chunk_path,
+            size,
+            bv,
+            bufsize,
+            maxrate,
+            vf,
+            cbs
+          );
         }
       } else {
-        trans2chunk(path, des, size, bv, bufsize, maxrate, vf);
+        transcode(
+          video_path,
+          trans_path,
+          chunk_path,
+          size,
+          bv,
+          bufsize,
+          maxrate,
+          vf,
+          cbs
+        );
       }
-
     });
+    return {
+      code: 200,
+      data: true,
+      message: '开始转码、切片',
+    };
   }
 }
 
-function transcode(path, des, size, bv, bufsize, maxrate, vf) {
-  ffmpeg(path)
+function transcode(
+  video_path,
+  trans_path,
+  chunk_path,
+  size,
+  bv,
+  bufsize,
+  maxrate,
+  vf,
+  cbs
+) {
+  ffmpeg(video_path)
     .addOptions([
       '-s ' + size,
       '-b:v ' + bv,
@@ -94,67 +211,69 @@ function transcode(path, des, size, bv, bufsize, maxrate, vf) {
       '-strict -2',
     ])
     .addOption('-vf', vf)
-    .output(des + '/index.mp4')
+    .output(trans_path)
     .on('start', function() {
-      console.log('start????s');
+      cbs.transStart();
     })
-    .on('error', function(err, stdout, stderr) {
-      console.log('Cannot process video: ' + path + err.message);
+    .on('error', function(err) {
+      console.log('Cannot process video: ' + video_path + err.message);
     })
     .on('end', function() {
-      chunk(des + '/index.mp4', des);
+      cbs.transEnd();
+      chunk(trans_path, chunk_path);
     })
     .run();
 }
 
-function chunk(path, des) {
-  ffmpeg(path)
+function chunk(trans_path, chunk_path, cbs) {
+  ffmpeg(trans_path)
     .addOptions([
       '-start_number 0',
       '-hls_time 10',
       '-hls_list_size 0',
       '-f hls',
       '-strict -2',
-    ]).output(des + '/index.m3u8')
+    ])
+    .output(chunk_path)
     .on('start', function() {
-      screenshots(path, des);
+      cbs.chunkStart();
+      screenshots(trans_path, chunk_path);
     })
-    .on('error', function(err, stdout, stderr) {
+    .on('error', function(err) {
       console.log('Cannot chunk video: ' + err.message);
     })
     .on('end', function() {
-      console.log('转码完成');
+      cbs.chunkEnd();
     })
     .run();
 }
 
-function trans2chunk(path, des, size, bv, bufsize, maxrate, vf) {
-  const fp = ffmpeg(path)
-    .addOptions([
-      '-s ' + size,
-      '-b:v ' + bv,
-      '-vcodec libx264',
-      '-acodec aac',
-      '-ac 2',
-      '-b:a 128k',
-      '-bufsize ' + bufsize,
-      '-maxrate ' + maxrate,
-      '-q:v 6',
-      '-strict -2',
-      '-start_number 0',
-      '-hls_time 10',
-      '-hls_list_size 0',
-      '-f hls',
-    ]);
+function trans2chunk(video_path, chunk_path, size, bv, bufsize, maxrate, vf) {
+  const fp = ffmpeg(video_path).addOptions([
+    '-s ' + size,
+    '-b:v ' + bv,
+    '-vcodec libx264',
+    '-acodec aac',
+    '-ac 2',
+    '-b:a 128k',
+    '-bufsize ' + bufsize,
+    '-maxrate ' + maxrate,
+    '-q:v 6',
+    '-strict -2',
+    '-start_number 0',
+    '-hls_time 10',
+    '-hls_list_size 0',
+    '-f hls',
+  ]);
   if (vf) {
     fp.addOption('-vf', vf);
   }
-  fp.output(des + '/index.m3u8')
+  fp.output(chunk_path)
     .on('start', function() {
-      screenshots(path, des);
+      screenshots(video_path, chunk_path);
     })
-    .on('error', function(err, stdout, stderr) {
-      console.log('Cannot process video: ' + path + err.message);
+    .on('error', function(err) {
+      console.log('Cannot process video: ' + video_path + err.message);
     })
     .on('end', function() {
       console.log('complate 6666');
@@ -162,11 +281,11 @@ function trans2chunk(path, des, size, bv, bufsize, maxrate, vf) {
     .run();
 }
 
-function screenshots(path, des, count = 4) {
-  ffmpeg(path).screenshots({
+function screenshots(video_path, chunk_path, count = 4) {
+  ffmpeg(video_path).screenshots({
     count,
     filename: '%i.jpg',
-    folder: des,
+    folder: path.dirname(chunk_path),
   });
 }
 

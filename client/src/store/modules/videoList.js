@@ -1,8 +1,4 @@
-import {
-  queryList,
-  createList,
-  updateList
-} from '@/api/video/list'
+import { queryList, createList, updateList, transcode } from '@/api/video/list'
 
 const app = {
   state: {
@@ -14,9 +10,7 @@ const app = {
     }
   },
   actions: {
-    QueryVideoList: ({
-      commit
-    }, playload) => {
+    QueryVideoList: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         queryList(playload)
           .then(response => {
@@ -28,9 +22,7 @@ const app = {
           })
       })
     },
-    CreateVideoList: ({
-      commit
-    }, playload) => {
+    CreateVideoList: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         createList(playload)
           .then(response => {
@@ -42,9 +34,18 @@ const app = {
           })
       })
     },
-    UpdateVideoList: ({
-      commit
-    }, playload) => {
+    Transcode: ({ commit }, playload) => {
+      return new Promise((resolve, reject) => {
+        transcode(playload)
+          .then(response => {
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    UpdateVideoList: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         updateList(playload.id, playload)
           .then(response => {

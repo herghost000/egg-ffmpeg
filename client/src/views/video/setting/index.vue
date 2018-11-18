@@ -131,9 +131,7 @@ export default {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     handleSuccess (response, file, fileList) {
-      console.log(this, 6)
-      this.form.watermark = file.response
-      console.log(this.form, 'form')
+      this.form.watermark = file.response.url
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
@@ -173,6 +171,6 @@ export default {
 </script>
 <style scoped>
 .watermark {
-    max-width: 300px;
+  max-width: 300px;
 }
 </style>

@@ -22,3 +22,10 @@ export function updateList(id, data) {
     data
   })
 }
+export function transcode(data) {
+  return request({
+    url: '/api/v2/video/list/transcode',
+    method: 'POST',
+    data
+  })
+}

@@ -59,13 +59,13 @@
       <el-table-column label="转码地址"
                        align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.decode_id && scope.row.video_decode.url">
+          <template v-if="scope.row.decode_id && scope.row.video_decode.trans_path">
             <el-popover placement="top-start"
                         title="转码地址"
                         trigger="hover"
-                        :content="scope.row.video_decode.url">
+                        :content="scope.row.video_decode.trans_path">
               <el-button slot="reference"
-                         v-clipboard:copy="scope.row.video_decode.url"
+                         v-clipboard:copy="scope.row.video_decode.trans_path"
                          v-clipboard:success="clipboardSuccess"
                          size="mini"
                          icon="el-icon-view"
@@ -80,13 +80,13 @@
       <el-table-column label="切片地址"
                        align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.decode_id && scope.row.video_decode.url">
+          <template v-if="scope.row.decode_id && scope.row.video_decode.chunk_path">
             <el-popover placement="top-start"
                         title="切片地址"
                         trigger="hover"
-                        :content="scope.row.video_decode.url">
+                        :content="scope.row.video_decode.chunk_path">
               <el-button slot="reference"
-                         v-clipboard:copy="scope.row.video_decode.url"
+                         v-clipboard:copy="scope.row.video_decode.chunk_path"
                          v-clipboard:success="clipboardSuccess"
                          size="mini"
                          icon="el-icon-view"
@@ -105,7 +105,7 @@
             {{scope.row.video_decode.video_decode_statu.name}}
           </template>
           <template v-else>
-            等待<i class="el-icon-loading"></i>
+            等待
           </template>
         </template>
       </el-table-column>
@@ -120,11 +120,7 @@
           <el-button size="mini"
                      class="operate-btn"
                      icon="el-icon-refresh"
-                     @click="handleEdit(scope.$index, scope.row)">转码</el-button>
-          <el-button size="mini"
-                     class="operate-btn"
-                     icon="el-icon-refresh"
-                     @click="handleEdit(scope.$index, scope.row)">切片</el-button>
+                     @click="handleTransAndChunk(scope.$index, scope.row)">转切</el-button>
           <el-button size="mini"
                      type="danger"
                      class="operate-btn"
@@ -185,7 +181,7 @@ export default {
     clearInterval(this.searchInterval)
   },
   methods: {
-    ...mapActions({ queryType: 'QueryType', queryVideoList: 'QueryVideoList' }),
+    ...mapActions({ queryType: 'QueryType', queryVideoList: 'QueryVideoList', transcode: 'Transcode' }),
     getList () {
       this.listLoading = true
       this.handleQueryVideoList()
@@ -222,6 +218,25 @@ export default {
     handleDelete (index, row) {
       console.log(index, row);
     },
+    handleTransAndChunk (index, row) {
+      this.transcode({
+        id: row.id
+      }).then(res => {
+        const { data, message } = res
+        console.log(data)
+        if (data) {
+          this.$message({
+            message,
+            type: 'success',
+          })
+        } else {
+          this.$message({
+            message,
+            type: 'error',
+          })
+        }
+      })
+    },
     clipboardSuccess () {
       this.$message({
         message: '视频地址复制成功',
@@ -239,18 +254,18 @@ export default {
 </script>
 <style scoped>
 .el-pagination {
-    margin-top: 20px;
-    text-align: right;
+  margin-top: 20px;
+  text-align: right;
 }
 .surface_plot {
-    width: 100px;
-    transition: all 0.2s linear;
+  width: 100px;
+  transition: all 0.2s linear;
 }
 .surface_plot:hover {
-    /* transform: scale(1.5, 1.5);
+  /* transform: scale(1.5, 1.5);
     filter: contrast(150%); */
 }
 .operate-btn {
-    margin: 1px 1px 1px 0;
+  margin: 1px 1px 1px 0;
 }
 </style>

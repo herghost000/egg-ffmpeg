@@ -10,6 +10,8 @@
              alt="">
       </el-carousel-item>
     </el-carousel>
+    <input type="file"
+           @change="handleChange" />
     <el-form ref="form"
              :model="form"
              label-width="120px">
@@ -48,6 +50,7 @@
         <el-upload :on-remove="handleVideoRemove"
                    :on-exceed="handleExceed"
                    :on-success="handleVideoSuccess"
+                   :before-upload="handleVideoBeforeUpload"
                    :limit="1"
                    :file-list="videoFileList"
                    action="/api/v2/upload/uploadVideo">
@@ -71,6 +74,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { uploadVideo } from '@/api/video/upload'
 
 const defaultData = {
   picFileList: [],
@@ -82,6 +86,7 @@ const defaultData = {
     surface_plot: '',
     video_url: '',
     dsc: '',
+    video_path: ''
   },
   *[Symbol.iterator] () {
     for (let key in this) {
@@ -102,6 +107,7 @@ export default {
         type_id: '',
         surface_plot: '',
         video_url: '',
+        video_path: '',
         dsc: '',
       }
     }
@@ -113,6 +119,52 @@ export default {
     this.getBanners()
   },
   methods: {
+    async handleChange (e) {
+      const file = e.target.files[0]
+      let name = file.name, //文件名
+        size = file.size, //总大小
+        succeed = 0, //当前上传数
+        shardSize = 10 * 1024 * 1024,
+        shardCount = Math.ceil(size / shardSize), key = '';
+
+      function upload (item) {
+        return new Promise((resolve, reject) => {
+          var i = item;
+          var start = i * shardSize,
+            end = Math.min(size, start + shardSize);
+
+          var form = new FormData();
+          form.append("name", name);
+          form.append("total", shardCount);
+          form.append("index", i + 1);
+          key && form.append("key", key);
+          form.append("file", file.slice(start, end), name);
+
+          uploadVideo(form).then(res => {
+            succeed++;
+            const { data } = res
+
+            if (data.complate) {
+
+            } else {
+              key = data.key
+            }
+
+            var process = `${Math.round(succeed / shardCount * 100)}%`;
+            console.log('process', process)
+
+            setTimeout(resolve, 50);
+
+          }).catch(e => {
+
+          })
+        })
+      }
+
+      for (let item = 0; item < shardCount; ++item) {
+        await upload(item);
+      }
+    },
     ...mapActions({ queryType: 'QueryType', createVideoList: 'CreateVideoList', queryVideoList: 'QueryVideoList' }),
     getBanners () {
       this.queryVideoList({
@@ -138,10 +190,22 @@ export default {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     handlePicSuccess (response, file, fileList) {
-      this.form.surface_plot = file.response
+      this.form.surface_plot = file.response.url
     },
     handleVideoSuccess (response, file, fileList) {
-      this.form.video_url = file.response
+      this.form.video_url = file.response.url
+      this.form.video_path = file.response.path
+    },
+    handleVideoBeforeUpload (file) {
+      const ext = file.name.split('.')[1]
+      if (ext != 'mp4') {
+        this.$message({
+          message: '不支持的视频格式',
+          type: 'error'
+        });
+        return false
+      }
+      return true
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)

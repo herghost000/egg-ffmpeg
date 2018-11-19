@@ -11,6 +11,45 @@ function host(ctx) {
   return ctx.helper.urlFor().slice(0, ctx.helper.urlFor().length - 1);
 }
 
+function randomkey() {
+  const data = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+  ];
+  for (let j = 0; j < 500; j++) {
+    let result = '',
+      r = '';
+    for (let i = 0; i < 16; i++) {
+      r = Math.floor(Math.random() * data.length);
+
+      result += data[r];
+    }
+    return result;
+  }
+}
+
 function md5(data) {
   const hash = crypto.createHash('md5');
   hash.update(data);
@@ -79,6 +118,36 @@ async function mkdirs(dir) {
     mkdirStatus = await mkdir(dir);
   }
   return mkdirStatus;
+}
+
+function readFile(path) {
+  return new Promise(resolve => {
+    fs.readFile(path, 'utf-8', function(err, data) {
+      if (err) {
+        resolve(false);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+function writeFile(path, data) {
+  return new Promise(resolve => {
+    fs.writeFile(path, data, 'utf8', function(error) {
+      if (error) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+
+async function copyFile(src, dest) {
+  await mkdirs(path.dirname(dest));
+  const data = await readFile(src);
+  return await writeFile(dest, data);
 }
 
 function uniqueFileName(filename) {
@@ -186,6 +255,7 @@ module.exports = {
         data: {
           host: host(this.ctx),
           staticDir: this.config.static.prefix,
+          realPath: `${baseDir}${uploadPath}${dirName}${name}`,
           path: `${uploadPath}${dirName}${name}`,
           url: `${host(this.ctx)}${
             this.config.static.prefix
@@ -209,4 +279,6 @@ module.exports = {
   host,
   mkdirs,
   toInt,
+  copyFile,
+  randomkey,
 };

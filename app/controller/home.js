@@ -5,7 +5,7 @@ class HomeController extends Controller {
   async index() {
     const ctx = this.ctx;
 
-    ctx.body = await this.ctx.service.video.transcode.trans(1);
+    ctx.body = 'hello world';
   }
 }
 module.exports = HomeController;

@@ -90,8 +90,10 @@ class VideoListService extends Service {
       dsc,
       type_id,
     } = playload;
-    const key = path.parse(video_path).name;
-    const decode_res = await ctx.service.video.decode.create(key);
+    const filename = path.parse(video_path).name;
+    const dirname = path.parse(path.dirname(video_path)).name;
+    const decodeName = path.join(dirname, filename);
+    const decode_res = await ctx.service.video.decode.create(decodeName);
     const decode = decode_res.data;
     const list = await ctx.model.VideoList.create({
       name,

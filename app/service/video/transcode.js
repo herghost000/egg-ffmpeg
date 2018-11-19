@@ -3,12 +3,13 @@ const Service = require('egg').Service;
 const ffmpeg = require('fluent-ffmpeg');
 const util = require('util');
 const path = require('path');
+const fs = require('fs');
 
 class TransCodeService extends Service {
   async trans(id) {
     const ctx = this.ctx;
     const {
-      data: { ratio, miaoqie, watermark },
+      data: { host, ratio, miaoqie, watermark, tsencry },
     } = await ctx.service.video.setting.find();
     const listItem = await ctx.service.video.list.find(id);
     if (!listItem.data) {
@@ -71,10 +72,6 @@ class TransCodeService extends Service {
     }
     const srtpath = '';
     const height = +ratio.split('p')[0];
-    const des = `${this.config.transcode.baseDir}${
-      this.config.transcode.targetDir
-    }`;
-    await ctx.helper.mkdirs(des);
     if (!util.isNumber(height)) {
       throw new Error('unknow ratio');
     }
@@ -112,6 +109,19 @@ class TransCodeService extends Service {
       vf.push(' [out]');
       vf = vf.join('');
     }
+    if (tsencry) {
+      const dest = path.dirname(chunk_path);
+      const filename = path.parse(chunk_path).name;
+      const dirname = path.parse(path.dirname(chunk_path)).name;
+      await ctx.helper.mkdirs(dest);
+      fs.writeFileSync(
+        `${dest}/key.info`,
+        `${host}/video/play/${dirname}/${filename}/ts.key\n${dest}/ts.key`
+      );
+      const key = ctx.helper.randomkey();
+      fs.writeFileSync(`${dest}/ts.key`, key);
+    }
+
     const cbs = {
       transStart() {
         video_decode.update({ status_id: 2 });
@@ -146,10 +156,12 @@ class TransCodeService extends Service {
               bufsize,
               maxrate,
               vf,
+              tsencry,
               cbs
             );
           } else {
-            chunk(trans_path, chunk_path, cbs);
+            ctx.helper.copyFile(video_path, trans_path);
+            chunk(video_path, chunk_path, tsencry, cbs);
           }
         } else {
           transcode(
@@ -161,6 +173,7 @@ class TransCodeService extends Service {
             bufsize,
             maxrate,
             vf,
+            tsencry,
             cbs
           );
         }
@@ -174,6 +187,7 @@ class TransCodeService extends Service {
           bufsize,
           maxrate,
           vf,
+          tsencry,
           cbs
         );
       }
@@ -195,23 +209,23 @@ function transcode(
   bufsize,
   maxrate,
   vf,
+  tsencry,
   cbs
 ) {
-  ffmpeg(video_path)
-    .addOptions([
-      '-s ' + size,
-      '-b:v ' + bv,
-      '-vcodec libx264',
-      '-acodec aac',
-      '-ac 2',
-      '-b:a 128k',
-      '-bufsize ' + bufsize,
-      '-maxrate ' + maxrate,
-      '-q:v 6',
-      '-strict -2',
-    ])
-    .addOption('-vf', vf)
-    .output(trans_path)
+  const fp = ffmpeg(video_path).addOptions([
+    '-s ' + size,
+    '-b:v ' + bv,
+    '-vcodec libx264',
+    '-acodec aac',
+    '-ac 2',
+    '-b:a 128k',
+    '-bufsize ' + bufsize,
+    '-maxrate ' + maxrate,
+    '-q:v 6',
+    '-strict -2',
+  ]);
+  fp.addOption('-vf', vf);
+  fp.output(trans_path)
     .on('start', function() {
       cbs.transStart();
     })
@@ -225,16 +239,18 @@ function transcode(
     .run();
 }
 
-function chunk(trans_path, chunk_path, cbs) {
-  ffmpeg(trans_path)
-    .addOptions([
-      '-start_number 0',
-      '-hls_time 10',
-      '-hls_list_size 0',
-      '-f hls',
-      '-strict -2',
-    ])
-    .output(chunk_path)
+function chunk(trans_path, chunk_path, tsencry, cbs) {
+  const fp = ffmpeg(trans_path).addOptions([
+    '-start_number 0',
+    '-hls_time 10',
+    '-hls_list_size 0',
+    '-f hls',
+    '-strict -2',
+  ]);
+  if (tsencry) {
+    fp.addOption('-hls_key_info_file', path.dirname(chunk_path) + '/key.info');
+  }
+  fp.output(chunk_path)
     .on('start', function() {
       cbs.chunkStart();
       screenshots(trans_path, chunk_path);

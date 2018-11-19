@@ -121,6 +121,10 @@ export default {
   methods: {
     async handleChange (e) {
       const file = e.target.files[0]
+      if (!file) {
+        return void 0
+      }
+      const vm = this
       let name = file.name, //文件名
         size = file.size, //总大小
         succeed = 0, //当前上传数
@@ -145,7 +149,8 @@ export default {
             const { data } = res
 
             if (data.complate) {
-
+              vm.form.video_url = data.url
+              vm.form.video_path = data.realPath
             } else {
               key = data.key
             }

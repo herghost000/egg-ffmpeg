@@ -4,10 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const {
-    router,
-    controller,
-  } = app;
+  const { router, controller } = app;
 
   // const checktoken = app.middleware.checktoken();
   router.get('/', controller.home.index);
@@ -36,6 +33,7 @@ module.exports = app => {
 
   router.get('/video/play/:dirname/:filename', controller.home.video.play);
   router.get('/video/link/:dirname/:filename.m3u8', controller.home.video.link);
+  router.get('/video/link/:dirname/:filename.ts', controller.home.video.ts);
   router.get('/video/link/:dirname/ts.key', controller.home.video.key);
   router.get('/video/share/:dirname/:filename', controller.home.video.share);
   // http://localhost:9528/video/play/26fe23d0ec9211e8a46e97b69cfa585a/03c7c0ace395d80182db07ae2c30f034/ts.key

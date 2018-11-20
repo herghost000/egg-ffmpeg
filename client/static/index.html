@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ckplayer</title>
+    <script
+      type="text/javascript"
+      src="ckplayer/ckplayer.js"
+      charset="UTF-8"
+    ></script>
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0px;
+        font-family: 'Microsoft YaHei', YaHei, '微软雅黑', SimHei, '黑体';
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="video" style="width: 600px; height: 400px;"></div>
+    <script type="text/javascript">
+      var videoObject = {
+        container: '#video', //“#”代表容器的ID，“.”或“”代表容器的class
+        variable: 'player', //该属性必需设置，值等于下面的new chplayer()的对象
+        loaded: 'loadedHandler', //监听播放器加载成功
+        video:
+          'http://localhost:7001/video/link/806ff890ec0a11e8977025a7dfbf82ef/1679091c5a880faf6fb5e6087eb1b2dc.m3u8' //视频地址
+      }
+      var player = new ckplayer(videoObject)
+      function loadedHandler() {
+        //播放器加载后会调用该函数
+        player.addListener('time', timeHandler) //监听播放时间,addListener是监听函数，需要传递二个参数，'time'是监听属性，这里是监听时间，timeHandler是监听接受的函数
+      }
+      function timeHandler(t) {
+        console.log('当前播放的时间：' + t)
+      }
+    </script>
+  </body>
+</html>

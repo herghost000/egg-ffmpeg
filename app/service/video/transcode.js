@@ -9,13 +9,7 @@ class TransCodeService extends Service {
   async trans(id) {
     const ctx = this.ctx;
     const {
-      data: {
-        host,
-        ratio,
-        miaoqie,
-        watermark,
-        tsencry,
-      },
+      data: { host, ratio, miaoqie, watermark, tsencry },
     } = await ctx.service.video.setting.find();
     const listItem = await ctx.service.video.list.find(id);
     if (!listItem.data) {
@@ -25,11 +19,7 @@ class TransCodeService extends Service {
         message: '未找到相关视频信息',
       };
     }
-    const {
-      video_path,
-      decode_id,
-      video_decode,
-    } = listItem.data;
+    const { video_path, decode_id, video_decode } = listItem.data;
     if (!decode_id || (decode_id && !video_decode)) {
       return {
         code: 404,
@@ -37,11 +27,7 @@ class TransCodeService extends Service {
         message: '未找到转码信息，未生成或被删除',
       };
     }
-    const {
-      trans_path,
-      chunk_path,
-      status_id,
-    } = video_decode;
+    const { trans_path, chunk_path, status_id } = video_decode;
     if (!video_path) {
       return {
         code: 404,
@@ -130,7 +116,7 @@ class TransCodeService extends Service {
       await ctx.helper.mkdirs(dest);
       fs.writeFileSync(
         `${dest}/key.info`,
-        `${host}/video/play/${dirname}/${filename}/ts.key\n${dest}/ts.key`
+        `${host}/video/link/${dirname}/ts.key\n${dest}/ts.key`
       );
       const key = ctx.helper.randomkey();
       fs.writeFileSync(`${dest}/ts.key`, key);

@@ -9,7 +9,13 @@ class TransCodeService extends Service {
   async trans(id) {
     const ctx = this.ctx;
     const {
-      data: { host, ratio, miaoqie, watermark, tsencry },
+      data: {
+        host,
+        ratio,
+        miaoqie,
+        watermark,
+        tsencry,
+      },
     } = await ctx.service.video.setting.find();
     const listItem = await ctx.service.video.list.find(id);
     if (!listItem.data) {
@@ -19,7 +25,11 @@ class TransCodeService extends Service {
         message: '未找到相关视频信息',
       };
     }
-    const { video_path, decode_id, video_decode } = listItem.data;
+    const {
+      video_path,
+      decode_id,
+      video_decode,
+    } = listItem.data;
     if (!decode_id || (decode_id && !video_decode)) {
       return {
         code: 404,
@@ -27,7 +37,11 @@ class TransCodeService extends Service {
         message: '未找到转码信息，未生成或被删除',
       };
     }
-    const { trans_path, chunk_path, status_id } = video_decode;
+    const {
+      trans_path,
+      chunk_path,
+      status_id,
+    } = video_decode;
     if (!video_path) {
       return {
         code: 404,
@@ -124,18 +138,40 @@ class TransCodeService extends Service {
 
     const cbs = {
       transStart() {
-        video_decode.update({ status_id: 2 });
+        video_decode.update({
+          status_id: 2,
+        });
       },
       transEnd() {
-        video_decode.update({ status_id: 3 });
+        video_decode.update({
+          status_id: 3,
+        });
+      },
+      transError() {
+        video_decode.update({
+          status_id: 6,
+        });
       },
       chunkStart() {
-        video_decode.update({ status_id: 4 });
+        video_decode.update({
+          status_id: 4,
+        });
       },
       chunkEnd() {
-        video_decode.update({ status_id: 5 });
+        video_decode.update({
+          status_id: 5,
+        });
+      },
+      chunkError() {
+        video_decode.update({
+          status_id: 7,
+        });
       },
     };
+
+    await ctx.helper.mkdirs(path.dirname(trans_path));
+    await ctx.helper.mkdirs(path.dirname(chunk_path));
+
     ffmpeg.ffprobe(video_path, (err, metadata) => {
       if (err) console.log(err);
       const videometa = metadata.streams[0];
@@ -224,17 +260,20 @@ function transcode(
     '-q:v 6',
     '-strict -2',
   ]);
-  fp.addOption('-vf', vf);
+  if (vf && !util.isArray(vf)) {
+    fp.addOption('-vf', vf);
+  }
   fp.output(trans_path)
     .on('start', function() {
       cbs.transStart();
     })
     .on('error', function(err) {
+      cbs.transError();
       console.log('Cannot process video: ' + video_path + err.message);
     })
     .on('end', function() {
       cbs.transEnd();
-      chunk(trans_path, chunk_path);
+      chunk(trans_path, chunk_path, tsencry, cbs);
     })
     .run();
 }
@@ -256,6 +295,7 @@ function chunk(trans_path, chunk_path, tsencry, cbs) {
       screenshots(trans_path, chunk_path);
     })
     .on('error', function(err) {
+      cbs.chunkError();
       console.log('Cannot chunk video: ' + err.message);
     })
     .on('end', function() {

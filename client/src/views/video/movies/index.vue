@@ -56,12 +56,12 @@
                        align="center"
                        prop="dsc">
       </el-table-column>
-      <el-table-column label="转码地址"
+      <el-table-column label="转码路径"
                        align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.decode_id && scope.row.video_decode.trans_path">
             <el-popover placement="top-start"
-                        title="转码地址"
+                        title="转码路径"
                         trigger="hover"
                         :content="scope.row.video_decode.trans_path">
               <el-button slot="reference"
@@ -77,12 +77,12 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column label="切片地址"
+      <el-table-column label="切片路径"
                        align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.decode_id && scope.row.video_decode.chunk_path">
             <el-popover placement="top-start"
-                        title="切片地址"
+                        title="切片路径"
                         trigger="hover"
                         :content="scope.row.video_decode.chunk_path">
               <el-button slot="reference"

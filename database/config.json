@@ -1,24 +1,24 @@
 {
   "development": {
     "username": "root",
-    "password": "luotian520",
-    "password1": "root",
+    "password1": "luotian520",
+    "password": "root",
     "database": "database_development",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "luotian520",
-    "password1": "root",
+    "password1": "luotian520",
+    "password": "root",
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "luotian520",
-    "password1": "root",
+    "password1": "luotian520",
+    "password": "root",
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"

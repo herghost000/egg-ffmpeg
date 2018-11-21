@@ -13,6 +13,10 @@ module.exports = {
       '/api': {
         target: 'http://localhost:7001',
         changeOrigin: true
+      },
+      '/public': {
+        target: 'http://localhost:7001',
+        changeOrigin: true
       }
     },
 

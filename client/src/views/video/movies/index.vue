@@ -254,18 +254,18 @@ export default {
 </script>
 <style scoped>
 .el-pagination {
-  margin-top: 20px;
-  text-align: right;
+    margin-top: 20px;
+    text-align: right;
 }
 .surface_plot {
-  width: 100px;
-  transition: all 0.2s linear;
+    width: 100px;
+    transition: all 0.2s linear;
 }
 .surface_plot:hover {
-  /* transform: scale(1.5, 1.5);
+    /* transform: scale(1.5, 1.5);
     filter: contrast(150%); */
 }
 .operate-btn {
-  margin: 1px 1px 1px 0;
+    margin: 1px 1px 1px 0;
 }
 </style>

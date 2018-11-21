@@ -9,7 +9,14 @@ class TransCodeService extends Service {
   async trans(id) {
     const ctx = this.ctx;
     const {
-      data: { host, ratio, miaoqie, watermark, tsencry },
+      data: {
+        host,
+        ratio,
+        miaoqie,
+        watermark,
+        tsencry,
+        screenshots,
+      },
     } = await ctx.service.video.setting.find();
     const listItem = await ctx.service.video.list.find(id);
     if (!listItem.data) {
@@ -19,7 +26,11 @@ class TransCodeService extends Service {
         message: '未找到相关视频信息',
       };
     }
-    const { video_path, decode_id, video_decode } = listItem.data;
+    const {
+      video_path,
+      decode_id,
+      video_decode,
+    } = listItem.data;
     if (!decode_id || (decode_id && !video_decode)) {
       return {
         code: 404,
@@ -27,7 +38,11 @@ class TransCodeService extends Service {
         message: '未找到转码信息，未生成或被删除',
       };
     }
-    const { trans_path, chunk_path, status_id } = video_decode;
+    const {
+      trans_path,
+      chunk_path,
+      status_id,
+    } = video_decode;
     if (!video_path) {
       return {
         code: 404,
@@ -63,7 +78,7 @@ class TransCodeService extends Service {
         message: '转切已完成，请勿重复处理',
       };
     }
-    if (status_id !== 1) {
+    if (status_id !== 1 && status_id < 6) {
       return {
         code: 404,
         data: null,
@@ -109,6 +124,10 @@ class TransCodeService extends Service {
       vf.push(' [out]');
       vf = vf.join('');
     }
+
+    await ctx.helper.mkdirs(path.dirname(trans_path));
+    await ctx.helper.mkdirs(path.dirname(chunk_path));
+
     if (tsencry) {
       const dest = path.dirname(chunk_path);
       const filename = path.parse(chunk_path).name;
@@ -121,7 +140,6 @@ class TransCodeService extends Service {
       const key = ctx.helper.randomkey();
       fs.writeFileSync(`${dest}/ts.key`, key);
     }
-
     const cbs = {
       transStart() {
         video_decode.update({
@@ -155,9 +173,6 @@ class TransCodeService extends Service {
       },
     };
 
-    await ctx.helper.mkdirs(path.dirname(trans_path));
-    await ctx.helper.mkdirs(path.dirname(chunk_path));
-
     ffmpeg.ffprobe(video_path, (err, metadata) => {
       if (err) console.log(err);
       const videometa = metadata.streams[0];
@@ -169,6 +184,7 @@ class TransCodeService extends Service {
       if (miaoqie) {
         if (videometa.height <= height && videometa.codec_name === 'h264') {
           if (watermark || srtpath) {
+            console.log(123);
             transcode(
               video_path,
               trans_path,
@@ -182,10 +198,12 @@ class TransCodeService extends Service {
               cbs
             );
           } else {
+            console.log(456);
             ctx.helper.copyFile(video_path, trans_path);
             chunk(video_path, chunk_path, tsencry, cbs);
           }
         } else {
+          console.log(789);
           transcode(
             video_path,
             trans_path,
@@ -200,6 +218,7 @@ class TransCodeService extends Service {
           );
         }
       } else {
+        console.log(777);
         transcode(
           video_path,
           trans_path,
@@ -247,6 +266,7 @@ function transcode(
     '-strict -2',
   ]);
   if (vf && !util.isArray(vf)) {
+    console.log('vf::', vf);
     fp.addOption('-vf', vf);
   }
   fp.output(trans_path)

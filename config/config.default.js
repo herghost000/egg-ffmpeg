@@ -18,8 +18,10 @@ module.exports = appInfo => {
       '.tpl': 'nunjucks',
     },
   };
+  const uploadStaticDir = '/public/';
   config.upload = {
-    baseDir: 'app/public/',
+    staticDir: uploadStaticDir,
+    baseDir: `app${uploadStaticDir}`,
     avatorDir: 'upload/avator/',
     picDir: 'upload/pic/',
     videoDir: 'upload/video/',

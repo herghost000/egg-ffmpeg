@@ -2,7 +2,9 @@
 const Controller = require('egg').Controller;
 const fs = require('fs');
 const path = require('path');
-const { read } = require('await-stream-ready');
+const {
+  read,
+} = require('await-stream-ready');
 
 function getRange(range) {
   const match = /bytes=([0-9]*)-([0-9]*)/.exec(range);
@@ -22,7 +24,10 @@ class VideoController extends Controller {
   }
   async link() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
     const realname = `${filename}.m3u8`;
     const file = path.join(
       this.config.transcode.baseDir,
@@ -31,7 +36,9 @@ class VideoController extends Controller {
       realname
     );
     const method = ctx.request.method;
-    const { size } = fs.statSync(file);
+    const {
+      size,
+    } = fs.statSync(file);
     // 2、响应head请求，返回文件大小
     if (method === 'HEAD') {
       ctx.set('Content-Length', size);
@@ -45,7 +52,10 @@ class VideoController extends Controller {
       ctx.body = fs.createReadStream(file);
       return void 0;
     }
-    const { start, end } = getRange(range);
+    const {
+      start,
+      end,
+    } = getRange(range);
     // 4、检查请求范围
     if (start >= size || end >= size) {
       ctx.status = 416;
@@ -57,11 +67,17 @@ class VideoController extends Controller {
     ctx.status = 206;
     ctx.set('Accept-Ranges', 'bytes');
     ctx.set('Content-Range', `bytes ${start}-${end ? end : size - 1}/${size}`);
-    ctx.body = fs.createReadStream(file, { start, end });
+    ctx.body = fs.createReadStream(file, {
+      start,
+      end,
+    });
   }
   async ts() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
     const realname = `${filename}.ts`;
     const file = path.join(
       this.config.transcode.baseDir,
@@ -70,7 +86,9 @@ class VideoController extends Controller {
       realname
     );
     const method = ctx.request.method;
-    const { size } = fs.statSync(file);
+    const {
+      size,
+    } = fs.statSync(file);
     // 2、响应head请求，返回文件大小
     if (method === 'HEAD') {
       ctx.set('Content-Length', size);
@@ -84,7 +102,10 @@ class VideoController extends Controller {
       ctx.body = fs.createReadStream(file);
       return void 0;
     }
-    const { start, end } = getRange(range);
+    const {
+      start,
+      end,
+    } = getRange(range);
     // 4、检查请求范围
     if (start >= size || end >= size) {
       ctx.status = 416;
@@ -96,11 +117,16 @@ class VideoController extends Controller {
     ctx.status = 206;
     ctx.set('Accept-Ranges', 'bytes');
     ctx.set('Content-Range', `bytes ${start}-${end ? end : size - 1}/${size}`);
-    ctx.body = fs.createReadStream(file, { start, end });
+    ctx.body = fs.createReadStream(file, {
+      start,
+      end,
+    });
   }
   async key() {
     const ctx = this.ctx;
-    const { dirname } = ctx.params;
+    const {
+      dirname,
+    } = ctx.params;
     const realname = 'ts.key';
     const filePath = path.join(
       this.config.transcode.baseDir,

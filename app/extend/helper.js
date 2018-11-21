@@ -2,7 +2,9 @@
 const crypto = require('crypto');
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
-const { write } = require('await-stream-ready');
+const {
+  write,
+} = require('await-stream-ready');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 
@@ -111,6 +113,9 @@ async function mkdirs(dir) {
   }
   // 如果该路径不存在
   const tempDir = path.parse(dir).dir; // 拿到上级路径
+  if (!tempDir) {
+    throw new Error('该路径最少有一个存在的目录');
+  }
   // 递归判断，如果上级目录也不存在，则会代码会在此处继续循环执行，直到目录存在
   const status = await mkdirs(tempDir);
   let mkdirStatus;
@@ -159,6 +164,9 @@ function uniqueFileName(filename) {
 }
 
 module.exports = {
+  covertSep(_path) {
+    return _path.replace(/\\/img, '/');
+  },
   async save(baseDir, uploadPath, salty, stream) {
     const datestr = new Date()
       .toLocaleDateString()
@@ -187,16 +195,16 @@ module.exports = {
     }
     writeStream.close();
     return {
-      host: this.ctx.helper
-        .urlFor()
-        .slice(0, this.ctx.helper.urlFor().length - 1),
-      staticDir: this.config.static.prefix,
-      path: `${uploadPath}${dateDir}${filename}`,
-      url: `${this.ctx.helper.urlFor()}public/${uploadPath}${dateDir}${filename}`,
+      url: `${this.config.upload.staticDir}${uploadPath}${dateDir}${filename}`,
     };
   },
   async chunkSave(baseDir, uploadPath, stream) {
-    let { name, total, index, key } = stream.fields;
+    let {
+      name,
+      total,
+      index,
+      key,
+    } = stream.fields;
     name = name || '';
     name = encodeURIComponent(name);
     name = `${md5(path.parse(name).name)}${path.parse(name).ext}`;
@@ -253,13 +261,7 @@ module.exports = {
       return {
         code: 200,
         data: {
-          host: host(this.ctx),
-          staticDir: this.config.static.prefix,
           realPath: `${baseDir}${uploadPath}${dirName}${name}`,
-          path: `${uploadPath}${dirName}${name}`,
-          url: `${host(this.ctx)}${
-            this.config.static.prefix
-          }${uploadPath}${dirName}${name}`,
           key,
           complate: true,
         },

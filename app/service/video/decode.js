@@ -5,7 +5,9 @@ class VideoDecodeService extends Service {
   async findAndCountAll(playload) {}
 
   async create(name) {
-    const { ctx } = this;
+    const {
+      ctx,
+    } = this;
     const created_at = new Date();
     const updated_at = created_at;
     const status_id = 1;

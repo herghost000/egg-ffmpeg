@@ -4,35 +4,44 @@ const path = require('path');
 
 class VideoListService extends Service {
   async findAndCountAll(playload) {
-    const { ctx, app } = this;
+    const {
+      ctx,
+      app,
+    } = this;
 
-    const { name, type_id, offset, limit } = playload;
+    const {
+      name,
+      type_id,
+      offset,
+      limit,
+    } = playload;
 
-    const { Op } = app.Sequelize;
+    const {
+      Op,
+    } = app.Sequelize;
 
     const query = {
-      include: [
-        {
-          model: ctx.model.VideoType,
-          where: type_id
-            ? {
-              id: type_id,
-            }
-            : null,
+      include: [{
+        model: ctx.model.VideoType,
+        where: type_id ? {
+          id: type_id,
+        } : null,
+      },
+      {
+        model: ctx.model.VideoDecode,
+        include: {
+          model: ctx.model.VideoDecodeStatus,
         },
-        {
-          model: ctx.model.VideoDecode,
-          include: {
-            model: ctx.model.VideoDecodeStatus,
-          },
-        },
+      },
       ],
       where: {
         name: {
           [Op.like]: name ? `%${name}%` : '%%',
         },
       },
-      order: [[ 'id', 'desc' ]],
+      order: [
+        [ 'id', 'desc' ],
+      ],
       offset: ctx.helper.toInt(offset) || 0,
       limit: ctx.helper.toInt(limit) || 10,
     };
@@ -45,7 +54,9 @@ class VideoListService extends Service {
 
   async find(id) {
     const ctx = this.ctx;
-    const { Op } = this.app.Sequelize;
+    const {
+      Op,
+    } = this.app.Sequelize;
     id = ctx.helper.toInt(id);
     if (!id) {
       return {
@@ -62,16 +73,15 @@ class VideoListService extends Service {
             [Op.eq]: id,
           },
         },
-        include: [
-          {
-            model: ctx.model.VideoType,
+        include: [{
+          model: ctx.model.VideoType,
+        },
+        {
+          model: ctx.model.VideoDecode,
+          include: {
+            model: ctx.model.VideoDecodeStatus,
           },
-          {
-            model: ctx.model.VideoDecode,
-            include: {
-              model: ctx.model.VideoDecodeStatus,
-            },
-          },
+        },
         ],
       }),
       message: '视频条目查询成功',
@@ -79,7 +89,9 @@ class VideoListService extends Service {
   }
 
   async create(playload) {
-    const { ctx } = this;
+    const {
+      ctx,
+    } = this;
     const created_at = new Date();
     const updated_at = created_at;
     const {
@@ -92,7 +104,7 @@ class VideoListService extends Service {
     } = playload;
     const filename = path.parse(video_path).name;
     const dirname = path.parse(path.dirname(video_path)).name;
-    const decodeName = path.join(dirname, filename);
+    const decodeName = `${dirname}/${filename}`;
     const decode_res = await ctx.service.video.decode.create(decodeName);
     const decode = decode_res.data;
     const list = await ctx.model.VideoList.create({

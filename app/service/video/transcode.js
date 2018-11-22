@@ -113,7 +113,7 @@ class TransCodeService extends Service {
     }
     if (watermark) {
       vf.push(
-        `movie=${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`
+        `movie=${this.config.upload.staticPrefix}${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`
       );
     }
     if (srtpath) {
@@ -135,7 +135,8 @@ class TransCodeService extends Service {
       await ctx.helper.mkdirs(dest);
       fs.writeFileSync(
         `${dest}/key.info`,
-        `${host}/video/link/${dirname}/ts.key\n${dest}/ts.key`
+        // `${host}/video/link/${dirname}/ts.key\n${dest}/ts.key`
+        `ts.key\n${dest}/ts.key`
       );
       const key = ctx.helper.randomkey();
       fs.writeFileSync(`${dest}/ts.key`, key);
@@ -184,7 +185,6 @@ class TransCodeService extends Service {
       if (miaoqie) {
         if (videometa.height <= height && videometa.codec_name === 'h264') {
           if (watermark || srtpath) {
-            console.log(123);
             transcode(
               video_path,
               trans_path,
@@ -198,12 +198,10 @@ class TransCodeService extends Service {
               cbs
             );
           } else {
-            console.log(456);
             ctx.helper.copyFile(video_path, trans_path);
             chunk(video_path, chunk_path, tsencry, cbs);
           }
         } else {
-          console.log(789);
           transcode(
             video_path,
             trans_path,
@@ -218,7 +216,6 @@ class TransCodeService extends Service {
           );
         }
       } else {
-        console.log(777);
         transcode(
           video_path,
           trans_path,

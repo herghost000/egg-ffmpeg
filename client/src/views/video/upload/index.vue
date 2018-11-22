@@ -149,11 +149,11 @@ export default {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     handlePicSuccess (response, file, fileList) {
-      this.form.surface_plot = file.response.url
+      this.form.surface_plot = response.data.url
     },
     handleVideoSuccess (data) {
       this.form.video_url = data.url
-      this.form.video_path = data.realPath
+      this.form.video_path = data.path
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)

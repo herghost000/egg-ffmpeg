@@ -3,7 +3,9 @@ const Controller = require('egg').Controller;
 
 class VideoListController extends Controller {
   async index() {
-    const { ctx } = this;
+    const {
+      ctx,
+    } = this;
 
     ctx.body = await this.ctx.service.video.list.findAndCountAll(ctx.query);
   }

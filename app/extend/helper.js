@@ -163,11 +163,12 @@ function uniqueFileName(filename) {
   );
 }
 
+function covertSep(_path) {
+  return _path.replace(/\\/img, '/');
+}
+
 module.exports = {
-  covertSep(_path) {
-    return _path.replace(/\\/img, '/');
-  },
-  async save(baseDir, uploadPath, salty, stream) {
+  async save(baseDir, uploadPath, stream) {
     const datestr = new Date()
       .toLocaleDateString()
       .split('/')
@@ -181,21 +182,19 @@ module.exports = {
     }
 
     const filename = uniqueFileName(stream.filename);
-    // const filename = Date.now() + '' + Number.parseInt(Math.random() * 10000) + path.extname(stream.filename);
-    const target = path.join(realPath, filename);
-    // 写入流
+    const target = covertSep(path.join(realPath, filename));
     const writeStream = fs.createWriteStream(target);
     try {
-      // 写入文件
       await write(stream.pipe(writeStream));
     } catch (err) {
-      // 必须将上传的文件流消费掉
       await sendToWormhole(stream);
       throw err;
     }
     writeStream.close();
     return {
-      url: `${this.config.upload.staticDir}${uploadPath}${dateDir}${filename}`,
+      filename: `${filename}`,
+      dirname: `${dateDir}`,
+      path: `${realPath}${filename}`,
     };
   },
   async chunkSave(baseDir, uploadPath, stream) {
@@ -216,7 +215,7 @@ module.exports = {
     if (key) {
       dirName = JSON.parse(aesDecrypt(key, 'fuck-you-video')).key;
       realPath = baseDir + uploadPath + dirName;
-      source = path.join(realPath, `${name}`);
+      source = covertSep(path.join(realPath, `${name}`));
       target = `${source}${index}`;
     } else {
       dirName =
@@ -227,7 +226,7 @@ module.exports = {
       if (!fs.existsSync(realPath)) {
         await mkdirs(realPath);
       }
-      source = path.join(realPath, `${name}`);
+      source = covertSep(path.join(realPath, `${name}`));
       target = `${source}${index}`;
       key = aesEncrypt(
         JSON.stringify({
@@ -259,23 +258,17 @@ module.exports = {
       }
       writeStream.end();
       return {
-        code: 200,
-        data: {
-          realPath: `${baseDir}${uploadPath}${dirName}${name}`,
-          key,
-          complate: true,
-        },
-        message: '文件碎片合并成功',
+        dirname: `${dirName}`,
+        path: `${source}`,
+        filename: name,
+        key,
+        complate: true,
       };
     }
 
     return {
-      code: 200,
-      data: {
-        key,
-        complate: false,
-      },
-      message: '文件碎片上传成功',
+      key,
+      complate: false,
     };
   },
   host,
@@ -283,4 +276,7 @@ module.exports = {
   toInt,
   copyFile,
   randomkey,
+  covertSep,
+  aesEncrypt,
+  aesDecrypt,
 };

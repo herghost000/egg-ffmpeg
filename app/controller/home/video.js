@@ -1,26 +1,13 @@
 'use strict';
 const Controller = require('egg').Controller;
-const fs = require('fs');
 const path = require('path');
-const {
-  read,
-} = require('await-stream-ready');
-
-function getRange(range) {
-  const match = /bytes=([0-9]*)-([0-9]*)/.exec(range);
-  const requestRange = {};
-  if (match) {
-    if (match[1]) requestRange.start = Number(match[1]);
-    if (match[2]) requestRange.end = Number(match[2]);
-  }
-  return requestRange;
-}
-
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const url = require('url');
 class VideoController extends Controller {
   async play() {
     const ctx = this.ctx;
-
-    ctx.body = ctx.params;
+    return ctx.render('home.tpl');
   }
   async link() {
     const ctx = this.ctx;
@@ -28,49 +15,46 @@ class VideoController extends Controller {
       dirname,
       filename,
     } = ctx.params;
+    const {
+      token,
+    } = ctx.query;
+    const setting = await ctx.service.video.setting.find();
+    const {
+      antiwhite,
+      antikey,
+    } = setting.data;
+    const {
+      access,
+    } = await new Promise(resolve => {
+      jwt.verify(token, antikey, function(err, decoded) {
+        if (err) {
+          return resolve(false);
+        }
+        resolve(decoded);
+      });
+    });
+
+    if (access !== 'view') {
+      ctx.body = null;
+      return void 0;
+    }
+    const referer = ctx.get('Referer');
+    const {
+      host,
+    } = url.parse(referer);
+    const atWhitList = antiwhite.replace(/\s/img, '').split('|').indexOf(host);
+    if (!atWhitList) {
+      ctx.body = null;
+      return void 0;
+    }
     const realname = `${filename}.m3u8`;
-    const file = path.join(
+    const filePath = path.join(
       this.config.transcode.baseDir,
       this.config.transcode.targetDir,
       dirname,
       realname
     );
-    const method = ctx.request.method;
-    const {
-      size,
-    } = fs.statSync(file);
-    // 2、响应head请求，返回文件大小
-    if (method === 'HEAD') {
-      ctx.set('Content-Length', size);
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    const range = ctx.headers.range;
-    // 3、通知浏览器可以进行分部分请求
-    if (!range) {
-      ctx.set('Accept-Ranges', 'bytes');
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    const {
-      start,
-      end,
-    } = getRange(range);
-    // 4、检查请求范围
-    if (start >= size || end >= size) {
-      ctx.status = 416;
-      ctx.set('Content-Range', `bytes */${size}`);
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    // 5、206分部分响应
-    ctx.status = 206;
-    ctx.set('Accept-Ranges', 'bytes');
-    ctx.set('Content-Range', `bytes ${start}-${end ? end : size - 1}/${size}`);
-    ctx.body = fs.createReadStream(file, {
-      start,
-      end,
-    });
+    this.service.download.range(filePath);
   }
   async ts() {
     const ctx = this.ctx;
@@ -79,48 +63,13 @@ class VideoController extends Controller {
       filename,
     } = ctx.params;
     const realname = `${filename}.ts`;
-    const file = path.join(
+    const filePath = path.join(
       this.config.transcode.baseDir,
       this.config.transcode.targetDir,
       dirname,
       realname
     );
-    const method = ctx.request.method;
-    const {
-      size,
-    } = fs.statSync(file);
-    // 2、响应head请求，返回文件大小
-    if (method === 'HEAD') {
-      ctx.set('Content-Length', size);
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    const range = ctx.headers.range;
-    // 3、通知浏览器可以进行分部分请求
-    if (!range) {
-      ctx.set('Accept-Ranges', 'bytes');
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    const {
-      start,
-      end,
-    } = getRange(range);
-    // 4、检查请求范围
-    if (start >= size || end >= size) {
-      ctx.status = 416;
-      ctx.set('Content-Range', `bytes */${size}`);
-      ctx.body = fs.createReadStream(file);
-      return void 0;
-    }
-    // 5、206分部分响应
-    ctx.status = 206;
-    ctx.set('Accept-Ranges', 'bytes');
-    ctx.set('Content-Range', `bytes ${start}-${end ? end : size - 1}/${size}`);
-    ctx.body = fs.createReadStream(file, {
-      start,
-      end,
-    });
+    this.service.download.range(filePath);
   }
   async key() {
     const ctx = this.ctx;
@@ -134,17 +83,67 @@ class VideoController extends Controller {
       dirname,
       realname
     );
-    this.ctx.attachment(realname);
-    // this.ctx.set('Content-Type', 'application/octet-stream');
-
-    this.ctx.body = fs.createReadStream(filePath);
-    // ctx.body = fs.readFileSync(filePath);
+    // const referer = ctx.get('Referer');
+    // if (referer !== '6666') {
+    //   ctx.body = null;
+    // } else {
+    this.service.download.range(filePath);
+    // }
+  }
+  async crossdomain() {
+    this.service.download.normal(`${this.config.upload.baseDir}js/crossdomain.xml`);
   }
   async share() {
     const ctx = this.ctx;
+    const {
+      id,
+    } = ctx.params;
 
-    ctx.body = ctx.params;
+    const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
+    if (!video.data) {
+      ctx.body = {
+        code: 404,
+        data: false,
+        message: '视频未找到',
+      };
+      return void 0;
+    }
+    const {
+      name,
+      surface_plot,
+      dsc,
+      video_decode: {
+        status_id,
+        chunk_path,
+      },
+    } = video.data;
+    const sp = chunk_path.split('/');
+    const filename = sp.pop();
+    const dirname = sp.pop();
+    if (status_id !== 5) {
+      ctx.body = {
+        code: 404,
+        data: false,
+        message: '视频未转切',
+      };
+      return void 0;
+    }
+    const setting = await ctx.service.video.setting.find();
+    const {
+      antikey,
+    } = setting.data;
+    const token = jwt.sign({
+      access: 'view',
+    }, antikey, {
+      expiresIn: '1h',
+    });
+    return ctx.render('share.tpl', {
+      video_url: `http://localhost:7001/video/link/${dirname}/${filename}?token=${token}`,
+      name,
+      surface_plot,
+      dsc,
+    });
   }
 }
-// http://localhost:7001/video/link/806ff890ec0a11e8977025a7dfbf82ef/1679091c5a880faf6fb5e6087eb1b2dc.m3u8
+//
 module.exports = VideoController;

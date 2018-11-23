@@ -35,8 +35,20 @@ waiting
 ## 开发
 
 ```bash
+# 安装node
+https://nodejs.org/
+
+# 安装ffmpeg
+http://ffmpeg.org/
+
+# 安装mysql
+https://www.mysql.com/
+
 # 克隆项目
 git clone https://github.com/herghost000/egg-ffmpeg.git
+
+# 配置数据库
+
 
 # 安装服务端依赖
 npm install

@@ -4,6 +4,7 @@ export function uploadVideo(data) {
   return request({
     url: '/api/v2/upload/uploadVideo',
     method: 'POST',
-    data
+    data,
+    timeout: 60000 * 60
   })
 }

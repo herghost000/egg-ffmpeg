@@ -8,6 +8,7 @@ const getters = {
   name: state => state.user.name,
   roles: state => state.user.roles,
   videoSetting: state => state.videoSetting,
+  videoSettingData: state => state.videoSetting.data,
   videoType: state => state.videoType,
   videoList: state => state.videoList
 }

@@ -122,6 +122,10 @@
                      icon="el-icon-refresh"
                      @click="handleTransAndChunk(scope.$index, scope.row)">转切</el-button>
           <el-button size="mini"
+                     class="operate-btn"
+                     icon="el-icon-share"
+                     @click="handleShare(scope.$index, scope.row)">分享</el-button>
+          <el-button size="mini"
                      type="danger"
                      class="operate-btn"
                      icon="el-icon-delete"
@@ -137,12 +141,39 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
+    <el-dialog title="分享链接"
+               :visible.sync="dialogShareVisible">
+      <el-form ref="form"
+               label-position="top"
+               size="mini"
+               :model="formShare"
+               label-width="120px">
+        <el-form-item label="分享链接">
+
+          <el-alert :closable="false"
+                    :title="`${videoSettingData.host}/video/share/${formShare.id}`"
+                    type="info">
+          </el-alert>
+        </el-form-item>
+        <el-form-item label="iframe链接">
+          <el-alert :closable="false"
+                    :title='`<iframe src="
+                    ${videoSettingData.host}/video/share/${formShare.id}"
+                    height="500"
+                    width="600"
+                    frameborder="0"
+                    allowfullscreen></iframe>`'
+                    type="info">
+          </el-alert>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
 
 import waves from '@/directive/waves/index.js' // 水波纹指令
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import clipboard from '@/directive/clipboard/index.js' // use clipboard by v-directive
 export default {
   directives: {
@@ -165,10 +196,16 @@ export default {
         currentPage: 1,
       },
       listData: [],
-      searchInterval: null
+      searchInterval: null,
+      dialogShareVisible: false,
+      formShare: {}
     }
   },
+  computed: {
+    ...mapGetters(['videoSettingData'])
+  },
   created () {
+    this.querySetting()
     this.queryType().then(res => {
       this.types = res.data.rows
     })
@@ -181,7 +218,7 @@ export default {
     clearInterval(this.searchInterval)
   },
   methods: {
-    ...mapActions({ queryType: 'QueryType', queryVideoList: 'QueryVideoList', transcode: 'Transcode' }),
+    ...mapActions({ querySetting: 'QuerySetting', queryType: 'QueryType', queryVideoList: 'QueryVideoList', transcode: 'Transcode' }),
     getList () {
       this.listLoading = true
       this.handleQueryVideoList()
@@ -237,6 +274,10 @@ export default {
         }
       })
     },
+    handleShare (index, row) {
+      this.dialogShareVisible = true
+      this.formShare = row
+    },
     clipboardSuccess () {
       this.$message({
         message: '视频地址复制成功',
@@ -254,18 +295,18 @@ export default {
 </script>
 <style scoped>
 .el-pagination {
-    margin-top: 20px;
-    text-align: right;
+  margin-top: 20px;
+  text-align: right;
 }
 .surface_plot {
-    width: 100px;
-    transition: all 0.2s linear;
+  width: 100px;
+  transition: all 0.2s linear;
 }
 .surface_plot:hover {
-    /* transform: scale(1.5, 1.5);
+  /* transform: scale(1.5, 1.5);
     filter: contrast(150%); */
 }
 .operate-btn {
-    margin: 1px 1px 1px 0;
+  margin: 1px 1px 1px 0;
 }
 </style>

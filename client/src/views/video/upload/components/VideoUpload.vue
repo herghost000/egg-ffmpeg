@@ -80,11 +80,12 @@ export default {
             const { data } = res
 
             if (data.complate) {
+              console.log(99999)
               vm.onSuccess && vm.onSuccess(data)
             } else {
               key = data.key
             }
-            vm.percentage = Math.round(succeed / shardCount * 100)
+            vm.percentage = Math.floor(succeed / shardCount * 100)
             resolve()
           }).catch(e => {
 
@@ -104,48 +105,48 @@ export default {
 
 <style lang="css" scoped>
 .upload-btn__inner {
-    display: none !important;
+  display: none !important;
 }
 .upload-list {
-    position: relative;
-    padding-right: 40px;
+  position: relative;
+  padding-right: 40px;
 
-    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-    font-size: 14px;
-    color: #606266;
-    line-height: 1.8;
-    margin-top: 5px;
-    position: relative;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-radius: 4px;
-    width: 100%;
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+  font-size: 14px;
+  color: #606266;
+  line-height: 1.8;
+  margin-top: 5px;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 4px;
+  width: 100%;
 }
 .upload-list .name {
 }
 .upload-list:hover {
-    color: #409eff;
-    cursor: pointer;
-    background-color: #f5f7fa;
+  color: #409eff;
+  cursor: pointer;
+  background-color: #f5f7fa;
 }
 .upload-list:hover .close {
-    display: inline-block;
+  display: inline-block;
 }
 .upload-list:hover .success {
-    display: none;
+  display: none;
 }
 .upload-list .success {
-    position: absolute;
-    right: 5px;
-    top: 0;
-    line-height: inherit;
-    color: #67c23a;
+  position: absolute;
+  right: 5px;
+  top: 0;
+  line-height: inherit;
+  color: #67c23a;
 }
 .upload-list .close {
-    display: none;
-    position: absolute;
-    right: 5px;
-    top: 0;
-    line-height: inherit;
+  display: none;
+  position: absolute;
+  right: 5px;
+  top: 0;
+  line-height: inherit;
 }
 </style>

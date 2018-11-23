@@ -22,7 +22,14 @@
 
 ## 前序准备
 
-waiting
+# 安装node
+https://nodejs.org/
+
+# 安装ffmpeg
+http://ffmpeg.org/
+
+# 安装mysql
+https://www.mysql.com/
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
@@ -35,15 +42,6 @@ waiting
 ## 开发
 
 ```bash
-# 安装node
-https://nodejs.org/
-
-# 安装ffmpeg
-http://ffmpeg.org/
-
-# 安装mysql
-https://www.mysql.com/
-
 # 克隆项目
 git clone https://github.com/herghost000/egg-ffmpeg.git
 

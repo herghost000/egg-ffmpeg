@@ -22,13 +22,13 @@
 
 ## 前序准备
 
-# 安装node
+##### 安装node
 https://nodejs.org/
 
-# 安装ffmpeg
+##### 安装ffmpeg
 http://ffmpeg.org/
 
-# 安装mysql
+##### 安装mysql
 https://www.mysql.com/
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**

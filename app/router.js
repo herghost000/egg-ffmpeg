@@ -10,7 +10,7 @@ module.exports = app => {
   } = app;
 
   // const checktoken = app.middleware.checktoken();
-  router.get('/', controller.home.index);
+  router.get('/xxxc/b/:lllc', controller.home.index);
   router.get('/crossdomain.xml', controller.home.video.crossdomain);
 
   router.resources(

@@ -6,17 +6,25 @@ module.exports = app => {
     INTEGER,
     DATE,
   } = app.Sequelize;
-  const User = app.model.define('user', {
+  const UserAuth = app.model.define('user_auth', {
     id: {
       type: INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     name: STRING(30),
-    age: INTEGER,
     created_at: DATE,
     updated_at: DATE,
+  }, {
+    deletedAt: 'deleted_at',
+    paranoid: true,
   });
 
-  return User;
+  UserAuth.associate = function() {
+    UserAuth.belongsToMany(app.model.UserMenu, {
+      through: 'user_auth_menu',
+    });
+  };
+
+  return UserAuth;
 };

@@ -48,7 +48,8 @@ https://www.mysql.com/
 git clone https://github.com/herghost000/egg-ffmpeg.git
 
 # 配置数据库
-
+database/config.json
+config/config.default.js
 
 # 安装服务端依赖
 npm install
@@ -56,14 +57,16 @@ npm install
 # 建议不要用 cnpm 安装 会有各种诡异的bug 可以通过如下操作解决 npm 下载速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
 
-# 启动服务端
+# 启动服务端，默认7001端口
 npm run dev
 
-# 安装服务端依赖
-cd client & npm install
+# 修改客户端代理端口
+client/config/index.js
+修改proxyTable target的端口为服务端启动端口
 
 # 启动客户端
-npm run dev
+cd client & npm install & npm run dev
+
 ```
 
 ## 发布

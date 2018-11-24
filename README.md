@@ -22,33 +22,39 @@
 
 ## 前序准备
 
-waiting
+##### 官方文档
+watting
+
+##### 安装node
+https://nodejs.org/
+
+##### 安装ffmpeg
+http://ffmpeg.org/
+
+##### 安装mysql
+https://www.mysql.com/
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
 ## 功能
 
 ```
-waiting
+1）在线上传视频并转码为mp4，同时切片为m3u8
+2）分享视频链接、iframe链接
+3）支持ts加密
+4）支持水印烧录
+5）支持防盗链
 ```
 
 ## 开发
 
 ```bash
-# 安装node
-https://nodejs.org/
-
-# 安装ffmpeg
-http://ffmpeg.org/
-
-# 安装mysql
-https://www.mysql.com/
-
 # 克隆项目
 git clone https://github.com/herghost000/egg-ffmpeg.git
 
 # 配置数据库
-
+database/config.json
+config/config.default.js
 
 # 安装服务端依赖
 npm install
@@ -56,14 +62,16 @@ npm install
 # 建议不要用 cnpm 安装 会有各种诡异的bug 可以通过如下操作解决 npm 下载速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
 
-# 启动服务端
+# 启动服务端，默认7001端口
 npm run dev
 
-# 安装服务端依赖
-cd client & npm install
+# 修改客户端代理端口
+client/config/index.js
+修改proxyTable target的端口为服务端启动端口
 
 # 启动客户端
-npm run dev
+cd client & npm install & npm run dev
+
 ```
 
 ## 发布

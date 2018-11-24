@@ -10,8 +10,8 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: STRING(30), // 用户组名
-      pid: INTEGER, // 父用户组
+      name: STRING(30),
+      pid: INTEGER,
       created_at: DATE,
       updated_at: DATE,
     },
@@ -23,10 +23,10 @@ module.exports = app => {
 
   UserGroup.associate = function() {
     UserGroup.belongsToMany(app.model.User, {
-      through: 'user_group_ref',
+      through: 'user_group_refs',
     });
     UserGroup.belongsToMany(app.model.UserRole, {
-      through: 'user_group_role_ref',
+      through: 'user_group_role_refs',
     });
   };
 

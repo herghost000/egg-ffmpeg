@@ -1,10 +1,13 @@
 'use strict';
 
 module.exports = app => {
-  const { STRING, INTEGER, DATE } = app.Sequelize;
+  const {
+    STRING,
+    INTEGER,
+    DATE,
+  } = app.Sequelize;
   const UserMenu = app.model.define(
-    'user_menu',
-    {
+    'user_menu', {
       id: {
         type: INTEGER,
         primaryKey: true,
@@ -15,8 +18,7 @@ module.exports = app => {
       pid: INTEGER,
       created_at: DATE,
       updated_at: DATE,
-    },
-    {
+    }, {
       deletedAt: 'deleted_at',
       paranoid: true,
     }
@@ -24,7 +26,7 @@ module.exports = app => {
 
   UserMenu.associate = function() {
     UserMenu.belongsToMany(app.model.UserAuth, {
-      through: 'user_auth_menu',
+      through: 'user_auth_menu_refs',
     });
   };
 

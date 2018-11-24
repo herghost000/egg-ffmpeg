@@ -10,7 +10,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: STRING(30), // 角色名
+      name: STRING(30),
       created_at: DATE,
       updated_at: DATE,
     },
@@ -22,13 +22,13 @@ module.exports = app => {
 
   UserRole.associate = function() {
     UserRole.belongsToMany(app.model.UserAuth, {
-      through: 'user_role_auth',
+      through: 'user_role_auth_refs',
     });
     UserRole.belongsToMany(app.model.User, {
-      through: 'user_role_ref',
+      through: 'user_role_refs',
     });
     UserRole.belongsToMany(app.model.UserGroup, {
-      through: 'user_group_role_ref',
+      through: 'user_group_role_refs',
     });
   };
 

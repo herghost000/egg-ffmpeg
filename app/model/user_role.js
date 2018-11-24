@@ -6,8 +6,8 @@ module.exports = app => {
     INTEGER,
     DATE,
   } = app.Sequelize;
-  const UserAuth = app.model.define(
-    'user_auth', {
+  const UserRole = app.model.define(
+    'user_role', {
       id: {
         type: INTEGER,
         primaryKey: true,
@@ -22,14 +22,17 @@ module.exports = app => {
     }
   );
 
-  UserAuth.associate = function() {
-    UserAuth.belongsToMany(app.model.UserMenu, {
-      through: 'user_auth_menu_refs',
-    });
-    UserAuth.belongsToMany(app.model.UserRole, {
+  UserRole.associate = function() {
+    UserRole.belongsToMany(app.model.UserAuth, {
       through: 'user_role_auth_refs',
+    });
+    UserRole.belongsToMany(app.model.User, {
+      through: 'user_role_refs',
+    });
+    UserRole.belongsToMany(app.model.UserGroup, {
+      through: 'user_group_role_refs',
     });
   };
 
-  return UserAuth;
+  return UserRole;
 };

@@ -6,14 +6,15 @@ module.exports = app => {
     INTEGER,
     DATE,
   } = app.Sequelize;
-  const UserAuth = app.model.define(
-    'user_auth', {
+  const UserGroup = app.model.define(
+    'user_group', {
       id: {
         type: INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
       name: STRING(30),
+      pid: INTEGER,
       created_at: DATE,
       updated_at: DATE,
     }, {
@@ -22,14 +23,14 @@ module.exports = app => {
     }
   );
 
-  UserAuth.associate = function() {
-    UserAuth.belongsToMany(app.model.UserMenu, {
-      through: 'user_auth_menu_refs',
+  UserGroup.associate = function() {
+    UserGroup.belongsToMany(app.model.User, {
+      through: 'user_group_refs',
     });
-    UserAuth.belongsToMany(app.model.UserRole, {
-      through: 'user_role_auth_refs',
+    UserGroup.belongsToMany(app.model.UserRole, {
+      through: 'user_group_role_refs',
     });
   };
 
-  return UserAuth;
+  return UserGroup;
 };

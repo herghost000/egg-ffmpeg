@@ -1,7 +1,11 @@
 'use strict';
 
 module.exports = app => {
-  const { STRING, INTEGER, DATE } = app.Sequelize;
+  const {
+    STRING,
+    INTEGER,
+    DATE,
+  } = app.Sequelize;
   const User = app.model.define('user', {
     id: {
       type: INTEGER,
@@ -16,10 +20,13 @@ module.exports = app => {
 
   User.associate = function() {
     User.belongsToMany(app.model.UserRole, {
-      through: 'user_role_ref',
+      through: 'user_role_refs',
     });
     User.belongsToMany(app.model.UserGroup, {
-      through: 'user_group_ref',
+      through: 'user_group_refs',
+    });
+    User.belongsToMany(app.model.UserAuth, {
+      through: 'user_auth_refs',
     });
   };
 

@@ -26,17 +26,7 @@
       </el-table-column>
       <el-table-column label="用户">
         <template slot-scope="scope">
-          <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.name"
-                      class="edit-input"
-                      size="small" />
-            <el-button class="cancel-btn"
-                       size="mini"
-                       icon="el-icon-circle-close-outline"
-                       type="warning"
-                       @click="cancelEdit(scope.row)"></el-button>
-          </template>
-          <span v-else>{{ scope.row.name }}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
@@ -54,7 +44,7 @@
 
       <el-table-column label="直属角色">
         <template slot-scope="scope">
-          <template v-if="scope.row.user_groups && scope.row.user_groups.length">
+          <template v-if="scope.row.user_roles && scope.row.user_roles.length">
             <el-tag v-for="role in scope.row.user_roles"
                     :key="role.id"
                     type="warning">{{role.name}}</el-tag>
@@ -67,7 +57,7 @@
 
       <el-table-column label="直属权限">
         <template slot-scope="scope">
-          <template v-if="scope.row.user_groups && scope.row.user_groups.length">
+          <template v-if="scope.row.user_auths && scope.row.user_auths.length">
             <el-tag v-for="auth in scope.row.user_auths"
                     :key="auth.id"
                     type="danger">{{auth.name}}</el-tag>
@@ -81,7 +71,12 @@
       <el-table-column label="注册时间"
                        align="center">
         <template slot-scope="scope">
-          {{scope.row.created_at | formatTime}}
+          <template v-if="scope.row.updated_at">
+            {{scope.row.created_at | formatTime}}
+          </template>
+          <template v-else>
+            未操作
+          </template>
         </template>
       </el-table-column>
 
@@ -100,17 +95,10 @@
       <el-table-column align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.edit"
-                     type="success"
-                     size="mini"
-                     icon="el-icon-circle-check-outline"
-                     class="operate-btn"
-                     @click="confirmEdit(scope.row)"></el-button>
-          <el-button v-else
-                     size="mini"
+          <el-button size="mini"
                      icon="el-icon-edit-outline"
                      class="operate-btn"
-                     @click="scope.row.edit=!scope.row.edit"></el-button>
+                     @click="confirmEdit(scope.row)"></el-button>
           <el-button size="mini"
                      type="danger"
                      icon="el-icon-delete"
@@ -164,11 +152,6 @@ export default {
         if (Object.isNotEmpty(data)) {
           this.listData = Object.deepClone(data.rows)
           this.query.total = data.count
-          this.listData.map(v => {
-            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-            v.originalName = v.name //  will be used when user click the cancel botton
-            return v
-          })
         }
         this.listLoading = false
       })
@@ -181,26 +164,8 @@ export default {
       this.query.offset = (val - 1) * this.query.limit
       this.getList()
     },
-    cancelEdit (row) {
-      row.name = row.originalName
-      row.edit = false
-      this.$message({
-        message: '取消编辑',
-        type: 'warning'
-      })
-    },
     confirmEdit (row) {
-      row.edit = false
-      row.originalName = row.name
-      this.updateUser(row).then(res => {
-        const { data } = res
-        if (Object.isNotEmpty(data)) {
-          this.$message({
-            message: '编辑成功',
-            type: 'success'
-          })
-        }
-      })
+      this.$router.push('/user/edit/' + row.id)
     },
     handleDelete (index, row) {
 

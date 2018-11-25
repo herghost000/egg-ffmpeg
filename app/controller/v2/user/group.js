@@ -12,8 +12,8 @@ class UserGroupController extends Controller {
         },
       },
       order: [[ 'id', 'desc' ]],
-      offset: ctx.helper.toInt(ctx.query.offset) || 0,
-      limit: ctx.helper.toInt(ctx.query.limit) || 10,
+      offset: ctx.helper.toInt(ctx.query.offset),
+      limit: ctx.helper.toInt(ctx.query.limit),
     };
     ctx.body = {
       code: 200,

@@ -21,144 +21,160 @@ import Layout from '../views/layout/Layout'
     icon: 'svg-name'             the icon show in the sidebar,
   }
 **/
-export const constantRouterMap = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/404',
-  component: () => import('@/views/404'),
-  hidden: true
-},
-
-{
-  path: '/',
-  component: Layout,
-  redirect: '/dashboard',
-  children: [{
-    name: 'Dashboard',
-    path: 'dashboard',
-    meta: {
-      title: '首页',
-      icon: 'dashboard'
-    },
-    component: () => import('@/views/dashboard/index')
-  }]
-},
-{
-  path: '/video',
-  component: Layout,
-  redirect: '/video/setting',
-  name: 'Video',
-  meta: {
-    title: '视频管理',
-    icon: 'example'
-  },
-  children: [{
-    path: 'setting',
-    name: 'Setting',
-    component: () => import('@/views/video/setting/index'),
-    meta: {
-      title: '转码设置',
-      icon: 'table'
-    }
-  },
+export const constantRouterMap = [
   {
-    path: 'type',
-    name: 'VideoType',
-    component: () => import('@/views/video/type/index'),
-    meta: {
-      title: '分类设置',
-      icon: 'tree'
-    }
-  },
-  {
-    path: 'upload',
-    name: 'VideoUpload',
-    component: () => import('@/views/video/upload/index'),
-    meta: {
-      title: '创建视频',
-      icon: 'form'
-    }
-  },
-  {
-    path: 'movies',
-    name: 'Movies',
-    component: () => import('@/views/video/movies/index'),
-    meta: {
-      title: '视频列表',
-      icon: 'list'
-    }
-  }
-  ]
-},
-{
-  path: '/user',
-  component: Layout,
-  redirect: '/user/list',
-  name: 'User',
-  meta: {
-    title: '用户管理',
-    icon: 'example'
-  },
-  children: [{
-    path: 'list',
-    name: 'UserList',
-    component: () => import('@/views/user/user/index'),
-    meta: {
-      title: '用户列表',
-      icon: 'user'
-    }
-  },
-  {
-    path: 'create',
-    name: 'UserCreate',
-    component: () => import('@/views/user/user/create/index'),
-    meta: {
-      title: '用户创建',
-      icon: 'user'
-    },
+    path: '/login',
+    component: () => import('@/views/login/index'),
     hidden: true
   },
   {
-    path: 'group',
-    name: 'UserGroup',
-    component: () => import('@/views/user/group/index'),
-    meta: {
-      title: '分组列表',
-      icon: 'user'
-    }
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [
+      {
+        name: 'Dashboard',
+        path: 'dashboard',
+        meta: {
+          title: '首页',
+          icon: 'dashboard'
+        },
+        component: () => import('@/views/dashboard/index')
+      }
+    ]
   },
   {
-    path: 'role',
-    name: 'UserRole',
-    component: () => import('@/views/user/role/index'),
+    path: '/video',
+    component: Layout,
+    redirect: '/video/setting',
+    name: 'Video',
     meta: {
-      title: '角色列表',
-      icon: 'user'
-    }
+      title: '视频管理',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'setting',
+        name: 'Setting',
+        component: () => import('@/views/video/setting/index'),
+        meta: {
+          title: '转码设置',
+          icon: 'table'
+        }
+      },
+      {
+        path: 'type',
+        name: 'VideoType',
+        component: () => import('@/views/video/type/index'),
+        meta: {
+          title: '分类设置',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'upload',
+        name: 'VideoUpload',
+        component: () => import('@/views/video/upload/index'),
+        meta: {
+          title: '创建视频',
+          icon: 'form'
+        }
+      },
+      {
+        path: 'movies',
+        name: 'Movies',
+        component: () => import('@/views/video/movies/index'),
+        meta: {
+          title: '视频列表',
+          icon: 'list'
+        }
+      }
+    ]
   },
   {
-    path: 'auth',
-    name: 'UserAuth',
-    component: () => import('@/views/user/auth/index'),
+    path: '/user',
+    component: Layout,
+    redirect: '/user/list',
+    name: 'User',
     meta: {
-      title: '权限列表',
-      icon: 'user'
-    }
+      title: '用户管理',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'list',
+        name: 'UserList',
+        component: () => import('@/views/user/user/index'),
+        meta: {
+          title: '用户列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'create',
+        name: 'UserCreate',
+        component: () => import('@/views/user/user/create/index'),
+        meta: {
+          title: '用户创建',
+          icon: 'user'
+        },
+        hidden: true
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'UserEdit',
+        component: () => import('@/views/user/user/edit/index'),
+        meta: {
+          title: '用户编辑',
+          icon: 'user',
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'group',
+        name: 'UserGroup',
+        component: () => import('@/views/user/group/index'),
+        meta: {
+          title: '分组列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'role',
+        name: 'UserRole',
+        component: () => import('@/views/user/role/index'),
+        meta: {
+          title: '角色列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'auth',
+        name: 'UserAuth',
+        component: () => import('@/views/user/auth/index'),
+        meta: {
+          title: '权限列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'menu',
+        name: 'UserMenu',
+        component: () => import('@/views/user/menu/index'),
+        meta: {
+          title: '菜单列表',
+          icon: 'user'
+        }
+      }
+    ]
   },
-  {
-    path: 'menu',
-    name: 'UserMenu',
-    component: () => import('@/views/user/menu/index'),
-    meta: {
-      title: '菜单列表',
-      icon: 'user'
-    }
-  }
-  ]
-},
   // {
   //   path: '/example',
   //   component: Layout,
@@ -294,11 +310,11 @@ export const constantRouterMap = [{
   //   ]
   // },
 
-{
-  path: '*',
-  redirect: '/404',
-  hidden: true
-}
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
 export default new Router({

@@ -43,7 +43,7 @@ export const constantRouterMap = [
         path: 'dashboard',
         meta: {
           title: '首页',
-          icon: 'example'
+          icon: 'dashboard'
         },
         component: () => import('@/views/dashboard/index')
       }
@@ -83,7 +83,7 @@ export const constantRouterMap = [
         component: () => import('@/views/video/upload/index'),
         meta: {
           title: '创建视频',
-          icon: 'tree'
+          icon: 'form'
         }
       },
       {
@@ -92,7 +92,37 @@ export const constantRouterMap = [
         component: () => import('@/views/video/movies/index'),
         meta: {
           title: '视频列表',
-          icon: 'tree'
+          icon: 'list'
+        }
+      }
+    ]
+  },
+  {
+    path: '/auth',
+    component: Layout,
+    redirect: '/auth/user',
+    name: 'Auth',
+    meta: {
+      title: '权限管理',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'user',
+        name: 'AuthUser',
+        component: () => import('@/views/auth/user/index'),
+        meta: {
+          title: '用户管理',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'role',
+        name: 'AuthRole',
+        component: () => import('@/views/auth/role/index'),
+        meta: {
+          title: '角色管理',
+          icon: 'user'
         }
       }
     ]

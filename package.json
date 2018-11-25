@@ -28,6 +28,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
+    "db:create": "npx sequelize db:create",
     "autod": "autod",
     "lint": "eslint .",
     "test": "egg-bin test",

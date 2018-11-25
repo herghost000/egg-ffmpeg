@@ -100,6 +100,7 @@ export default {
     }
   },
   created () {
+    console.log(this.$store)
     this.querySetting().then(res => {
       if (Object.isEmpty(res.data)) {
         this.initDB = true
@@ -170,6 +171,6 @@ export default {
 </script>
 <style scoped>
 .watermark {
-    max-width: 300px;
+  max-width: 300px;
 }
 </style>

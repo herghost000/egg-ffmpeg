@@ -34,3 +34,10 @@
   margin-top: 20px;
   text-align: right;
 }
+
+.el-table {
+  .el-tag {
+    width: auto;
+    max-width: 100%;
+  }
+}

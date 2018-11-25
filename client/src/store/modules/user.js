@@ -8,13 +8,22 @@ import {
   setToken,
   removeToken
 } from '@/utils/auth'
+import {
+  queryUser,
+  createUser,
+  updateUser,
+  destoryUser
+} from '@/api/user/user'
 
 const user = {
   state: {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    code: 200,
+    rows: {},
+    msg: '查询成功'
   },
 
   mutations: {
@@ -29,6 +38,20 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_USER_ROWS: (state, rows) => {
+      state.rows = rows || []
+    },
+    SET_USER_MSG: (state, msg) => {
+      state.msg = msg
+    },
+    SET_USER_CODE: (state, code) => {
+      state.code = code
+    },
+    UNPACK_USER_QUERY_RES(state, res) {
+      this.commit('SET_USER_MSG', res.message)
+      this.commit('SET_USER_CODE', res.code)
+      this.commit('SET_USER_ROWS', res.rows)
     }
   },
 
@@ -97,6 +120,66 @@ const user = {
         commit('SET_TOKEN', '')
         removeToken()
         resolve()
+      })
+    },
+    QueryUser: ({
+      commit
+    }, playload) => {
+      return new Promise((resolve, reject) => {
+        queryUser(playload)
+          .then(response => {
+            const {
+              code
+            } = response
+            if (code === 200) {
+              commit('UNPACK_USER_QUERY_RES', response)
+            } else {
+              commit('SET_USER_ROWS')
+            }
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    CreateUser: ({
+      commit
+    }, playload) => {
+      return new Promise((resolve, reject) => {
+        createUser(playload)
+          .then(response => {
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    UpdateUser: ({
+      commit
+    }, playload) => {
+      return new Promise((resolve, reject) => {
+        updateUser(playload.id, playload)
+          .then(response => {
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    DestoryUser: ({
+      commit
+    }, playload) => {
+      return new Promise((resolve, reject) => {
+        destoryUser(playload.id)
+          .then(response => {
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     }
   }

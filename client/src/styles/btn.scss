@@ -2,8 +2,10 @@
 
 @mixin colorBtn($color) {
   background: $color;
+
   &:hover {
     color: $color;
+
     &:before,
     &:after {
       background: $color;
@@ -55,18 +57,22 @@
   position: relative;
   display: inline-block;
   line-height: 1;
+
   &.small {
     font-size: 12px;
     padding: 9px 15px;
   }
+
   &:hover {
     background: #fff;
+
     &:before,
     &:after {
       width: 100%;
       transition: 600ms ease all;
     }
   }
+
   &:before,
   &:after {
     content: '';
@@ -77,6 +83,7 @@
     width: 0;
     transition: 400ms ease all;
   }
+
   &::after {
     right: inherit;
     top: inherit;
@@ -100,4 +107,12 @@
   padding: 10px 15px;
   font-size: 14px;
   border-radius: 4px;
+}
+
+.el-button+.operate-btn {
+  margin-left: 0;
+}
+
+.operate-btn {
+  margin: 1px 1px 1px 0;
 }

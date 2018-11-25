@@ -1,9 +1,9 @@
 import {
-  queryAuthUser,
-  createAuthUser,
-  updateAuthUser,
-  destoryAuthUser
-} from '@/api/auth/user'
+  queryUserAuth,
+  createUserAuth,
+  updateUserAuth,
+  destoryUserAuth
+} from '@/api/user/auth'
 
 const app = {
   state: {
@@ -12,31 +12,35 @@ const app = {
     msg: '查询成功'
   },
   mutations: {
-    SET_AUTHUSER_ROWS: (state, rows) => {
+    SET_USERAUTH_ROWS: (state, rows) => {
       state.rows = rows || []
     },
-    SET_AUTHUSER_MSG: (state, msg) => {
+    SET_USERAUTH_MSG: (state, msg) => {
       state.msg = msg
     },
-    SET_AUTHUSER_CODE: (state, code) => {
+    SET_USERAUTH_CODE: (state, code) => {
       state.code = code
     },
-    UNPACK_AUTHUSER_QUERY_RES(state, res) {
-      this.commit('SET_AUTHUSER_MSG', res.message)
-      this.commit('SET_AUTHUSER_CODE', res.code)
-      this.commit('SET_AUTHUSER_ROWS', res.rows)
+    UNPACK_USERAUTH_QUERY_RES(state, res) {
+      this.commit('SET_USERAUTH_MSG', res.message)
+      this.commit('SET_USERAUTH_CODE', res.code)
+      this.commit('SET_USERAUTH_ROWS', res.rows)
     }
   },
   actions: {
-    QueryAuthUser: ({ commit }, playload) => {
+    QueryUserAuth: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        queryAuthUser(playload)
+        queryUserAuth(playload)
           .then(response => {
-            const { code } = response
+            const {
+              code
+            } = response
             if (code === 200) {
-              commit('UNPACK_AUTHUSER_QUERY_RES', response)
+              commit('UNPACK_USERAUTH_QUERY_RES', response)
             } else {
-              commit('SET_AUTHUSER_ROWS')
+              commit('SET_USERAUTH_ROWS')
             }
             resolve(response)
           })
@@ -45,9 +49,11 @@ const app = {
           })
       })
     },
-    CreateAuthUser: ({ commit }, playload) => {
+    CreateUserAuth: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        createAuthUser(playload)
+        createUserAuth(playload)
           .then(response => {
             resolve(response)
           })
@@ -56,9 +62,11 @@ const app = {
           })
       })
     },
-    UpdateAuthUser: ({ commit }, playload) => {
+    UpdateUserAuth: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        updateAuthUser(playload.id, playload)
+        updateUserAuth(playload.id, playload)
           .then(response => {
             resolve(response)
           })
@@ -67,9 +75,11 @@ const app = {
           })
       })
     },
-    DestoryAuthUser: ({ commit }, playload) => {
+    DestoryUserAuth: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        destoryAuthUser(playload.id)
+        destoryUserAuth(playload.id)
           .then(response => {
             resolve(response)
           })

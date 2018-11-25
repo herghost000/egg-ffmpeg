@@ -4,21 +4,24 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app;
+  const {
+    router,
+    controller,
+  } = app;
 
   // const checktoken = app.middleware.checktoken();
   router.get('/xxxc/b/:lllc', controller.home.index);
   router.get('/crossdomain.xml', controller.home.video.crossdomain);
 
-  router.resources('auth-user', '/api/v2/auth/user', controller.v2.auth.user);
-  router.resources('auth-role', '/api/v2/auth/role', controller.v2.auth.role);
+  router.resources('user', '/api/v2/user', controller.v2.user.user);
+  router.resources('user-role', '/api/v2/user/role', controller.v2.user.role);
   router.resources(
-    'auth-group',
-    '/api/v2/auth/group',
-    controller.v2.auth.group
+    'user-group',
+    '/api/v2/user/group',
+    controller.v2.user.group
   );
-  router.resources('auth-auth', '/api/v2/auth/auth', controller.v2.auth.auth);
-  router.resources('auth-menu', '/api/v2/auth/menu', controller.v2.auth.menu);
+  router.resources('user-auth', '/api/v2/user/auth', controller.v2.user.auth);
+  router.resources('user-menu', '/api/v2/user/menu', controller.v2.user.menu);
 
   router.resources(
     'video-setting',

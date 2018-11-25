@@ -3,15 +3,32 @@ const Controller = require('egg').Controller;
 
 class UserController extends Controller {
   async index() {
-    const { ctx, app } = this;
-    const { Op } = app.Sequelize;
+    const {
+      ctx,
+      app,
+    } = this;
+    const {
+      Op,
+    } = app.Sequelize;
     const query = {
+      include: [{
+        model: ctx.model.UserRole,
+      },
+      {
+        model: ctx.model.UserGroup,
+      },
+      {
+        model: ctx.model.UserAuth,
+      },
+      ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [[ 'id', 'desc' ]],
+      order: [
+        [ 'id', 'desc' ],
+      ],
       offset: ctx.helper.toInt(ctx.query.offset) || 0,
       limit: ctx.helper.toInt(ctx.query.limit) || 10,
     };
@@ -25,7 +42,9 @@ class UserController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const { name } = ctx.request.body;
+    const {
+      name,
+    } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
     const type = await ctx.model.User.create({
@@ -54,7 +73,9 @@ class UserController extends Controller {
       return;
     }
 
-    const { name } = ctx.request.body;
+    const {
+      name,
+    } = ctx.request.body;
     const updated_at = new Date();
     await type.update({
       name,

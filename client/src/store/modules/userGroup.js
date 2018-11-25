@@ -1,9 +1,9 @@
 import {
-  queryAuthRole,
-  createAuthRole,
-  updateAuthRole,
-  destoryAuthRole
-} from '@/api/auth/role'
+  queryUserGroup,
+  createUserGroup,
+  updateUserGroup,
+  destoryUserGroup
+} from '@/api/user/group'
 
 const app = {
   state: {
@@ -12,31 +12,35 @@ const app = {
     msg: '查询成功'
   },
   mutations: {
-    SET_AUTHROLE_ROWS: (state, rows) => {
+    SET_USERGROUP_ROWS: (state, rows) => {
       state.rows = rows || []
     },
-    SET_AUTHROLE_MSG: (state, msg) => {
+    SET_USERGROUP_MSG: (state, msg) => {
       state.msg = msg
     },
-    SET_AUTHROLE_CODE: (state, code) => {
+    SET_USERGROUP_CODE: (state, code) => {
       state.code = code
     },
-    UNPACK_AUTHROLE_QUERY_RES(state, res) {
-      this.commit('SET_AUTHROLE_MSG', res.message)
-      this.commit('SET_AUTHROLE_CODE', res.code)
-      this.commit('SET_AUTHROLE_ROWS', res.rows)
+    UNPACK_USERGROUP_QUERY_RES(state, res) {
+      this.commit('SET_USERGROUP_MSG', res.message)
+      this.commit('SET_USERGROUP_CODE', res.code)
+      this.commit('SET_USERGROUP_ROWS', res.rows)
     }
   },
   actions: {
-    QueryAuthRole: ({ commit }, playload) => {
+    QueryUserGroup: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        queryAuthRole(playload)
+        queryUserGroup(playload)
           .then(response => {
-            const { code } = response
+            const {
+              code
+            } = response
             if (code === 200) {
-              commit('UNPACK_AUTHROLE_QUERY_RES', response)
+              commit('UNPACK_USERGROUP_QUERY_RES', response)
             } else {
-              commit('SET_AUTHROLE_ROWS')
+              commit('SET_USERGROUP_ROWS')
             }
             resolve(response)
           })
@@ -45,9 +49,11 @@ const app = {
           })
       })
     },
-    CreateAuthRole: ({ commit }, playload) => {
+    CreateUserGroup: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        createAuthRole(playload)
+        createUserGroup(playload)
           .then(response => {
             resolve(response)
           })
@@ -56,9 +62,11 @@ const app = {
           })
       })
     },
-    UpdateAuthRole: ({ commit }, playload) => {
+    UpdateUserGroup: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        updateAuthRole(playload.id, playload)
+        updateUserGroup(playload.id, playload)
           .then(response => {
             resolve(response)
           })
@@ -67,9 +75,11 @@ const app = {
           })
       })
     },
-    DestoryAuthRole: ({ commit }, playload) => {
+    DestoryUserGroup: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
-        destoryAuthRole(playload.id)
+        destoryUserGroup(playload.id)
           .then(response => {
             resolve(response)
           })

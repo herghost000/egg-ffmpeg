@@ -17,7 +17,7 @@
       <el-table-column prop="id"
                        label="ID">
       </el-table-column>
-      <el-table-column label="用户">
+      <el-table-column label="角色">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-input v-model="scope.row.name"
@@ -87,10 +87,10 @@ export default {
     this.getList()
   },
   methods: {
-    ...mapActions({ queryAuthUser: 'QueryAuthUser', createAuthUser: 'CreateAuthUser', updateAuthUser: 'UpdateAuthUser', destoryAuthUser: 'DestoryAuthUser' }),
+    ...mapActions({ queryUserMenu: 'QueryUserMenu', createUserMenu: 'CreateUserMenu', updateUserMenu: 'UpdateUserMenu', destoryUserMenu: 'DestoryUserMenu' }),
     getList () {
       this.listLoading = true
-      this.queryAuthUser({
+      this.queryUserMenu({
         ...this.query,
         ...this.form
       }).then(res => {
@@ -126,7 +126,7 @@ export default {
     confirmEdit (row) {
       row.edit = false
       row.originalName = row.name
-      this.updateAuthUser(row).then(res => {
+      this.updateUserMenu(row).then(res => {
         const { data } = res
         if (Object.isNotEmpty(data)) {
           this.$message({
@@ -144,7 +144,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.listData.splice(index, 1)
-        this.destoryAuthUser(row)
+        this.destoryUserMenu(row)
         this.$message({
           type: 'success',
           message: '删除成功!'

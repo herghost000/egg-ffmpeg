@@ -87,10 +87,10 @@ export default {
     this.getList()
   },
   methods: {
-    ...mapActions({ queryAuthRole: 'QueryAuthRole', createAuthRole: 'CreateAuthRole', updateAuthRole: 'UpdateAuthRole', destoryAuthRole: 'DestoryAuthRole' }),
+    ...mapActions({ queryUserRole: 'QueryUserRole', createUserRole: 'CreateUserRole', updateUserRole: 'UpdateUserRole', destoryUserRole: 'DestoryUserRole' }),
     getList () {
       this.listLoading = true
-      this.queryAuthRole({
+      this.queryUserRole({
         ...this.query,
         ...this.form
       }).then(res => {
@@ -126,7 +126,7 @@ export default {
     confirmEdit (row) {
       row.edit = false
       row.originalName = row.name
-      this.updateAuthRole(row).then(res => {
+      this.updateUserRole(row).then(res => {
         const { data } = res
         if (Object.isNotEmpty(data)) {
           this.$message({
@@ -144,7 +144,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.listData.splice(index, 1)
-        this.destoryAuthRole(row)
+        this.destoryUserRole(row)
         this.$message({
           type: 'success',
           message: '删除成功!'

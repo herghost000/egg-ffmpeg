@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
   </a>
 </p>
-✔︎
+
 简体中文 | [English](./README.md)
 
 ## 简介
@@ -41,13 +41,12 @@ https://www.mysql.com
 
 ## 功能
 
-```
-1）在线上传视频并转码为mp4，同时切片为m3u8
-2）分享视频链接、iframe链接
-3）支持ts加密
-4）支持水印烧录
-5）支持防盗链
-```
+- ✔︎在线上传视频并转码为mp4，同时切片为m3u8
+- ✔︎分享视频链接、iframe链接
+- ✔︎支持ts加密
+- ✔︎支持水印烧录
+- ✔︎支持防盗链
+
 
 ## 开发
 

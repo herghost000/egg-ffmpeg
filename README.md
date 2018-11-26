@@ -80,26 +80,26 @@ cd client & npm install & npm run dev
 ## 发布
 
 ```
-waiting
+:zzz:
 ```
 
 ## 其它
 
 ```
-waiting
+:zzz:
 ```
 
 ## Changelog
 
-waiting
+:zzz:
 
 ## Online Demo
 
-waiting
+:zzz:
 
 ## Donate
 
-waiting
+:zzz:
 
 ## Browsers support
 

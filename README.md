@@ -18,7 +18,7 @@
 
 ## :pencil2:简介
 
-[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。希望不管你的需求是什么，本项目都能帮助到你。
+[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。作者大大每天都在更新新的需求,希望不管你的需求是什么，本项目都能帮助到你。
 
 ## 前序准备
 
@@ -42,6 +42,8 @@ http://ffmpeg.org
 https://www.mysql.com
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr:smile:**
+
+![image](https://raw.githubusercontent.com/herghost000/egg-ffmpeg/master/app/public/image/thumb.png)
 
 ## 功能
 

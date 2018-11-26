@@ -18,13 +18,13 @@
 
 ## 简介
 
-[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案
+[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。
 
 ## 前序准备
 
-:tada:本项目技术栈基于[ES2015+](http://es6.ruanyifeng.com/)、[egg](https://eggjs.org/zh-cn/)、[vue](https://cn.vuejs.org/index.html)、[vuex](https://vuex.vuejs.org/zh-cn/)、[vue-router](https://router.vuejs.org/zh-cn/) 、[axios](https://github.com/axios/axios) 和 [element-ui](https://github.com/ElemeFE/element)，提前了解和学习这些知识会对使用本项目有很大的帮助。
+:tada: 本项目技术栈基于 [FFmpeg](http://ffmpeg.org/)、[ES2015+](http://es6.ruanyifeng.com/)、[egg](https://eggjs.org/zh-cn/)、[vue](https://cn.vuejs.org/index.html)、[vuex](https://vuex.vuejs.org/zh-cn/)、[vue-router](https://router.vuejs.org/zh-cn/) 、[axios](https://github.com/axios/axios) 和 [element-ui](https://github.com/ElemeFE/element)，提前了解和学习这些知识会对使用本项目有很大的帮助。
 
-:loudspeaker:拉取项目前你还需要做如下准备
+:loudspeaker: 拉取项目前你还需要做如下准备
 
 ##### 官方文档
 :zzz:

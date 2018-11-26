@@ -14,7 +14,7 @@
 <script>
 import { mapActions } from 'vuex'
 export default {
-  name: 'UserGroupCheck',
+  name: 'UserRoleCheck',
   props: {
     value: {
       type: Array,
@@ -40,7 +40,7 @@ export default {
     }
   },
   created () {
-    this.queryUserGroup().then(res => {
+    this.queryUserRole().then(res => {
       const { rows } = res.data
       rows.forEach(element => {
         this.allData.push(element.id)
@@ -49,7 +49,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions({ queryUserGroup: 'QueryUserGroup' }),
+    ...mapActions({ queryUserRole: 'QueryUserRole' }),
     handleCheckAllChange (val) {
       this.checkedOptions = val ? this.allData : [];
       this.isIndeterminate = false;

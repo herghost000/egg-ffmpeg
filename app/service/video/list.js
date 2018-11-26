@@ -42,8 +42,8 @@ class VideoListService extends Service {
       order: [
         [ 'id', 'desc' ],
       ],
-      offset: ctx.helper.toInt(offset) || 0,
-      limit: ctx.helper.toInt(limit) || 10,
+      offset: ctx.helper.toInt(offset),
+      limit: ctx.helper.toInt(limit),
     };
     return {
       code: 200,

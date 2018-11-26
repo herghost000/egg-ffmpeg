@@ -29,8 +29,8 @@ class UserController extends Controller {
       order: [
         [ 'id', 'desc' ],
       ],
-      offset: ctx.helper.toInt(ctx.query.offset) || 0,
-      limit: ctx.helper.toInt(ctx.query.limit) || 10,
+      offset: ctx.helper.toInt(ctx.query.offset),
+      limit: ctx.helper.toInt(ctx.query.limit),
     };
     ctx.body = {
       code: 200,
@@ -40,22 +40,61 @@ class UserController extends Controller {
   }
 
   async create() {
-    // post posts
     const ctx = this.ctx;
     const {
       name,
+      age,
+      user_auths = [],
+      user_groups = [],
+      user_roles = [],
     } = ctx.request.body;
     const created_at = new Date();
     const updated_at = created_at;
-    const type = await ctx.model.User.create({
+    const user = await ctx.model.User.create({
       name,
+      age,
       created_at,
       updated_at,
     });
+
+    if (user_auths && user_groups && user_roles) {
+      user.addUser_auths(user_auths);
+      user.addUser_groups(user_groups);
+      user.addUser_roles(user_roles);
+    }
+
     ctx.body = {
       code: 200,
-      data: type || {},
+      data: user || {},
       message: '用户创建成功！',
+    };
+  }
+
+  async edit() {
+    const ctx = this.ctx;
+    const {
+      id,
+    } = ctx.params;
+
+    const user = await this.ctx.model.User.findOne({
+      include: [{
+        model: ctx.model.UserRole,
+      },
+      {
+        model: ctx.model.UserGroup,
+      },
+      {
+        model: ctx.model.UserAuth,
+      },
+      ],
+      where: {
+        id,
+      },
+    });
+    ctx.body = {
+      code: 200,
+      data: user || {},
+      message: '用户编辑信息获取成功！',
     };
   }
 
@@ -63,28 +102,68 @@ class UserController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = ctx.helper.toInt(ctx.params.id);
-    const type = await ctx.model.User.findById(id);
-    if (!type) {
+    let user = await ctx.model.User.findById(id);
+    if (!user) {
       ctx.status = {
         code: 404,
-        data: type,
-        message: '未找到需要编辑的用户！',
+        data: user,
+        message: '未找到需要更新的用户！',
       };
       return;
     }
 
     const {
       name,
+      age,
+      user_auths = [],
+      user_groups = [],
+      user_roles = [],
     } = ctx.request.body;
     const updated_at = new Date();
-    await type.update({
+    user = await user.update({
       name,
+      age,
       updated_at,
     });
+
+    const allUserAuths = await user.getUser_auths();
+    const allUserGroups = await user.getUser_groups();
+    const allUserRoles = await user.getUser_roles();
+
+    const allUserAuthsIds = allUserAuths.map(item => item.id);
+    const allUserGroupsIds = allUserGroups.map(item => item.id);
+    const allUserRolesIds = allUserRoles.map(item => item.id);
+
+    const allUserAuthsDupObjs = ctx.helper.duplicates(allUserAuthsIds.concat(user_auths));
+    const allUserAuthsAdds = ctx.helper.duplicates(user_auths.concat(allUserAuthsDupObjs.same)).diff;
+    const allUserAuthsDels = ctx.helper.duplicates(allUserAuthsIds.concat(allUserAuthsDupObjs.same)).diff;
+
+    const allUserGroupsDupObjs = ctx.helper.duplicates(allUserGroupsIds.concat(user_groups));
+    const allUserGroupsAdds = ctx.helper.duplicates(user_groups.concat(allUserGroupsDupObjs.same)).diff;
+    const allUserGroupsDels = ctx.helper.duplicates(allUserGroupsIds.concat(allUserGroupsDupObjs.same)).diff;
+
+
+    const allUserRolesDupObjs = ctx.helper.duplicates(allUserRolesIds.concat(user_roles));
+    const allUserRolesAdds = ctx.helper.duplicates(user_roles.concat(allUserRolesDupObjs.same)).diff;
+    const allUserRolesDels = ctx.helper.duplicates(allUserRolesIds.concat(allUserRolesDupObjs.same)).diff;
+
+    if (user_auths && user_groups && user_roles) {
+      !user_auths.length && user.removeUser_auths(allUserAuths);
+      !user_groups.length && user.removeUser_groups(allUserGroups);
+      !user_roles.length && user.removeUser_roles(allUserRoles);
+    }
+    user.addUser_auths(allUserAuthsAdds);
+    user.addUser_groups(allUserGroupsAdds);
+    user.addUser_roles(allUserRolesAdds);
+
+    user.removeUser_auths(allUserAuthsDels);
+    user.removeUser_groups(allUserGroupsDels);
+    user.removeUser_roles(allUserRolesDels);
+
     ctx.body = {
       code: 201,
-      data: type || {},
-      message: '用户信息编辑成功！',
+      data: user || {},
+      message: '用户信息更新成功！',
     };
   }
 

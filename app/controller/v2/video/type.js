@@ -25,8 +25,8 @@ class VideoTypeController extends Controller {
       order: [
         [ 'id', 'desc' ],
       ],
-      offset: toInt(ctx.query.offset) || 0,
-      limit: toInt(ctx.query.limit) || 10,
+      offset: toInt(ctx.query.offset),
+      limit: toInt(ctx.query.limit),
     };
     ctx.body = {
       code: 200,

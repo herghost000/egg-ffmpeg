@@ -12,7 +12,8 @@ import {
   queryUser,
   createUser,
   updateUser,
-  destoryUser
+  destoryUser,
+  editUser
 } from '@/api/user/user'
 
 const user = {
@@ -22,7 +23,7 @@ const user = {
     avatar: '',
     roles: [],
     code: 200,
-    rows: {},
+    rows: [],
     msg: '查询成功'
   },
 
@@ -51,7 +52,7 @@ const user = {
     UNPACK_USER_QUERY_RES(state, res) {
       this.commit('SET_USER_MSG', res.message)
       this.commit('SET_USER_CODE', res.code)
-      this.commit('SET_USER_ROWS', res.rows)
+      this.commit('SET_USER_ROWS', res.data.rows)
     }
   },
 
@@ -167,6 +168,29 @@ const user = {
           .catch(error => {
             reject(error)
           })
+      })
+    },
+    EditUser: ({
+      getters,
+      commit
+    }, playload) => {
+      return new Promise((resolve, reject) => {
+        const user = getters.userRows.filter(item => {
+          return item.id === +playload.id
+        })[0] || {}
+        console.log(user, 'user')
+        if (Object.isNotEmpty(user)) {
+          return resolve({
+            code: 200,
+            data: user,
+            message: '用户编辑信息获取成功！'
+          })
+        }
+        editUser(playload.id).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
     DestoryUser: ({

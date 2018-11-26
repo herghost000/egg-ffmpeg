@@ -8,6 +8,25 @@ const {
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 
+function duplicates(arr) {
+  const same = [];
+  const diff = [];
+  arr.sort();
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === arr[i + 1] && (same.indexOf(arr[i]) === -1)) {
+      same.push(arr[i]);
+      i++;
+    } else {
+      diff.push(arr[i]);
+    }
+  }
+
+  return {
+    same,
+    diff,
+  };
+}
+
 function host(ctx) {
   ctx = ctx || this.ctx;
   return ctx.helper.urlFor().slice(0, ctx.helper.urlFor().length - 1);
@@ -279,4 +298,5 @@ module.exports = {
   covertSep,
   aesEncrypt,
   aesDecrypt,
+  duplicates,
 };

@@ -23,6 +23,12 @@ export function updateUser(id, data) {
   })
 }
 
+export function editUser(id) {
+  return request({
+    url: `/api/v2/user/${id}/edit`
+  })
+}
+
 export function destoryUser(id) {
   return request({
     url: `/api/v2/user/${id}`,

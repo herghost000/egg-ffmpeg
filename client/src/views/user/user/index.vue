@@ -71,7 +71,7 @@
       <el-table-column label="注册时间"
                        align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.updated_at">
+          <template v-if="scope.row.created_at">
             {{scope.row.created_at | formatTime}}
           </template>
           <template v-else>

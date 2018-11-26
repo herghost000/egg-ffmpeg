@@ -12,6 +12,7 @@ const getters = {
   videoType: state => state.videoType,
   videoList: state => state.videoList,
   user: state => state.user,
+  userRows: state => state.user.rows,
   userRole: state => state.userRole,
   userMenu: state => state.userMenu,
   userGroup: state => state.userGroup,

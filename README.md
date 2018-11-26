@@ -18,7 +18,7 @@
 
 ## 简介
 
-[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。作者大大每天都在更新新的需求:pencil2:，希望不管你的需求是什么，本项目都能帮助到你。
+[egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。作者大大每天都在更新新的需求<span style="font-size:12px;">:pencil2:</span>,希望不管你的需求是什么，本项目都能帮助到你。
 
 ## 前序准备
 
@@ -47,12 +47,15 @@ https://www.mysql.com
 
 ## 功能
 
-- ✔︎在线上传视频并转码为mp4，同时切片为m3u8
-- ✔︎分享视频链接、iframe链接
+- ✔支持在线上传视频并转码为mp4，同时切片为m3u8
+- ✔︎支持分享视频链接、iframe链接
 - ✔︎支持ts加密
 - ✔︎支持水印烧录
 - ✔︎支持防盗链
-
+- ❌支持gif转码为视频
+- ❌支持多集发布
+- ❌支持转码为多种视频格式
+- ✨
 
 ## 开发
 

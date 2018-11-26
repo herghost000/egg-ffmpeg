@@ -16,7 +16,7 @@
 
 简体中文 | [English](./README.md)
 
-## 简介:pencil2:
+## :pencil2:简介
 
 [egg-video-admin](https://github.com/herghost000/egg-ffmpeg) 是一个视频点播后台集成解决方案，它基于 [FFmpeg](http://ffmpeg.org/)、[Egg](https://eggjs.org/zh-cn/) 和 [Vue](https://cn.vuejs.org/index.html)。希望不管你的需求是什么，本项目都能帮助到你。
 

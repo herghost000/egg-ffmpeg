@@ -23,7 +23,7 @@
 ## 前序准备
 
 ##### 官方文档
-watting
+:zzz:
 
 ##### 安装openssl
 https://www.openssl.org

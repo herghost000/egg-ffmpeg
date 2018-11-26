@@ -2,18 +2,16 @@
 const crypto = require('crypto');
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
-const {
-  write,
-} = require('await-stream-ready');
+const { write } = require('await-stream-ready');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
-
+const NodeRSA = require('node-rsa');
 function duplicates(arr) {
   const same = [];
   const diff = [];
   arr.sort();
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === arr[i + 1] && (same.indexOf(arr[i]) === -1)) {
+    if (arr[i] === arr[i + 1] && same.indexOf(arr[i]) === -1) {
       same.push(arr[i]);
       i++;
     } else {
@@ -183,7 +181,7 @@ function uniqueFileName(filename) {
 }
 
 function covertSep(_path) {
-  return _path.replace(/\\/img, '/');
+  return _path.replace(/\\/gim, '/');
 }
 
 module.exports = {
@@ -217,12 +215,7 @@ module.exports = {
     };
   },
   async chunkSave(baseDir, uploadPath, stream) {
-    let {
-      name,
-      total,
-      index,
-      key,
-    } = stream.fields;
+    let { name, total, index, key } = stream.fields;
     name = name || '';
     name = encodeURIComponent(name);
     name = `${md5(path.parse(name).name)}${path.parse(name).ext}`;
@@ -299,4 +292,19 @@ module.exports = {
   aesEncrypt,
   aesDecrypt,
   duplicates,
+  rsaEncrypt() {
+    const pu =
+      '-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCoRSxPqDLxsdbM9Q4D4sujWBKHCAEcMHD19fkRigMbVMROCrvuETSCBE9Yefz+bwu09Gt8gIM3uA78ZZpY1P0ugkrZUNtNLeXPSjDd4HCaSiQsP2dhUPkhLpO0yVh+HJT2ducfVJpTU+cTk39TQOpSEAyQoq0L7Zhqa2D/uTKo+wIDAQAB-----END PUBLIC KEY-----';
+    const pubkey = new NodeRSA(pu);
+
+    pubkey.setOptions({ encryptionScheme: 'pkcs1' });
+    return pubkey.encrypt('666', 'base64');
+  },
+  rsaDecrypt(encrypted) {
+    const pr =
+      '-----BEGIN PRIVATE KEY-----MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKhFLE+oMvGx1sz1DgPiy6NYEocIARwwcPX1+RGKAxtUxE4Ku+4RNIIET1h5/P5vC7T0a3yAgze4DvxlmljU/S6CStlQ200t5c9KMN3gcJpKJCw/Z2FQ+SEuk7TJWH4clPZ25x9UmlNT5xOTf1NA6lIQDJCirQvtmGprYP+5Mqj7AgMBAAECgYBZ9lGQbN5/tZKflUxe63vv4oBVTQQ66/MYrN7yb5TlodYp2zdKOkyWTnOVW/LUnM3net2UfKiqu27XpgJ1B7orqXSe0xRSlR4dqlKDSr4Q/Cq5ftmgKzdA13TlwyDJyO1B9Ru7VIvjhk9PBsb3gb4fLh13A8xUvgVwQlZpoOt3AQJBAO1PYp0pjwHfMAJRTw7OjzBFD8oPE2n/Jw8vpUFmWviDja3tDk+7MlY6tRfqbXkor3GS9rxRuf2EhUpVSK8Ko0ECQQC1hdCSgB7eS7hPIm2uxZGfud2n9IV0H/R91a4fX5CuCJdlnNlMesSuVbh3l6hFLhHC9U3YmKkG5sTZ67pgUck7AkEAzeig1190/5nJzWkBoQZnxelWrutv2/wRxyJ/UITgkFuNdomHbnUuUxWzhmHZxVQhDvoG7xY2vJvdD8d6Pq+LQQJADMedBZNrmO7vzPJ5kmJqfDpTtq1qb+CIEAvpNGBACWCleAvw6IeELVnvoMvWlvhFW9p1Xphw3gGFPmpwNrPLXQJAE6Vy+BkepP6KfSD/rwbsQcTMrPOP6jGtp+6VBuUca6s/mbKWabgd7/GxveTpNnIUwv6kh2O7kZV5c8+4AGRNBQ==-----END PRIVATE KEY-----';
+    const prikey = new NodeRSA(pr);
+    prikey.setOptions({ encryptionScheme: 'pkcs1' });
+    return prikey.decrypt(encrypted, 'utf8');
+  },
 };

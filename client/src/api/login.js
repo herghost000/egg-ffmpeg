@@ -1,32 +1,33 @@
 import request from '@/utils/request'
 
 export function login(username, password) {
+  request({
+    url: '/api/v2/user/login',
+    method: 'post',
+    data: {
+      username,
+      password
+    }
+  })
   return new Promise((resolve, reject) => {
     resolve({
-      'code': 20000,
-      'data': {
-        'token': 'admin'
+      code: 20000,
+      data: {
+        token: 'admin'
       }
     })
   })
-  // return request({
-  //   url: '/user/login',
-  //   method: 'post',
-  //   data: {
-  //     username,
-  //     password
-  //   }
-  // })
 }
 
 export function getInfo(token) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     resolve({
-      'code': 20000,
-      'data': {
-        'roles': ['admin'],
-        'name': 'admin',
-        'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+      code: 20000,
+      data: {
+        roles: ['admin'],
+        name: 'admin',
+        avatar:
+          'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
       }
     })
   })

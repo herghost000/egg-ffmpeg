@@ -2,33 +2,38 @@
 const Controller = require('egg').Controller;
 
 class UserController extends Controller {
+  async login() {
+    const ctx = this.ctx;
+    const { username, password } = ctx.request.body;
+    ctx.body = {
+      data: {
+        username,
+        password: ctx.helper.rsaDecrypt(password),
+        token: 'jwt',
+      },
+    };
+  }
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -72,20 +77,19 @@ class UserController extends Controller {
 
   async edit() {
     const ctx = this.ctx;
-    const {
-      id,
-    } = ctx.params;
+    const { id } = ctx.params;
 
     const user = await this.ctx.model.User.findOne({
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         id,
@@ -134,18 +138,35 @@ class UserController extends Controller {
     const allUserGroupsIds = allUserGroups.map(item => item.id);
     const allUserRolesIds = allUserRoles.map(item => item.id);
 
-    const allUserAuthsDupObjs = ctx.helper.duplicates(allUserAuthsIds.concat(user_auths));
-    const allUserAuthsAdds = ctx.helper.duplicates(user_auths.concat(allUserAuthsDupObjs.same)).diff;
-    const allUserAuthsDels = ctx.helper.duplicates(allUserAuthsIds.concat(allUserAuthsDupObjs.same)).diff;
+    const allUserAuthsDupObjs = ctx.helper.duplicates(
+      allUserAuthsIds.concat(user_auths)
+    );
+    const allUserAuthsAdds = ctx.helper.duplicates(
+      user_auths.concat(allUserAuthsDupObjs.same)
+    ).diff;
+    const allUserAuthsDels = ctx.helper.duplicates(
+      allUserAuthsIds.concat(allUserAuthsDupObjs.same)
+    ).diff;
 
-    const allUserGroupsDupObjs = ctx.helper.duplicates(allUserGroupsIds.concat(user_groups));
-    const allUserGroupsAdds = ctx.helper.duplicates(user_groups.concat(allUserGroupsDupObjs.same)).diff;
-    const allUserGroupsDels = ctx.helper.duplicates(allUserGroupsIds.concat(allUserGroupsDupObjs.same)).diff;
+    const allUserGroupsDupObjs = ctx.helper.duplicates(
+      allUserGroupsIds.concat(user_groups)
+    );
+    const allUserGroupsAdds = ctx.helper.duplicates(
+      user_groups.concat(allUserGroupsDupObjs.same)
+    ).diff;
+    const allUserGroupsDels = ctx.helper.duplicates(
+      allUserGroupsIds.concat(allUserGroupsDupObjs.same)
+    ).diff;
 
-
-    const allUserRolesDupObjs = ctx.helper.duplicates(allUserRolesIds.concat(user_roles));
-    const allUserRolesAdds = ctx.helper.duplicates(user_roles.concat(allUserRolesDupObjs.same)).diff;
-    const allUserRolesDels = ctx.helper.duplicates(allUserRolesIds.concat(allUserRolesDupObjs.same)).diff;
+    const allUserRolesDupObjs = ctx.helper.duplicates(
+      allUserRolesIds.concat(user_roles)
+    );
+    const allUserRolesAdds = ctx.helper.duplicates(
+      user_roles.concat(allUserRolesDupObjs.same)
+    ).diff;
+    const allUserRolesDels = ctx.helper.duplicates(
+      allUserRolesIds.concat(allUserRolesDupObjs.same)
+    ).diff;
 
     if (user_auths && user_groups && user_roles) {
       !user_auths.length && user.removeUser_auths(allUserAuths);

@@ -2,33 +2,37 @@
 const Controller = require('egg').Controller;
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+const NodeRSA = require('node-rsa');
+
 class HomeController extends Controller {
   async index() {
     const ctx = this.ctx;
-    const {
-      id,
-    } = ctx.params;
+    const newkey = new NodeRSA({ b: 1024 });
+    newkey.setOptions({ encryptionScheme: 'pkcs1' }); // 因为jsencrypt自身使用的是pkcs1加密方案,只有从后台改咯
+    const public_key = newkey.exportKey('pkcs8-public'), // 公钥,
+      private_key = newkey.exportKey('pkcs8-private'); // 私钥
+    console.log({ a: public_key, b: private_key });
+    const pubkey = new NodeRSA(public_key),
+      prikey = new NodeRSA(private_key);
+    pubkey.setOptions({ encryptionScheme: 'pkcs1' }); // 因为jsencrypt自身使用的是pkcs1加密方案,只有从后台改咯
+    prikey.setOptions({ encryptionScheme: 'pkcs1' }); // 因为jsencrypt自身使用的是pkcs1加密方案,只有从后台改咯
+    // 	   	加密 	&&	  解密方法
+    const encrypted = pubkey.encrypt('666', 'base64');
+    const decrypted = prikey.decrypt(encrypted, 'utf8');
+    console.log(decrypted);
+    ctx.body = 66;
+  }
+  async rsa() {
+    const newkey = new NodeRSA({ b: 1024 });
+    newkey.setOptions({ encryptionScheme: 'pkcs1' });
+    const public_key = newkey.exportKey('pkcs8-public'),
+      private_key = newkey.exportKey('pkcs8-private');
 
-    const user = await this.ctx.model.User.findOne({
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
-      ],
-      where: {
-        id: null,
-      },
+    return this.ctx.render('rsa.tpl', {
+      public: public_key,
+      private: private_key,
     });
-    ctx.body = {
-      code: 200,
-      data: user || {},
-      message: '用户创建成功！',
-    };
   }
 }
 module.exports = HomeController;

@@ -22,6 +22,12 @@ module.exports = appInfo => {
     },
   };
 
+  config.login = {
+    activeTime: 1000 * 60 * 30, // 30分钟未活动退出登陆
+    sign: 'signner666',
+    tokenExpiresIn: '60s',
+  };
+
   const uploadStaticPrefix = 'app';
   const uploadStaticDir = '/public/';
   config.upload = {
@@ -43,8 +49,8 @@ module.exports = appInfo => {
     port: 3306,
     database: 'database_development',
     username: 'root',
-    password: 'luotian520',
-    // password: 'root',
+    // password: 'luotian520',
+    password: 'root',
     operatorsAliases: Sequelize.Op,
     benchmark: false,
   };

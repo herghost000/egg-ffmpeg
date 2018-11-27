@@ -1,21 +1,13 @@
 import request from '@/utils/request'
 
 export function login(username, password) {
-  request({
+  return request({
     url: '/api/v2/user/login',
     method: 'post',
     data: {
       username,
       password
     }
-  })
-  return new Promise((resolve, reject) => {
-    resolve({
-      code: 20000,
-      data: {
-        token: 'admin'
-      }
-    })
   })
 }
 
@@ -26,8 +18,7 @@ export function getInfo(token) {
       data: {
         roles: ['admin'],
         name: 'admin',
-        avatar:
-          'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
       }
     })
   })

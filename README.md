@@ -38,6 +38,9 @@ http://ffmpeg.org
 ##### 安装mysql
 https://www.mysql.com
 
+##### 安装redis
+https://redis.io/
+
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr:smile:**
 
 ![image](https://raw.githubusercontent.com/herghost000/egg-ffmpeg/master/app/public/image/thumb.png)

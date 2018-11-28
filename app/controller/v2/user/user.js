@@ -5,10 +5,8 @@ const jwt = require('jsonwebtoken');
 class UserController extends Controller {
   async login() {
     const ctx = this.ctx;
-    let {
-      username,
-      password,
-    } = ctx.request.body;
+    const redis = this.app.redis;
+    let { username, password } = ctx.request.body;
 
     password = ctx.helper.rsaDecrypt(password);
 
@@ -28,15 +26,25 @@ class UserController extends Controller {
       };
       return void 0;
     }
-    const token = jwt.sign({
-      id: 1,
-      username,
-    }, this.config.login.sign, {
-      expiresIn: this.config.login.tokenExpiresIn,
-    });
+    const token = jwt.sign(
+      {
+        id: 1,
+        username,
+      },
+      this.config.login.sign,
+      {
+        expiresIn: this.config.login.tokenExpiresIn,
+      }
+    );
+    await redis.set(`user.${username}.token`, token);
+    redis.expire(`user.${username}.token`, 60 * 60 * 24 * 7);
+
+    const expires = new Date();
+    expires.setDate(expires.getDate() + this.config.login.tokenClientExpire);
+    // await redis.set(`user.${username}.tokenClientExpire`, +expires);
+
     ctx.cookies.set('X-Token', token, {
-      // maxAge: this.config.login.activeTime,
-      expires: null,
+      expires,
       httpOnly: false,
       overwrite: true,
       signed: false,
@@ -54,32 +62,26 @@ class UserController extends Controller {
     };
   }
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -123,20 +125,19 @@ class UserController extends Controller {
 
   async edit() {
     const ctx = this.ctx;
-    const {
-      id,
-    } = ctx.params;
+    const { id } = ctx.params;
 
     const user = await this.ctx.model.User.findOne({
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         id,

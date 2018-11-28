@@ -14,7 +14,7 @@ module.exports = appInfo => {
       enable: false,
     },
   };
-  // add your config here
+
   config.middleware = [];
   config.view = {
     mapping: {
@@ -22,10 +22,18 @@ module.exports = appInfo => {
     },
   };
 
+  config.rsa = {
+    private:
+      '-----BEGIN PRIVATE KEY-----MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKhFLE+oMvGx1sz1DgPiy6NYEocIARwwcPX1+RGKAxtUxE4Ku+4RNIIET1h5/P5vC7T0a3yAgze4DvxlmljU/S6CStlQ200t5c9KMN3gcJpKJCw/Z2FQ+SEuk7TJWH4clPZ25x9UmlNT5xOTf1NA6lIQDJCirQvtmGprYP+5Mqj7AgMBAAECgYBZ9lGQbN5/tZKflUxe63vv4oBVTQQ66/MYrN7yb5TlodYp2zdKOkyWTnOVW/LUnM3net2UfKiqu27XpgJ1B7orqXSe0xRSlR4dqlKDSr4Q/Cq5ftmgKzdA13TlwyDJyO1B9Ru7VIvjhk9PBsb3gb4fLh13A8xUvgVwQlZpoOt3AQJBAO1PYp0pjwHfMAJRTw7OjzBFD8oPE2n/Jw8vpUFmWviDja3tDk+7MlY6tRfqbXkor3GS9rxRuf2EhUpVSK8Ko0ECQQC1hdCSgB7eS7hPIm2uxZGfud2n9IV0H/R91a4fX5CuCJdlnNlMesSuVbh3l6hFLhHC9U3YmKkG5sTZ67pgUck7AkEAzeig1190/5nJzWkBoQZnxelWrutv2/wRxyJ/UITgkFuNdomHbnUuUxWzhmHZxVQhDvoG7xY2vJvdD8d6Pq+LQQJADMedBZNrmO7vzPJ5kmJqfDpTtq1qb+CIEAvpNGBACWCleAvw6IeELVnvoMvWlvhFW9p1Xphw3gGFPmpwNrPLXQJAE6Vy+BkepP6KfSD/rwbsQcTMrPOP6jGtp+6VBuUca6s/mbKWabgd7/GxveTpNnIUwv6kh2O7kZV5c8+4AGRNBQ==-----END PRIVATE KEY-----',
+    public:
+      '-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCoRSxPqDLxsdbM9Q4D4sujWBKHCAEcMHD19fkRigMbVMROCrvuETSCBE9Yefz+bwu09Gt8gIM3uA78ZZpY1P0ugkrZUNtNLeXPSjDd4HCaSiQsP2dhUPkhLpO0yVh+HJT2ducfVJpTU+cTk39TQOpSEAyQoq0L7Zhqa2D/uTKo+wIDAQAB-----END PUBLIC KEY-----',
+  };
+
   config.login = {
     activeTime: 1000 * 60 * 30, // 30分钟未活动退出登陆
     sign: 'signner666',
-    tokenExpiresIn: '60s',
+    tokenExpiresIn: '60s', // 令牌刷新时间
+    tokenClientExpire: 1, // 客户端token过期时间
   };
 
   const uploadStaticPrefix = 'app';
@@ -49,36 +57,54 @@ module.exports = appInfo => {
     port: 3306,
     database: 'database_development',
     username: 'root',
-    // password: 'luotian520',
-    password: 'root',
+    password: 'luotian520',
+    // password: 'root',
     operatorsAliases: Sequelize.Op,
     benchmark: false,
   };
 
-  config.rsa = {
-    private: `-----BEGIN RSA PRIVATE KEY-----
-    MIICXAIBAAKBgQDSVPyozh34XlAFuvDZlgy4KOCJ0KwvI8Dtsjzc8UMwsv8Zv17M
-    6pX6ZT9dB2DKgUeSBK1m7a2Jv1prcUJbiRRcpwm4klEheCeiANPiRcOwjUI2abDk
-    6EbA2RJlyu796vSanbgK5Jt2hDpuiCLDApqBZivGFu4W9wkXD68Ow0Pd5wIDAQAB
-    AoGAYaUU2uU9oqVeLxrXX5w6cXCAtVpL5WKK2Y7KlKPo1n3y0ig2wZkSYXmJjg2z
-    0K9t44sKWWN0EiPkvUaKUOZ1ranbi8wLUQy5PH2uETSgfZkrPkBAGT7U0+dqn72o
-    UMBD8tCGA9FSzs4VPjW3ysXEKqhJkp7IcDua51hwLdmfBWkCQQD5GgKrVGV7CoAS
-    ON5wSDfBVHkVRCyIc0H3VCxpvKZntD7m3Q9a2c5DFIdoj4XXBWLwteVmSk7x4Rt8
-    EXiSo5YlAkEA2CgfLvGm8dP6b9M469daMFgh++E8Jg3ZkTlJtYoZCpHsl+BBX2Cs
-    w+/bPAgfu5/isH35DejyA8RGkaRqobRoGwJAXpnzM4/srkqxkroIOAolKoXjKiFm
-    7DchcUWFTG65n57DWLfRUgZvn+gW+K2w/ZTtG09pHGzSCGgeIQMdkEsSBQJBAJo2
-    Zaj0NoqpFS7anu2DQpDjD7vHwUXU87esC249DAiCey0PjRQiwJ85bEuz8A/Hzc7k
-    0N6fpqoRSdd2WazsLKkCQHm7Cby2jrkexvBzGO0L4Oq5q+dl0ybBYyS/gmdP+hsL
-    Ck6PkOtrw61qmzN9O/Is+bLxs6L8g4BX/xme+y7CBnM=
-    -----END RSA PRIVATE KEY-----
-    `,
-    public: `-----BEGIN PUBLIC KEY-----
-    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDSVPyozh34XlAFuvDZlgy4KOCJ
-    0KwvI8Dtsjzc8UMwsv8Zv17M6pX6ZT9dB2DKgUeSBK1m7a2Jv1prcUJbiRRcpwm4
-    klEheCeiANPiRcOwjUI2abDk6EbA2RJlyu796vSanbgK5Jt2hDpuiCLDApqBZivG
-    Fu4W9wkXD68Ow0Pd5wIDAQAB
-    -----END PUBLIC KEY-----
-    `,
+  config.redis = {
+    client: {
+      cluster: true,
+      nodes: [
+        {
+          host: '127.0.0.1',
+          port: '7000',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7001',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7002',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7003',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7004',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7005',
+          password: 'root',
+          db: 'db',
+        },
+      ],
+    },
   };
 
   return config;

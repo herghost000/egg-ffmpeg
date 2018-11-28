@@ -4,11 +4,14 @@ const NodeRSA = require('node-rsa');
 
 class HomeController extends Controller {
   async index() {
-    const ctx = this.ctx;
-    const scheduleobjs = await this.app.runSchedule('spider');
-    scheduleobjs.start();
-    this.app.runSchedule('spider');
-    ctx.body = 666;
+    const { ctx, app } = this;
+    // set
+    await app.redis.set('foo', 'bar');
+    await app.redis.set('user.herghost.token', 6666);
+    app.redis.expire('user.herghost.token', 10);
+    console.log(await app.redis.ttl('user.herghost.token'));
+    // get
+    ctx.body = await app.redis.get('foo');
   }
   async rsa() {
     const newkey = new NodeRSA({

@@ -5,6 +5,7 @@
   "dependencies": {
     "await-stream-ready": "^1.0.1",
     "egg": "2.10.0",
+    "egg-redis": "^2.0.0",
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.1.0",
     "egg-validate": "^2.0.2",

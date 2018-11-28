@@ -1,21 +1,25 @@
 'use strict';
 
 module.exports = app => {
-  const { STRING, INTEGER, DATE } = app.Sequelize;
+  const {
+    STRING,
+    INTEGER,
+    DATE,
+  } = app.Sequelize;
   const User = app.model.define(
-    'user',
-    {
+    'user', {
       id: {
         type: INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
       name: STRING(30),
+      pass: STRING(30),
+      avator: STRING,
       age: INTEGER,
       created_at: DATE,
       updated_at: DATE,
-    },
-    {
+    }, {
       deletedAt: 'deleted_at',
       paranoid: true,
     }

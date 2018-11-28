@@ -7,12 +7,25 @@ module.exports = () => {
     const redis = ctx.app.redis;
     const config = ctx.app.config;
     const curTime = +new Date();
-    const { lastTime = 0, username } = ctx.session;
+    const {
+      lastTime = 0, username,
+    } = ctx.session;
     const time = curTime - lastTime;
 
-    if (username && time >= config.login.activeTime) {
+    if (!username) {
       ctx.status = 401;
       ctx.body = {
+        code: 401,
+        message: 'session已失效',
+      };
+      return;
+    }
+
+    if (username && time >= config.login.activeTime) {
+      ctx.session = {};
+      ctx.status = 401;
+      ctx.body = {
+        code: 401,
         message: '长时间未活动',
       };
       return;
@@ -29,8 +42,19 @@ module.exports = () => {
           decoded = jwt.decode(token);
           const redisToken = await redis.get(`user.${decoded.username}.token`);
           if (token !== redisToken || !redisToken) {
+            const dead = await redis.get(`user.${decoded.username}.dead`);
+            if (dead === 'yes') {
+              redis.del(`user.${decoded.username}.dead`);
+              ctx.status = 401;
+              ctx.body = {
+                code: 401,
+                message: '您的账号在别处被登陆',
+              };
+              return void 0;
+            }
             ctx.status = 401;
             ctx.body = {
+              code: 401,
               message: 'token失效',
             };
             return void 0;
@@ -39,15 +63,13 @@ module.exports = () => {
           ctx.session.username = decoded.username;
           ctx.session.id = decoded.id;
 
-          token = jwt.sign(
-            {
-              id: decoded.id,
-              username: decoded.username,
-            },
-            config.login.sign,
-            {
-              expiresIn: config.login.tokenExpiresIn,
-            }
+          token = jwt.sign({
+            id: decoded.id,
+            username: decoded.username,
+          },
+          config.login.sign, {
+            expiresIn: config.login.tokenExpiresIn,
+          }
           );
           await redis.set(`user.${decoded.username}.token`, token);
           redis.expire(`user.${username}.token`, ttl);
@@ -64,18 +86,40 @@ module.exports = () => {
         } else {
           ctx.status = 401;
           ctx.body = {
+            code: 401,
             message: '无效的token',
           };
           return;
         }
       }
+      decoded = jwt.decode(token);
+      const redisToken = await redis.get(`user.${decoded.username}.token`);
+      if (token !== redisToken || !redisToken) {
+        const dead = await redis.get(`user.${decoded.username}.dead`);
+        if (dead === 'yes') {
+          redis.del(`user.${decoded.username}.dead`);
+          ctx.status = 401;
+          ctx.body = {
+            code: 401,
+            message: '您的账号在别处被登陆',
+          };
+          return void 0;
+        }
+        ctx.status = 401;
+        ctx.body = {
+          code: 401,
+          message: 'token已失效',
+        };
+        return void 0;
+      }
       await next();
     } else {
       ctx.status = 401;
       ctx.body = {
-        message: '没有token',
+        code: 401,
+        message: 'token不存在',
       };
-      return;
+      return void 0;
     }
   };
 };

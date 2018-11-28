@@ -29,9 +29,6 @@
 ##### 官方文档
 :zzz:
 
-##### 安装openssl
-https://www.openssl.org
-
 ##### 安装node
 https://nodejs.org
 
@@ -40,6 +37,9 @@ http://ffmpeg.org
 
 ##### 安装mysql
 https://www.mysql.com
+
+##### 安装redis
+https://redis.io/
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr:smile:**
 
@@ -52,6 +52,7 @@ https://www.mysql.com
 - ✔︎支持ts加密
 - ✔︎支持水印烧录
 - ✔︎支持防盗链
+- ✔︎支持灵活配置，单独为角色赋予用户组、角色、或某些权限
 - ❌支持gif转码为视频
 - ❌支持多集发布
 - ❌支持转码为多种视频格式

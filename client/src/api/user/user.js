@@ -6,6 +6,11 @@ export function queryUser(params) {
     params
   })
 }
+export function queryUserSelfAuth() {
+  return request({
+    url: `/api/v2/userauth`
+  })
+}
 
 export function createUser(data) {
   return request({

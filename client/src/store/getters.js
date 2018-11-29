@@ -4,6 +4,7 @@ const getters = {
   language: state => state.app.language,
   device: state => state.app.device,
   token: state => state.user.token,
+  userid: state => state.user.id,
   avatar: state => state.user.avatar,
   name: state => state.user.name,
   roles: state => state.user.roles,

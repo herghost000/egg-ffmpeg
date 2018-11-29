@@ -1,7 +1,8 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import {
   queryUser,
+  queryUserSelfAuth,
   createUser,
   updateUser,
   destoryUser,
@@ -11,6 +12,7 @@ import {
 const user = {
   state: {
     token: getToken(),
+    id: null,
     name: '',
     avatar: '',
     roles: [],
@@ -25,6 +27,9 @@ const user = {
     },
     SET_NAME: (state, name) => {
       state.name = name
+    },
+    SET_USER_ID: (state, id) => {
+      state.id = id
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -56,7 +61,6 @@ const user = {
         login(username, userInfo.password)
           .then(response => {
             const data = response.data
-            // setToken(data.token)
             commit('SET_TOKEN', data.token)
             resolve()
           })
@@ -65,7 +69,34 @@ const user = {
           })
       })
     },
-
+    QueryUserSelfAuth({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        queryUserSelfAuth()
+          .then(response => {
+            const data = response.data
+            const { user_auths, user_groups, user_roles } = data
+            function parseUserAuths2Menu(user_auths = []) {
+              const menus = []
+              for (const i in user_auths) {
+                const auth = user_auths[i]
+                const { user_menus = [] } = auth
+                for (const ii in user_menus) {
+                  menus.push(user_menus[ii])
+                }
+              }
+              return menus
+            }
+            console.log(parseUserAuths2Menu(user_auths))
+            commit('SET_USER_ID', data.id)
+            commit('SET_NAME', data.name)
+            commit('SET_AVATAR', data.avatar)
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {

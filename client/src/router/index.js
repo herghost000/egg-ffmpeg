@@ -36,6 +36,7 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
+    name: 'Index',
     redirect: '/dashboard',
     children: [
       {
@@ -61,7 +62,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'setting',
-        name: 'Setting',
+        name: 'VideoSetting',
         component: () => import('@/views/video/setting/index'),
         meta: {
           title: '转码设置',
@@ -88,7 +89,7 @@ export const constantRouterMap = [
       },
       {
         path: 'movies',
-        name: 'Movies',
+        name: 'VideoMovies',
         component: () => import('@/views/video/movies/index'),
         meta: {
           title: '视频列表',

@@ -13,9 +13,14 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: STRING(30), // 菜单名
-      url: STRING, // 菜单url
+      name: STRING(30),
+      url: STRING,
+      component: STRING,
+      redirect: STRING,
+      title: STRING,
+      icon: STRING,
       pid: INTEGER,
+      sort: INTEGER,
       created_at: DATE,
       updated_at: DATE,
     }, {

@@ -40,6 +40,7 @@ import Hamburger from '@/components/Hamburger'
 import LangSelect from '@/components/LangSelect'
 
 export default {
+  name: 'Navbar',
   components: {
     Breadcrumb,
     Hamburger,

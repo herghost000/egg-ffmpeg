@@ -97,6 +97,7 @@ const defaultData = {
 }
 
 export default {
+  name: 'VideoUpload',
   components: {
     VideoUpload
   },
@@ -188,34 +189,34 @@ export default {
 
 <style scoped>
 .line {
-    text-align: center;
+  text-align: center;
 }
 .upload_pic {
-    max-width: 300px;
+  max-width: 300px;
 }
 .el-carousel__item h3 {
-    color: #475669;
-    font-size: 14px;
-    opacity: 0.75;
-    line-height: 200px;
-    margin: 0;
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
 }
 
 .el-carousel__item:nth-child(2n) {
-    /* background-color: #99a9bf; */
+  /* background-color: #99a9bf; */
 }
 
 .el-carousel__item:nth-child(2n + 1) {
-    /* background-color: #d3dce6; */
+  /* background-color: #d3dce6; */
 }
 .el-form {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 .el-carousel__item {
-    text-align: center;
+  text-align: center;
 }
 .banner {
-    height: 100%;
+  height: 100%;
 }
 </style>
 

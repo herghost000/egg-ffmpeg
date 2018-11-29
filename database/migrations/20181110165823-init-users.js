@@ -21,6 +21,8 @@ module.exports = {
         autoIncrement: true,
       },
       name: STRING(30),
+      pass: STRING(30),
+      avatar: STRING,
       age: INTEGER,
       created_at: DATE,
       updated_at: DATE,

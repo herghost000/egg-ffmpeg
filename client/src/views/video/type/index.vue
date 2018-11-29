@@ -70,6 +70,7 @@
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'VideoType',
   data () {
     return {
       listLoading: false,

@@ -11,18 +11,30 @@ class VideoController extends Controller {
   }
   async link() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
-    const { token } = ctx.query;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
+    const {
+      token,
+    } = ctx.query;
     const referer = ctx.get('Referer');
-    const { host } = url.parse(referer);
+    const {
+      host,
+    } = url.parse(referer);
     const setting = await ctx.service.video.setting.find();
-    const { antiwhite, antikey } = setting.data;
+    const {
+      antiwhite,
+      antikey,
+    } = setting.data;
     const atWhitList = antiwhite
       .replace(/\s/gim, '')
       .split('|')
       .indexOf(host);
-    if (!atWhitList) {
-      const { access } = await new Promise(resolve => {
+    if (!atWhitList || !atWhitList.includes(host)) {
+      const {
+        access,
+      } = await new Promise(resolve => {
         jwt.verify(token, antikey, function(err, decoded) {
           if (err) {
             return resolve(false);
@@ -47,7 +59,10 @@ class VideoController extends Controller {
   }
   async ts() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
     const realname = `${filename}.ts`;
     const filePath = path.join(
       this.config.transcode.baseDir,
@@ -59,7 +74,9 @@ class VideoController extends Controller {
   }
   async key() {
     const ctx = this.ctx;
-    const { dirname } = ctx.params;
+    const {
+      dirname,
+    } = ctx.params;
     const realname = 'ts.key';
     const filePath = path.join(
       this.config.transcode.baseDir,
@@ -81,7 +98,9 @@ class VideoController extends Controller {
   }
   async share() {
     const ctx = this.ctx;
-    const { id } = ctx.params;
+    const {
+      id,
+    } = ctx.params;
 
     const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
     if (!video.data) {
@@ -96,7 +115,10 @@ class VideoController extends Controller {
       name,
       surface_plot,
       dsc,
-      video_decode: { status_id, chunk_path },
+      video_decode: {
+        status_id,
+        chunk_path,
+      },
     } = video.data;
     const sp = chunk_path.split('/');
     const filename = sp.pop();
@@ -110,18 +132,19 @@ class VideoController extends Controller {
       return void 0;
     }
     const setting = await ctx.service.video.setting.find();
-    const { antikey } = setting.data;
-    const token = jwt.sign(
-      {
-        access: 'view',
-      },
+    const {
       antikey,
-      {
-        expiresIn: '1h',
-      }
+      host,
+    } = setting.data;
+    const token = jwt.sign({
+      access: 'view',
+    },
+    antikey, {
+      expiresIn: '1h',
+    }
     );
     return ctx.render('share.tpl', {
-      video_url: `http://localhost:7001/video/link/${dirname}/${filename}?token=${token}`,
+      video_url: `${host}/video/link/${dirname}/${filename}?token=${token}`,
       name,
       surface_plot,
       dsc,

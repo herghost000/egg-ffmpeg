@@ -1,5 +1,12 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, removeToken } from '@/utils/auth'
+import {
+  login,
+  logout,
+  getInfo
+} from '@/api/login'
+import {
+  getToken,
+  removeToken
+} from '@/utils/auth'
 import {
   queryUser,
   queryUserSelfAuth,
@@ -16,11 +23,14 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
+    routers: [],
+    auth: {
+      user_menus: []
+    },
     code: 200,
     rows: [],
     msg: '查询成功'
   },
-
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
@@ -36,6 +46,12 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_AUTHMENUS: (state, user_menus) => {
+      state.auth.user_menus = user_menus
+    },
+    SET_ROUTERS: (state, routers) => {
+      state.routers = routers
     },
     SET_USER_ROWS: (state, rows) => {
       state.rows = rows || []
@@ -55,7 +71,9 @@ const user = {
 
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
+    Login({
+      commit
+    }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password)
@@ -69,24 +87,86 @@ const user = {
           })
       })
     },
-    QueryUserSelfAuth({ commit, state }) {
+    GenerateRoutes({
+      commit
+    }, menus) {
+      return new Promise(resolve => {
+        const GetComponent = function (index) {
+          return () => import(index)
+        }
+        const path = '../../views/layout/Layout'
+        const pmenus = menus.filter(_ => !_.pid)
+        const routers = pmenus.map((pmenu) => {
+          pmenu = { ...pmenu
+          }
+          pmenu.component = GetComponent('' + pmenu.component)
+          const cmenus = menus.filter(menu => pmenu.id === menu.pid)
+          pmenu.children = cmenus.map(cmenu => {
+            cmenu = { ...cmenu
+            }
+            return {
+              path: cmenu.url,
+              component: GetComponent('' + cmenu.component),
+              name: cmenu.name,
+              meta: {
+                title: cmenu.title,
+                icon: cmenu.icon
+              }
+            }
+          })
+          return {
+            path: pmenu.url,
+            component: pmenu.component,
+            redirect: pmenu.redirect,
+            name: pmenu.name,
+            meta: {
+              title: pmenu.title,
+              icon: pmenu.icon
+            },
+            children: pmenu.children
+          }
+        })
+        commit('SET_ROUTERS', routers)
+        resolve()
+      })
+    },
+    QueryUserSelfAuth({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
         queryUserSelfAuth()
           .then(response => {
             const data = response.data
-            const { user_auths, user_groups, user_roles } = data
+            const {
+              user_auths,
+              user_groups,
+              user_roles
+            } = data
+
             function parseUserAuths2Menu(user_auths = []) {
               const menus = []
               for (const i in user_auths) {
                 const auth = user_auths[i]
-                const { user_menus = [] } = auth
+                const {
+                  user_menus = []
+                } = auth
                 for (const ii in user_menus) {
                   menus.push(user_menus[ii])
                 }
               }
+              menus.sort(function (b, a) {
+                if (a.sort > b.sort) {
+                  return -1
+                } else if (a.sort === b.sort) {
+                  return 0
+                }
+                return 1
+              })
               return menus
             }
-            console.log(parseUserAuths2Menu(user_auths))
+
+            commit('SET_AUTHMENUS', parseUserAuths2Menu(user_auths))
             commit('SET_USER_ID', data.id)
             commit('SET_NAME', data.name)
             commit('SET_AVATAR', data.avatar)
@@ -98,7 +178,10 @@ const user = {
       })
     },
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    GetInfo({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token)
           .then(response => {
@@ -120,7 +203,10 @@ const user = {
     },
 
     // 登出
-    LogOut({ commit, state }) {
+    LogOut({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
         logout(state.token)
           .then(() => {
@@ -136,18 +222,24 @@ const user = {
     },
 
     // 前端 登出
-    FedLogOut({ commit }) {
+    FedLogOut({
+      commit
+    }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         removeToken()
         resolve()
       })
     },
-    QueryUser: ({ commit }, playload) => {
+    QueryUser: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         queryUser(playload)
           .then(response => {
-            const { code } = response
+            const {
+              code
+            } = response
             if (code === 200) {
               commit('UNPACK_USER_QUERY_RES', response)
             } else {
@@ -160,7 +252,9 @@ const user = {
           })
       })
     },
-    CreateUser: ({ commit }, playload) => {
+    CreateUser: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         createUser(playload)
           .then(response => {
@@ -171,7 +265,9 @@ const user = {
           })
       })
     },
-    UpdateUser: ({ commit }, playload) => {
+    UpdateUser: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         updateUser(playload.id, playload)
           .then(response => {
@@ -182,7 +278,10 @@ const user = {
           })
       })
     },
-    EditUser: ({ getters, commit }, playload) => {
+    EditUser: ({
+      getters,
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         const user =
           getters.userRows.filter(item => {
@@ -205,7 +304,9 @@ const user = {
           })
       })
     },
-    DestoryUser: ({ commit }, playload) => {
+    DestoryUser: ({
+      commit
+    }, playload) => {
       return new Promise((resolve, reject) => {
         destoryUser(playload.id)
           .then(response => {

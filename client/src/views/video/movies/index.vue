@@ -176,6 +176,7 @@ import waves from '@/directive/waves/index.js' // 水波纹指令
 import { mapActions, mapGetters } from 'vuex'
 import clipboard from '@/directive/clipboard/index.js' // use clipboard by v-directive
 export default {
+  name: 'VideoMovies',
   directives: {
     clipboard,
     waves
@@ -295,15 +296,15 @@ export default {
 </script>
 <style scoped>
 .el-pagination {
-    margin-top: 20px;
-    text-align: right;
+  margin-top: 20px;
+  text-align: right;
 }
 .surface_plot {
-    width: 100px;
-    transition: all 0.2s linear;
+  width: 100px;
+  transition: all 0.2s linear;
 }
 .surface_plot:hover {
-    /* transform: scale(1.5, 1.5);
+  /* transform: scale(1.5, 1.5);
     filter: contrast(150%); */
 }
 </style>

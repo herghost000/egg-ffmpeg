@@ -79,6 +79,7 @@ import { mapActions } from 'vuex'
 import { deepClone } from '@/utils/index'
 
 export default {
+  name: 'VideoSetting',
   data () {
     return {
       initDB: false,
@@ -170,6 +171,6 @@ export default {
 </script>
 <style scoped>
 .watermark {
-    max-width: 300px;
+  max-width: 300px;
 }
 </style>

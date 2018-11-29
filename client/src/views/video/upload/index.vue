@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <el-carousel :interval="4000"
+    <el-carousel v-if="banners.length" :interval="4000"
                  type="card"
                  height="200px">
       <el-carousel-item v-for="item in banners"
                         :key="item.id">
         <img class="banner"
-             :src="item.surface_plot"
+             :src="item.surface_plot || require('@/assets/images/nopic.png')"
              alt="">
       </el-carousel-item>
     </el-carousel>
@@ -97,7 +97,7 @@ const defaultData = {
 }
 
 export default {
-  name: 'VideoUpload',
+  name: 'VideoCreate',
   components: {
     VideoUpload
   },

@@ -1,12 +1,5 @@
-import {
-  login,
-  logout,
-  getInfo
-} from '@/api/login'
-import {
-  getToken,
-  removeToken
-} from '@/utils/auth'
+import { login, logout, getInfo } from '@/api/login'
+import { getToken, removeToken } from '@/utils/auth'
 import {
   queryUser,
   queryUserSelfAuth,
@@ -15,6 +8,10 @@ import {
   destoryUser,
   editUser
 } from '@/api/user/user'
+
+function asyncComponent(path) {
+  return () => import('@/' + path + '.vue')
+}
 
 const user = {
   state: {
@@ -71,9 +68,7 @@ const user = {
 
   actions: {
     // 登录
-    Login({
-      commit
-    }, userInfo) {
+    Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password)
@@ -87,26 +82,21 @@ const user = {
           })
       })
     },
-    GenerateRoutes({
-      commit
-    }, menus) {
+    GenerateRoutes({ commit }, menus) {
       return new Promise(resolve => {
-        const GetComponent = function (index) {
-          return () => import(index)
-        }
-        const path = '../../views/layout/Layout'
         const pmenus = menus.filter(_ => !_.pid)
-        const routers = pmenus.map((pmenu) => {
-          pmenu = { ...pmenu
+        const routers = pmenus.map(pmenu => {
+          pmenu = {
+            ...pmenu
           }
-          pmenu.component = GetComponent('' + pmenu.component)
           const cmenus = menus.filter(menu => pmenu.id === menu.pid)
           pmenu.children = cmenus.map(cmenu => {
-            cmenu = { ...cmenu
+            cmenu = {
+              ...cmenu
             }
             return {
               path: cmenu.url,
-              component: GetComponent('' + cmenu.component),
+              component: asyncComponent(cmenu.component),
               name: cmenu.name,
               meta: {
                 title: cmenu.title,
@@ -116,7 +106,7 @@ const user = {
           })
           return {
             path: pmenu.url,
-            component: pmenu.component,
+            component: asyncComponent(pmenu.component),
             redirect: pmenu.redirect,
             name: pmenu.name,
             meta: {
@@ -130,32 +120,23 @@ const user = {
         resolve()
       })
     },
-    QueryUserSelfAuth({
-      commit,
-      state
-    }) {
+    QueryUserSelfAuth({ commit, state }) {
       return new Promise((resolve, reject) => {
         queryUserSelfAuth()
           .then(response => {
             const data = response.data
-            const {
-              user_auths,
-              user_groups,
-              user_roles
-            } = data
+            const { user_auths, user_groups, user_roles } = data
 
             function parseUserAuths2Menu(user_auths = []) {
               const menus = []
               for (const i in user_auths) {
                 const auth = user_auths[i]
-                const {
-                  user_menus = []
-                } = auth
+                const { user_menus = [] } = auth
                 for (const ii in user_menus) {
                   menus.push(user_menus[ii])
                 }
               }
-              menus.sort(function (b, a) {
+              menus.sort(function(b, a) {
                 if (a.sort > b.sort) {
                   return -1
                 } else if (a.sort === b.sort) {
@@ -178,10 +159,7 @@ const user = {
       })
     },
     // 获取用户信息
-    GetInfo({
-      commit,
-      state
-    }) {
+    GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token)
           .then(response => {
@@ -203,10 +181,7 @@ const user = {
     },
 
     // 登出
-    LogOut({
-      commit,
-      state
-    }) {
+    LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token)
           .then(() => {
@@ -222,24 +197,18 @@ const user = {
     },
 
     // 前端 登出
-    FedLogOut({
-      commit
-    }) {
+    FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         removeToken()
         resolve()
       })
     },
-    QueryUser: ({
-      commit
-    }, playload) => {
+    QueryUser: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         queryUser(playload)
           .then(response => {
-            const {
-              code
-            } = response
+            const { code } = response
             if (code === 200) {
               commit('UNPACK_USER_QUERY_RES', response)
             } else {
@@ -252,9 +221,7 @@ const user = {
           })
       })
     },
-    CreateUser: ({
-      commit
-    }, playload) => {
+    CreateUser: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         createUser(playload)
           .then(response => {
@@ -265,9 +232,7 @@ const user = {
           })
       })
     },
-    UpdateUser: ({
-      commit
-    }, playload) => {
+    UpdateUser: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         updateUser(playload.id, playload)
           .then(response => {
@@ -278,10 +243,7 @@ const user = {
           })
       })
     },
-    EditUser: ({
-      getters,
-      commit
-    }, playload) => {
+    EditUser: ({ getters, commit }, playload) => {
       return new Promise((resolve, reject) => {
         const user =
           getters.userRows.filter(item => {
@@ -304,9 +266,7 @@ const user = {
           })
       })
     },
-    DestoryUser: ({
-      commit
-    }, playload) => {
+    DestoryUser: ({ commit }, playload) => {
       return new Promise((resolve, reject) => {
         destoryUser(playload.id)
           .then(response => {

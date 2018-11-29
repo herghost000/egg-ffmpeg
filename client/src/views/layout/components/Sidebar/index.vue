@@ -18,7 +18,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
-
+import {constantRouterMap} from '@/router/index'
 export default {
   name: 'Sidebar',
   components: { SidebarItem },
@@ -28,8 +28,8 @@ export default {
       'routers'
     ]),
     routes () {
-      return this.routers
-      return this.$router.options.routes
+      return this.routers.concat(constantRouterMap)
+      // return this.$router.options.routes
     },
     isCollapse () {
       return !this.sidebar.opened

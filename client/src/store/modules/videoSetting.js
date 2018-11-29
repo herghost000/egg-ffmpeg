@@ -66,6 +66,12 @@ const app = {
       return new Promise((resolve, reject) => {
         updateSetting(playload.id, playload)
           .then(response => {
+            const { code } = response
+            if (code === 200) {
+              commit('UNPACK_VIDEOSETTING_QUERY_RES', response)
+            } else {
+              commit('SET_VIDEOSETTING_DATA')
+            }
             resolve(response)
           })
           .catch(error => {

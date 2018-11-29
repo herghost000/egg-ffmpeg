@@ -6,8 +6,12 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+function asyncComponent(path) {
+  return () => import('@/' + path + '.vue')
+}
+
 /* Layout */
-const Layout = () => import('@/views/layout/Layout')
+const Layout = asyncComponent('views/layout/Layout')
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -21,32 +25,34 @@ const Layout = () => import('@/views/layout/Layout')
     icon: 'svg-name'             the icon show in the sidebar,
   }
 **/
-export const constantRouterMap = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/404',
-  component: () => import('@/views/404'),
-  hidden: true
-},
-
-{
-  path: '/',
-  component: Layout,
-  name: 'Index',
-  redirect: '/dashboard',
-  children: [{
-    name: 'Dashboard',
-    path: 'dashboard',
-    meta: {
-      title: '首页',
-      icon: 'dashboard'
-    },
-    component: () => import('@/views/dashboard/index')
-  }]
-},
+export const constantRouterMap = [
+  {
+    path: '*',
+    component: asyncComponent('views/404'),
+    hidden: true
+  },
+  {
+    path: '/login',
+    component: asyncComponent('views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/',
+    component: Layout,
+    name: 'Index',
+    redirect: '/dashboard',
+    children: [
+      {
+        name: 'Dashboard',
+        path: 'dashboard',
+        meta: {
+          title: '首页',
+          icon: 'dashboard'
+        },
+        component: asyncComponent('views/dashboard/index')
+      }
+    ]
+  },
   // {
   //   path: '/video',
   //   component: Layout,
@@ -94,223 +100,84 @@ export const constantRouterMap = [{
   //   }
   //   ]
   // },
-{
-  path: '/user',
-  component: Layout,
-  redirect: '/user/list',
-  name: 'User',
-  meta: {
-    title: '用户管理',
-    icon: 'example'
-  },
-  children: [{
-    path: 'list',
-    name: 'UserList',
-    component: () => import('@/views/user/user/index'),
-    meta: {
-      title: '用户列表',
-      icon: 'user'
-    }
-  },
   {
-    path: 'create',
-    name: 'UserCreate',
-    component: () => import('@/views/user/user/create/index'),
+    path: '/user',
+    component: Layout,
+    redirect: '/user/list',
+    name: 'User',
     meta: {
-      title: '用户创建',
-      icon: 'user'
+      title: '用户管理',
+      icon: 'example'
     },
-    hidden: true
-  },
-  {
-    path: 'edit/:id(\\d+)',
-    name: 'UserEdit',
-    component: () => import('@/views/user/user/edit/index'),
-    meta: {
-      title: '用户编辑',
-      icon: 'user',
-      noCache: true
-    },
-    hidden: true
-  },
-  {
-    path: 'group',
-    name: 'UserGroup',
-    component: () => import('@/views/user/group/index'),
-    meta: {
-      title: '分组列表',
-      icon: 'user'
-    }
-  },
-  {
-    path: 'role',
-    name: 'UserRole',
-    component: () => import('@/views/user/role/index'),
-    meta: {
-      title: '角色列表',
-      icon: 'user'
-    }
-  },
-  {
-    path: 'auth',
-    name: 'UserAuth',
-    component: () => import('@/views/user/auth/index'),
-    meta: {
-      title: '权限列表',
-      icon: 'user'
-    }
-  },
-  {
-    path: 'menu',
-    name: 'UserMenu',
-    component: () => import('@/views/user/menu/index'),
-    meta: {
-      title: '菜单列表',
-      icon: 'user'
-    }
+    children: [
+      {
+        path: 'list',
+        name: 'UserList',
+        component: asyncComponent('views/user/user/index'),
+        meta: {
+          title: '用户列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'create',
+        name: 'UserCreate',
+        component: asyncComponent('views/user/user/create/index'),
+        meta: {
+          title: '用户创建',
+          icon: 'user'
+        },
+        hidden: true
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'UserEdit',
+        component: asyncComponent('views/user/user/edit/index'),
+        meta: {
+          title: '用户编辑',
+          icon: 'user',
+          noCache: true
+        },
+        hidden: true
+      },
+      {
+        path: 'group',
+        name: 'UserGroup',
+        component: asyncComponent('views/user/group/index'),
+        meta: {
+          title: '分组列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'role',
+        name: 'UserRole',
+        component: asyncComponent('views/user/role/index'),
+        meta: {
+          title: '角色列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'auth',
+        name: 'UserAuth',
+        component: asyncComponent('views/user/auth/index'),
+        meta: {
+          title: '权限列表',
+          icon: 'user'
+        }
+      },
+      {
+        path: 'menu',
+        name: 'UserMenu',
+        component: asyncComponent('views/user/menu/index'),
+        meta: {
+          title: '菜单列表',
+          icon: 'user'
+        }
+      }
+    ]
   }
-  ]
-},
-  // {
-  //   path: '/example',
-  //   component: Layout,
-  //   redirect: '/example/table',
-  //   name: 'Example',
-  //   meta: {
-  //     title: 'Example',
-  //     icon: 'example'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'table',
-  //       name: 'Table',
-  //       component: () => import('@/views/table/index'),
-  //       meta: {
-  //         title: 'Table',
-  //         icon: 'table'
-  //       }
-  //     },
-  //     {
-  //       path: 'tree',
-  //       name: 'Tree',
-  //       component: () => import('@/views/tree/index'),
-  //       meta: {
-  //         title: 'Tree',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/form',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'Form',
-  //       component: () => import('@/views/form/index'),
-  //       meta: {
-  //         title: 'Form',
-  //         icon: 'form'
-  //       }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/nested',
-  //   component: Layout,
-  //   redirect: '/nested/menu1',
-  //   name: 'Nested',
-  //   meta: {
-  //     title: 'Nested',
-  //     icon: 'nested'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'menu1',
-  //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
-  //       name: 'Menu1',
-  //       meta: {
-  //         title: 'Menu1'
-  //       },
-  //       children: [
-  //         {
-  //           path: 'menu1-1',
-  //           component: () => import('@/views/nested/menu1/menu1-1'),
-  //           name: 'Menu1-1',
-  //           meta: {
-  //             title: 'Menu1-1'
-  //           }
-  //         },
-  //         {
-  //           path: 'menu1-2',
-  //           component: () => import('@/views/nested/menu1/menu1-2'),
-  //           name: 'Menu1-2',
-  //           meta: {
-  //             title: 'Menu1-2'
-  //           },
-  //           children: [
-  //             {
-  //               path: 'menu1-2-1',
-  //               component: () =>
-  //                 import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-  //               name: 'Menu1-2-1',
-  //               meta: {
-  //                 title: 'Menu1-2-1'
-  //               }
-  //             },
-  //             {
-  //               path: 'menu1-2-2',
-  //               component: () =>
-  //                 import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-  //               name: 'Menu1-2-2',
-  //               meta: {
-  //                 title: 'Menu1-2-2'
-  //               }
-  //             }
-  //           ]
-  //         },
-  //         {
-  //           path: 'menu1-3',
-  //           component: () => import('@/views/nested/menu1/menu1-3'),
-  //           name: 'Menu1-3',
-  //           meta: {
-  //             title: 'Menu1-3'
-  //           }
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: 'menu2',
-  //       component: () => import('@/views/nested/menu2/index'),
-  //       meta: {
-  //         title: 'menu2'
-  //       }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-  //       meta: {
-  //         title: 'External Link',
-  //         icon: 'link'
-  //       }
-  //     }
-  //   ]
-  // },
-
-{
-  path: '*',
-  redirect: '/404',
-  hidden: true
-}
 ]
 
 export default new Router({

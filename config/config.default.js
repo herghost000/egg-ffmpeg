@@ -56,61 +56,61 @@ module.exports = appInfo => {
     port: 3306,
     database: 'database_development',
     username: 'root',
-    // password: 'luotian520',
-    password: 'root',
+    password: 'luotian520',
+    // password: 'root',
     operatorsAliases: Sequelize.Op,
     benchmark: false,
   };
 
   config.redis = {
-    client: {
-      host: '127.0.0.1',
-      port: '6379',
-      family: 'ooo',
-      password: 'root',
-      db: '0',
-    },
     // client: {
-    //   cluster: true,
-    //   nodes: [
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7000',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7001',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7002',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7003',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7004',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //     {
-    //       host: '127.0.0.1',
-    //       port: '7005',
-    //       password: 'root',
-    //       db: 'db',
-    //     },
-    //   ],
+    //   host: '127.0.0.1',
+    //   port: '6379',
+    //   family: 'ooo',
+    //   password: 'root',
+    //   db: '0',
     // },
+    client: {
+      cluster: true,
+      nodes: [
+        {
+          host: '127.0.0.1',
+          port: '7000',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7001',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7002',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7003',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7004',
+          password: 'root',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '7005',
+          password: 'root',
+          db: 'db',
+        },
+      ],
+    },
   };
 
   return config;

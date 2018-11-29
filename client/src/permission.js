@@ -2,15 +2,8 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css' // Progress 进度条样式
-import {
-  Message
-} from 'element-ui'
-import {
-  getToken
-} from '@/utils/auth' // 验权
-import {
-  Base64
-} from 'js-base64'
+import { Message } from 'element-ui'
+import { getToken } from '@/utils/auth' // 验权
 
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
@@ -23,14 +16,16 @@ router.beforeEach((to, from, next) => {
       })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      if (Object.isEmpty(store.getters.authMenus)) {
+      if (Object.isEmpty(store.getters.routers)) {
+        console.log('???')
         store
           .dispatch('QueryUserSelfAuth')
           .then(res => {
             const menus = store.getters.authMenus
             store.dispatch('GenerateRoutes', menus).then(() => {
               router.addRoutes(store.getters.routers)
-              next({ ...to,
+              next({
+                ...to,
                 replace: true
               })
             })

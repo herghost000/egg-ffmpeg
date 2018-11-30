@@ -17,7 +17,13 @@
       <el-table-column prop="id"
                        label="ID">
       </el-table-column>
-      <el-table-column label="角色">
+      <el-table-column prop="title"
+                       label="菜单名">
+      </el-table-column>
+      <el-table-column prop="url"
+                       label="路由">
+      </el-table-column>
+      <el-table-column label="组件名">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-input v-model="scope.row.name"
@@ -32,7 +38,9 @@
           <span v-else>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column prop="component"
+                       label="组件路径">
+      </el-table-column>
       <el-table-column align="center"
                        label="操作">
         <template slot-scope="scope">
@@ -42,14 +50,15 @@
                      icon="el-icon-circle-check-outline"
                      @click="confirmEdit(scope.row)">确定</el-button>
           <el-button v-else
-                     type="primary"
-                     size="small"
-                     icon="el-icon-edit"
-                     @click="scope.row.edit=!scope.row.edit">编辑</el-button>
-          <el-button size="small"
+                     size="mini"
+                     icon="el-icon-edit-outline"
+                     class="operate-btn"
+                     @click="confirmEdit(scope.row)"></el-button>
+          <el-button size="mini"
                      type="danger"
                      icon="el-icon-delete"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                     class="operate-btn"
+                     @click="handleDelete(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -61,13 +70,16 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
+    <menu-detail v-model="visible"></menu-detail>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import { deepClone } from '@/utils/index'
+import MenuDetail from './components/MenuDetail'
 
 export default {
+  components: { MenuDetail },
   data () {
     return {
       listLoading: false,
@@ -80,7 +92,8 @@ export default {
         offset: 0,
         limit: 5,
         total: 0
-      }
+      },
+      visible: true
     }
   },
   created () {

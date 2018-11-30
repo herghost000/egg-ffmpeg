@@ -34,17 +34,17 @@ class UserAuthController extends Controller {
     const ctx = this.ctx;
     const {
       name,
+      menu_id,
     } = ctx.request.body;
     const created_at = new Date();
-    const updated_at = created_at;
-    const type = await ctx.model.UserAuth.create({
+    const auth = await ctx.model.UserAuth.create({
       name,
       created_at,
-      updated_at,
     });
+    auth.setUser_menu(menu_id);
     ctx.body = {
       code: 200,
-      data: type || {},
+      data: auth || {},
       message: '用户创建成功！',
     };
   }

@@ -2,8 +2,12 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css' // Progress 进度条样式
-import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth' // 验权
+import {
+  Message
+} from 'element-ui'
+import {
+  getToken
+} from '@/utils/auth' // 验权
 
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
@@ -16,13 +20,18 @@ router.beforeEach((to, from, next) => {
       })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      if (Object.isEmpty(store.getters.routers)) {
-        console.log('???')
+      if (store.getters.isPullRouters) {
         store
           .dispatch('QueryUserSelfAuth')
           .then(res => {
             const menus = store.getters.authMenus
-            store.dispatch('GenerateRoutes', menus).then(() => {
+            store.dispatch('GenerateRoutes', menus).then((hasRouters) => {
+              if (!hasRouters) {
+                alert('你没有可访问的菜单啊，老铁')
+                return next({
+                  path: '/404'
+                })
+              }
               router.addRoutes(store.getters.routers)
               next({
                 ...to,
@@ -32,7 +41,6 @@ router.beforeEach((to, from, next) => {
           })
           .catch(err => {
             store.dispatch('FedLogOut').then(() => {
-              Message.error(err || 'Verification failed, please login again')
               next({
                 path: '/'
               })

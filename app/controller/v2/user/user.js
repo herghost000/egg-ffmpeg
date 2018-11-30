@@ -81,10 +81,11 @@ class UserController extends Controller {
     const {
       ctx,
     } = this;
-    if (!ctx.session.id) {
+    const id = jwt.decode(ctx.get('X-Token')).id || ctx.session.id;
+    if (!id) {
       ctx.body = {
         code: 404,
-        message: '查询失败',
+        message: '获取用户权限失败',
       };
       return void 0;
     }
@@ -104,7 +105,7 @@ class UserController extends Controller {
       },
       ],
       where: {
-        id: ctx.session.id,
+        id,
       },
     };
     const user = await ctx.model.User.findOne(query);
@@ -162,12 +163,10 @@ class UserController extends Controller {
       user_roles = [],
     } = ctx.request.body;
     const created_at = new Date();
-    const updated_at = created_at;
     const user = await ctx.model.User.create({
       name,
       age,
       created_at,
-      updated_at,
     });
 
     if (user_auths && user_groups && user_roles) {

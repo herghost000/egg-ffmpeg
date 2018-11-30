@@ -24,7 +24,7 @@ const app = {
     UNPACK_USERMENU_QUERY_RES(state, res) {
       this.commit('SET_USERMENU_MSG', res.message)
       this.commit('SET_USERMENU_CODE', res.code)
-      this.commit('SET_USERMENU_ROWS', res.rows)
+      this.commit('SET_USERMENU_ROWS', res.data.rows)
     }
   },
   actions: {

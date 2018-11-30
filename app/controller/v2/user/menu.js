@@ -34,18 +34,30 @@ class UserMenuController extends Controller {
     const ctx = this.ctx;
     const {
       name,
+      url,
+      component,
+      redirect,
+      title,
+      icon,
+      pid,
+      sort,
     } = ctx.request.body;
     const created_at = new Date();
-    const updated_at = created_at;
     const type = await ctx.model.UserMenu.create({
       name,
+      url,
+      component,
+      redirect,
+      title,
+      icon,
+      pid,
+      sort,
       created_at,
-      updated_at,
     });
     ctx.body = {
       code: 200,
       data: type || {},
-      message: '用户创建成功！',
+      message: '菜单创建成功！',
     };
   }
 
@@ -74,7 +86,7 @@ class UserMenuController extends Controller {
     ctx.body = {
       code: 201,
       data: type || {},
-      message: '用户信息编辑成功！',
+      message: '菜单编辑成功！',
     };
   }
 

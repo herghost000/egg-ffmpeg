@@ -42,11 +42,9 @@ class VideoTypeController extends Controller {
       name,
     } = ctx.request.body;
     const created_at = new Date();
-    const updated_at = created_at;
     const type = await ctx.model.VideoType.create({
       name,
       created_at,
-      updated_at,
     });
     ctx.body = {
       code: 200,

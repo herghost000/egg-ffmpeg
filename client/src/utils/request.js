@@ -1,7 +1,12 @@
 import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
+import {
+  Message,
+  MessageBox
+} from 'element-ui'
 import store from '../store'
-import { getToken } from '@/utils/auth'
+import {
+  getToken
+} from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
@@ -31,7 +36,6 @@ service.interceptors.response.use(
      * code为非20000是抛错 可结合自己业务进行修改
      */
     const res = response.data
-    console.log(res.code)
     if (res.code < 200 || res.code > 300) {
       Message({
         message: res.message,
@@ -43,8 +47,7 @@ service.interceptors.response.use(
       if (res.code === 401 || res.code === 50012 || res.code === 50014) {
         MessageBox.confirm(
           `你已被登出，可以取消继续留在该页面，或者重新登录（${res.message})`,
-          '确定登出',
-          {
+          '确定登出', {
             confirmButtonText: '重新登录',
             cancelButtonText: '取消',
             type: 'warning'
@@ -55,15 +58,14 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject('error')
+      return Promise.reject(res.message)
     } else {
       return response.data
     }
   },
-  (error, b, c) => {
-    console.log(b, c, 'err' + error) // for debug
+  (error) => {
     Message({
-      message: error.message,
+      message: error,
       type: 'error',
       duration: 5 * 1000
     })

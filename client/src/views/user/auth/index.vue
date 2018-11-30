@@ -36,20 +36,15 @@
       <el-table-column align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.edit"
-                     type="success"
-                     size="small"
-                     icon="el-icon-circle-check-outline"
-                     @click="confirmEdit(scope.row)">确定</el-button>
-          <el-button v-else
-                     type="primary"
-                     size="small"
-                     icon="el-icon-edit"
-                     @click="scope.row.edit=!scope.row.edit">编辑</el-button>
-          <el-button size="small"
+          <el-button size="mini"
+                     icon="el-icon-setting"
+                     class="operate-btn"
+                     @click="confirmEdit(scope.row)"></el-button>
+          <el-button size="mini"
                      type="danger"
                      icon="el-icon-delete"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                     class="operate-btn"
+                     @click="handleDelete(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -61,13 +56,15 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
+    <auth-detail v-model="visible"></auth-detail>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import { deepClone } from '@/utils/index'
-
+import AuthDetail from './components/AuthDetail'
 export default {
+  components: { AuthDetail },
   data () {
     return {
       listLoading: false,
@@ -80,7 +77,8 @@ export default {
         offset: 0,
         limit: 5,
         total: 0
-      }
+      },
+      visible: false
     }
   },
   created () {
@@ -124,17 +122,7 @@ export default {
       })
     },
     confirmEdit (row) {
-      row.edit = false
-      row.originalName = row.name
-      this.updateUserAuth(row).then(res => {
-        const { data } = res
-        if (Object.isNotEmpty(data)) {
-          this.$message({
-            message: '编辑成功',
-            type: 'success'
-          })
-        }
-      })
+      this.visible = true
     },
     handleDelete (index, row) {
 

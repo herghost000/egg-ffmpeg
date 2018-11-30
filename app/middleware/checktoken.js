@@ -7,20 +7,23 @@ module.exports = () => {
     const redis = ctx.app.redis;
     const config = ctx.app.config;
     const curTime = +new Date();
-    const { lastTime = 0, username } = ctx.session;
+    const {
+      lastTime = 0, username,
+    } = ctx.session;
     const time = curTime - lastTime;
 
-    if (!username) {
-      ctx.status = 200;
-      ctx.body = {
-        code: 401,
-        message: 'session已失效',
-      };
-      return;
-    }
+    // if (!username) {
+    //   ctx.status = 200;
+    //   ctx.body = {
+    //     code: 401,
+    //     message: 'session已失效',
+    //   };
+    //   return;
+    // }
 
     if (username && time >= config.login.activeTime) {
       ctx.session = {};
+      ctx.cookies.set('X-Token', '');
       ctx.status = 200;
       ctx.body = {
         code: 401,
@@ -49,7 +52,7 @@ module.exports = () => {
             }
             const dead = await redis.get(`user.${decoded.username}.dead`);
             if (dead === 'yes') {
-              redis.del(`user.${decoded.username}.dead`);
+              await redis.del(`user.${decoded.username}.dead`);
               ctx.status = 200;
               ctx.body = {
                 code: 401,
@@ -64,22 +67,20 @@ module.exports = () => {
             };
             return void 0;
           }
-          const ttl = await redis.ttl(`user.${decoded.username}.token`);
           ctx.session.username = decoded.username;
           ctx.session.id = decoded.id;
 
-          token = jwt.sign(
-            {
-              id: decoded.id,
-              username: decoded.username,
-            },
-            config.login.sign,
-            {
-              expiresIn: config.login.tokenExpiresIn,
-            }
+          token = jwt.sign({
+            id: decoded.id,
+            username: decoded.username,
+          },
+          config.login.sign, {
+            expiresIn: config.login.tokenExpiresIn,
+          }
           );
+          const ttl = await redis.ttl(`user.${decoded.username}.token`);
           await redis.set(`user.${decoded.username}.token`, token);
-          redis.expire(`user.${username}.token`, ttl);
+          await redis.expire(`user.${username}.token`, ttl);
 
           const expires = new Date();
           expires.setDate(expires.getDate() + config.login.tokenClientExpire);
@@ -111,7 +112,7 @@ module.exports = () => {
         }
         const dead = await redis.get(`user.${decoded.username}.dead`);
         if (dead === 'yes') {
-          redis.del(`user.${decoded.username}.dead`);
+          await redis.del(`user.${decoded.username}.dead`);
           ctx.status = 200;
           ctx.body = {
             code: 401,

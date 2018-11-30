@@ -23,8 +23,9 @@ module.exports = app => {
   );
 
   UserAuth.associate = function() {
-    UserAuth.belongsToMany(app.model.UserMenu, {
-      through: 'user_auth_menu_refs',
+    UserAuth.hasOne(app.model.UserMenu, {
+      foreignKey: 'uauth_id',
+      sourceKey: 'id',
     });
     UserAuth.belongsToMany(app.model.UserRole, {
       through: 'user_role_auth_refs',

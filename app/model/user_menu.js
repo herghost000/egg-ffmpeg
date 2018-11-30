@@ -21,6 +21,7 @@ module.exports = app => {
       icon: STRING,
       pid: INTEGER,
       sort: INTEGER,
+      uauth_id: INTEGER,
       created_at: DATE,
       updated_at: DATE,
     }, {
@@ -30,8 +31,9 @@ module.exports = app => {
   );
 
   UserMenu.associate = function() {
-    UserMenu.belongsToMany(app.model.UserAuth, {
-      through: 'user_auth_menu_refs',
+    UserMenu.belongsTo(app.model.UserAuth, {
+      foreignKey: 'uauth_id',
+      targetKey: 'id',
     });
   };
 

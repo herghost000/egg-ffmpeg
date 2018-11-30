@@ -30,7 +30,7 @@ module.exports = app => {
 
   VideoDecode.associate = function() {
     VideoDecode.hasOne(app.model.VideoList, {
-      foreignKey: 'type_id',
+      foreignKey: 'decode_id',
       sourceKey: 'id',
     });
     VideoDecode.belongsTo(app.model.VideoDecodeStatus, {

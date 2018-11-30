@@ -4,7 +4,10 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app;
+  const {
+    router,
+    controller,
+  } = app;
 
   const checktoken = app.middleware.checktoken();
   router.get('/xxxc/b/:lllc', controller.home.index);
@@ -35,7 +38,7 @@ module.exports = app => {
   router.resources(
     'user-auth',
     '/api/v2/user/auth',
-    checktoken,
+    // checktoken,
     controller.v2.user.auth
   );
   router.resources(

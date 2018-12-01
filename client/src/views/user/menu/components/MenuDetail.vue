@@ -3,12 +3,36 @@
              :visible.sync="dialogVisible">
     <el-form ref="form"
              :model="form"
-             label-width="40px">
-      <el-form-item label="名称">
+             label-width="80px">
+      <el-form-item label="菜单名称">
         <el-input v-model="form.name"
-                  placeholder="请输入权限名称"></el-input>
+                  placeholder="事例：视频管理"></el-input>
       </el-form-item>
-      <el-form-item label="菜单">
+      <el-form-item label="路由路径">
+        <el-input v-model="form.name"
+                  placeholder="事例：/video"></el-input>
+      </el-form-item>
+      <el-form-item label="路由路径">
+        <el-input v-model="form.name"
+                  placeholder="事例：/video"></el-input>
+      </el-form-item>
+      <el-form-item label="组件名称">
+        <el-input v-model="form.name"
+                  placeholder="事例：Video"></el-input>
+      </el-form-item>
+      <el-form-item label="组件路径">
+        <el-input v-model="form.name"
+                  placeholder="事例：views/layout/Layout"></el-input>
+      </el-form-item>
+      <el-form-item label="菜单图标">
+        <el-input v-model="form.name"
+                  placeholder="事例：example"></el-input>
+      </el-form-item>
+      <el-form-item label="菜单排序">
+        <el-input-number v-model="form.sort" controls-position="right" @change="handleChange" :min="1"></el-input-number>
+        
+      </el-form-item>
+      <el-form-item label="所属菜单">
         <el-cascader :props="{value: 'id',label: 'title'}"
                      :show-all-levels="false"
                      :options="menuOptions"
@@ -49,7 +73,8 @@ export default {
     return {
       form: {
         name: null,
-        menuid: null
+        menuid: null,
+        sort: 1
       },
       menuSelected: [],
       menuOptions: []
@@ -68,15 +93,7 @@ export default {
   created () {
     this.queryUserMenu().then(res => {
       const { data: { rows = [] } } = res
-      const pmenus = rows.filter(_ => !_.pid)
-      this.menuOptions = pmenus.map(pmenu => {
-        const cmenus = rows.filter(menu => pmenu.id === menu.pid)
-        cmenus.unshift({
-          ...pmenu
-        })
-        pmenu.children = cmenus
-        return pmenu
-      })
+      this.menuOptions = rows.filter(_ => !_.pid)
     })
   },
   methods: {

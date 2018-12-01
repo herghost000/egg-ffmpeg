@@ -35,6 +35,7 @@
                    :on-remove="handlePicRemove"
                    :on-exceed="handleExceed"
                    :on-success="handlePicSuccess"
+                   :headers="headers"
                    :limit="1"
                    :file-list="picFileList"
                    action="/api/v2/upload/uploadPic">
@@ -76,6 +77,7 @@
 import { mapActions } from 'vuex'
 import { uploadVideo } from '@/api/video/upload'
 import VideoUpload from './components/VideoUpload'
+import { getToken } from '@/utils/auth'
 
 const defaultData = {
   picFileList: [],
@@ -103,6 +105,9 @@ export default {
   },
   data () {
     return {
+      headers: {
+        'X-Token':getToken()
+      },
       picFileList: [],
       videoFileList: [],
       types: [],

@@ -7,10 +7,8 @@ module.exports = () => {
     const redis = ctx.app.redis;
     const config = ctx.app.config;
     const curTime = +new Date();
-    const {
-      lastTime = 0, username,
-    } = ctx.session;
-    const time = curTime - lastTime;
+    const { lastTime = 0, username } = ctx.session;
+    // const time = curTime - lastTime;
 
     // if (!username) {
     //   ctx.status = 200;
@@ -21,17 +19,17 @@ module.exports = () => {
     //   return;
     // }
 
-    if (username && time >= config.login.activeTime) {
-      ctx.session = {};
-      ctx.cookies.set('X-Token', '');
-      ctx.status = 200;
-      ctx.body = {
-        code: 401,
-        message: '长时间未活动',
-      };
-      return;
-    }
-    ctx.session.lastTime = +new Date();
+    // if (username && time >= config.login.activeTime) {
+    //   ctx.session = {};
+    //   ctx.cookies.set('X-Token', '');
+    //   ctx.status = 200;
+    //   ctx.body = {
+    //     code: 401,
+    //     message: '长时间未活动',
+    //   };
+    //   return;
+    // }
+    // ctx.session.lastTime = +new Date();
 
     let token = ctx.get('X-Token');
     if (token) {
@@ -46,41 +44,31 @@ module.exports = () => {
             if (!redisToken) {
               ctx.body = {
                 code: 401,
-                message: '为了您的安全请重新登陆验证',
-              };
-              return void 0;
-            }
-            const dead = await redis.get(`user.${decoded.username}.dead`);
-            if (dead === 'yes') {
-              await redis.del(`user.${decoded.username}.dead`);
-              ctx.status = 200;
-              ctx.body = {
-                code: 401,
-                message: '您的账号在别处被登陆',
+                message: '为了您的安全起见，请重新登陆验证',
               };
               return void 0;
             }
             ctx.status = 200;
             ctx.body = {
               code: 401,
-              message: 'token失效',
+              message: '您的账号在别处被登陆，请重新验证',
             };
             return void 0;
           }
-          ctx.session.username = decoded.username;
-          ctx.session.id = decoded.id;
 
-          token = jwt.sign({
-            id: decoded.id,
-            username: decoded.username,
-          },
-          config.login.sign, {
-            expiresIn: config.login.tokenExpiresIn,
-          }
+          token = jwt.sign(
+            {
+              id: decoded.id,
+              username: decoded.username,
+            },
+            config.login.sign,
+            {
+              expiresIn: config.login.tokenExpiresIn,
+            }
           );
           const ttl = await redis.ttl(`user.${decoded.username}.token`);
           await redis.set(`user.${decoded.username}.token`, token);
-          await redis.expire(`user.${username}.token`, ttl);
+          await redis.expire(`user.${decoded.usernam}.token`, ttl);
 
           const expires = new Date();
           expires.setDate(expires.getDate() + config.login.tokenClientExpire);
@@ -101,29 +89,21 @@ module.exports = () => {
         }
       }
       decoded = jwt.decode(token);
+      ctx.session.username = decoded.username;
+      ctx.session.id = decoded.id;
       const redisToken = await redis.get(`user.${decoded.username}.token`);
       if (token !== redisToken || !redisToken) {
         if (!redisToken) {
           ctx.body = {
             code: 401,
-            message: '为了您的安全请重新登陆验证',
-          };
-          return void 0;
-        }
-        const dead = await redis.get(`user.${decoded.username}.dead`);
-        if (dead === 'yes') {
-          await redis.del(`user.${decoded.username}.dead`);
-          ctx.status = 200;
-          ctx.body = {
-            code: 401,
-            message: '您的账号在别处被登陆',
+            message: '为了您的安全起见，请重新登陆验证',
           };
           return void 0;
         }
         ctx.status = 200;
         ctx.body = {
           code: 401,
-          message: 'token已失效',
+          message: '您的账号在别处被登陆，请重新验证',
         };
         return void 0;
       }

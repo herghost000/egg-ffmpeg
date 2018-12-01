@@ -58,6 +58,7 @@
                    :before-remove="beforeRemove"
                    :on-exceed="handleExceed"
                    :on-success="handleSuccess"
+                   :headers="headers"
                    :limit="1"
                    :file-list="fileList"
                    action="/api/v2/upload/uploadPic">
@@ -77,6 +78,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { deepClone } from '@/utils/index'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'VideoSetting',
@@ -84,6 +86,9 @@ export default {
     return {
       initDB: false,
       fileList: [],
+      headers: {
+        'X-Token':getToken()
+      },
       form: {
         antikey: null,
         antiurl: null,

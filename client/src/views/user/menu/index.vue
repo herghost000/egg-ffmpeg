@@ -9,6 +9,8 @@
       <el-form-item>
         <el-button type="primary"
                    @click="onSearch">查询</el-button>
+        <el-button type="primary"
+                   @click="onCreate">创建</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="listData"
@@ -70,7 +72,7 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
-    <menu-detail v-model="visible"></menu-detail>
+    <menu-detail v-model="visible" :is-create="true"></menu-detail>
   </div>
 </template>
 <script>
@@ -93,7 +95,7 @@ export default {
         limit: 5,
         total: 0
       },
-      visible: true
+      visible: false
     }
   },
   created () {
@@ -174,6 +176,9 @@ export default {
     },
     onSearch () {
       this.getList()
+    },
+    onCreate() {
+      this.visible = true
     }
   }
 }

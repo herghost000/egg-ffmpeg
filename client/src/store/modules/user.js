@@ -15,6 +15,9 @@ import {
   destoryUser,
   editUser
 } from '@/api/user/user'
+import {
+  setToken
+} from '@/utils/auth'
 
 function asyncComponent(path) {
   return () => import('@/' + path + '.vue')
@@ -38,6 +41,7 @@ const user = {
   },
   mutations: {
     SET_TOKEN: (state, token) => {
+      setToken(token)
       state.token = token
     },
     SET_NAME: (state, name) => {
@@ -87,6 +91,7 @@ const user = {
         login(username, userInfo.password)
           .then(response => {
             const data = response.data
+            console.log(data.token)
             commit('SET_TOKEN', data.token)
             resolve()
           })

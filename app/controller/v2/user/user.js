@@ -6,7 +6,9 @@ class UserController extends Controller {
   async logout() {
     const ctx = this.ctx;
     const redis = this.app.redis;
-    const { username } = ctx.session;
+    const {
+      username,
+    } = ctx.session;
     redis.del(`user.${username}.token`);
     ctx.cookies.set('X-Token', '');
     ctx.session = null;
@@ -18,7 +20,10 @@ class UserController extends Controller {
   async login() {
     const ctx = this.ctx;
     const redis = this.app.redis;
-    let { username, password } = ctx.request.body;
+    let {
+      username,
+      password,
+    } = ctx.request.body;
 
     password = ctx.helper.rsaDecrypt(password);
 
@@ -38,32 +43,16 @@ class UserController extends Controller {
       };
       return void 0;
     }
-    const token = jwt.sign(
-      {
-        id: 1,
-        username,
-      },
-      this.config.login.sign,
-      {
-        expiresIn: this.config.login.tokenExpiresIn,
-      }
+    const token = jwt.sign({
+      id: 1,
+      username,
+    },
+    this.config.login.sign, {
+      expiresIn: this.config.login.tokenExpiresIn,
+    }
     );
     await redis.set(`user.${username}.token`, token);
     redis.expire(`user.${username}.token`, this.config.login.tokenMaxAge);
-
-    const expires = new Date();
-    expires.setDate(expires.getDate() + this.config.login.tokenClientExpire);
-
-    ctx.cookies.set('X-Token', token, {
-      expires,
-      httpOnly: false,
-      overwrite: true,
-      signed: false,
-    });
-
-    ctx.session.lastTime = +new Date();
-    ctx.session.username = username;
-    ctx.session.id = 1;
 
     ctx.body = {
       code: 200,
@@ -73,9 +62,10 @@ class UserController extends Controller {
     };
   }
   async auth() {
-    const { ctx } = this;
-    const id = ctx.session.id;
-    // jwt.decode(ctx.get('X-Token')).id ||
+    const {
+      ctx,
+    } = this;
+    const id = jwt.decode(ctx.get('X-Token')).id;
     if (!id) {
       ctx.body = {
         code: 404,
@@ -85,21 +75,18 @@ class UserController extends Controller {
     }
     const query = {
       attributes: [ 'id', 'name', 'avatar' ],
-      include: [
-        {
-          model: ctx.model.UserRole,
-        },
-        {
-          model: ctx.model.UserGroup,
-        },
-        {
-          model: ctx.model.UserAuth,
-          include: [
-            {
-              model: ctx.model.UserMenu,
-            },
-          ],
-        },
+      include: [{
+        model: ctx.model.UserRole,
+      },
+      {
+        model: ctx.model.UserGroup,
+      },
+      {
+        model: ctx.model.UserAuth,
+        include: [{
+          model: ctx.model.UserMenu,
+        }],
+      },
       ],
       where: {
         id,
@@ -113,27 +100,33 @@ class UserController extends Controller {
     };
   }
   async index() {
-    const { ctx, app } = this;
-    const { Op } = app.Sequelize;
+    const {
+      ctx,
+      app,
+    } = this;
+    const {
+      Op,
+    } = app.Sequelize;
     const query = {
       attributes: [ 'id', 'name', 'avatar' ],
-      include: [
-        {
-          model: ctx.model.UserRole,
-        },
-        {
-          model: ctx.model.UserGroup,
-        },
-        {
-          model: ctx.model.UserAuth,
-        },
+      include: [{
+        model: ctx.model.UserRole,
+      },
+      {
+        model: ctx.model.UserGroup,
+      },
+      {
+        model: ctx.model.UserAuth,
+      },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [[ 'id', 'desc' ]],
+      order: [
+        [ 'id', 'desc' ],
+      ],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -175,19 +168,20 @@ class UserController extends Controller {
 
   async edit() {
     const ctx = this.ctx;
-    const { id } = ctx.params;
+    const {
+      id,
+    } = ctx.params;
 
     const user = await this.ctx.model.User.findOne({
-      include: [
-        {
-          model: ctx.model.UserRole,
-        },
-        {
-          model: ctx.model.UserGroup,
-        },
-        {
-          model: ctx.model.UserAuth,
-        },
+      include: [{
+        model: ctx.model.UserRole,
+      },
+      {
+        model: ctx.model.UserGroup,
+      },
+      {
+        model: ctx.model.UserAuth,
+      },
       ],
       where: {
         id,

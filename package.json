@@ -12,6 +12,7 @@
     "egg-view-nunjucks": "^2.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "jsonwebtoken": "^8.3.0",
+    "md5": "^2.2.1",
     "mysql2": "^1.6.4",
     "node-rsa": "^1.0.1",
     "uuid": "^3.3.2"

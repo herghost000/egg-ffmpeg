@@ -300,6 +300,7 @@ module.exports = {
   aesEncrypt,
   aesDecrypt,
   duplicates,
+  md5,
   rsaEncrypt(origin) {
     const pu = this.config.rsa.public;
     const pubkey = new NodeRSA(pu);

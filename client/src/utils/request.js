@@ -1,8 +1,24 @@
 import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
+import {
+  Message,
+  MessageBox
+} from 'element-ui'
 import store from '../store'
-import { getToken, setToken } from '@/utils/auth'
-
+import {
+  getToken,
+  setToken
+} from '@/utils/auth'
+import {
+  encrypt
+} from './rsa'
+import md5 from 'md5'
+import {
+  parseQuery,
+  urlencode,
+  aesEncrypt,
+  aesDecrypt,
+  randnum
+} from './index'
 // 创建axios实例
 const service = axios.create({
   // baseURL: process.env.BASE_API, // api 的 base_url
@@ -12,8 +28,33 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
+    console.log(config)
     if (store.getters.token) {
-      config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+      config.headers['X-Token'] = getToken()
+    }
+    if (config.method.toLowerCase() === 'get') {
+      const newParams = config.params || {}
+      const t = `${+new Date()}`
+      config.headers['X-Sign'] = encrypt(`${md5(JSON.stringify({
+        ...parseQuery(urlencode(newParams)),
+        t
+      }))}.${t}`)
+    } else {
+      const newParams = config.data || {}
+      const t = `${+new Date()}`
+      config.headers['X-Sign'] = encrypt(`${md5(JSON.stringify({
+        ...newParams,
+        t
+      }))}.${t}`)
+
+      if (config.encrypt) {
+        const key = randnum(32, 16)
+        config.headers['X-Key'] = encrypt(key)
+        config.key = key
+        config.data = {
+          body: aesEncrypt(JSON.stringify(newParams), key)
+        }
+      }
     }
     return config
   },
@@ -27,10 +68,10 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   response => {
+    console.log('res', response)
     /**
      * code为非20000是抛错 可结合自己业务进行修改
      */
-    console.log(response)
     const res = response.data
     if (res.code < 200 || res.code > 300) {
       Message({
@@ -43,8 +84,7 @@ service.interceptors.response.use(
       if (res.code === 401 || res.code === 50012 || res.code === 50014) {
         MessageBox.confirm(
           `你已被登出，可以取消继续留在该页面，或者重新登录（${res.message})`,
-          '确定登出',
-          {
+          '确定登出', {
             confirmButtonText: '重新登录',
             cancelButtonText: '取消',
             type: 'warning'
@@ -54,15 +94,14 @@ service.interceptors.response.use(
             location.reload() // 为了重新实例化vue-router对象 避免bug
           })
         })
+        setToken('')
       }
-      setToken('')
       return Promise.reject(res.message)
     } else {
       return response.data
     }
   },
   error => {
-    console.log(error)
     Message({
       message: error.message,
       type: 'error',

@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 /**
  * Created by jiachenpan on 16/11/18.
  */
@@ -299,4 +300,70 @@ export function uniqueArr(arr) {
 
 export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+export function md5(data) {
+  const hash = crypto.createHash('md5')
+  hash.update(data)
+  return hash.digest('hex')
+}
+
+export function aesEncrypt(data, key) {
+  const cipher = crypto.createCipher('aes192', key)
+  let crypted = cipher.update(data, 'utf8', 'hex')
+  crypted += cipher.final('hex')
+  return crypted
+}
+
+export function aesDecrypt(encrypted, key) {
+  const decipher = crypto.createDecipher('aes192', key)
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8')
+  decrypted += decipher.final('utf8')
+  return decrypted
+}
+
+export function parseQuery(query) {
+  var reg = /([^=&\s]+)[=\s]*([^&\s]*)/g
+  var obj = {}
+  while (reg.exec(query)) {
+    obj[RegExp.$1] = RegExp.$2
+  }
+  return obj
+}
+
+export function urlencode(data) {
+  var _result = []
+  for (var key in data) {
+    var value = data[key]
+    if (value.constructor === Array) {
+      value.forEach(function (_value) {
+        _result.push(key + '=' + _value)
+      })
+    } else {
+      _result.push(key + '=' + value)
+    }
+  }
+
+  return _result.join('&')
+}
+
+export function randnum(len, radix) {
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
+  const gp = []
+  let i = 0
+  radix = radix || chars.length
+  if (len) {
+    for (i = 0; i < len; i++) gp[i] = chars[0 | Math.random() * radix]
+  } else {
+    let r
+    gp[8] = gp[13] = gp[18] = gp[23] = '-'
+    gp[14] = '4'
+    for (i = 0; i < 36; i++) {
+      if (!gp[i]) {
+        r = 0 | Math.random() * 16
+        gp[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
+      }
+    }
+  }
+  return gp.join('')
 }

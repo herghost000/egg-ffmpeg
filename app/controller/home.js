@@ -4,10 +4,7 @@ const NodeRSA = require('node-rsa');
 
 class HomeController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
+    const { ctx, app } = this;
     // set
     // await app.redis.set('foo', 'bar');
     // await app.redis.set('user.herghost.token', 6666);
@@ -15,13 +12,7 @@ class HomeController extends Controller {
     // console.log(await app.redis.ttl('user.herghost.token'));
     // get
     // ctx.body = await app.redis.get('foo');
-    ctx.body = {
-      data: {
-        xf: ctx.request.get('x-forwarded-for'),
-        ip: ctx.request.ip,
-        ips: ctx.request.ips,
-      },
-    };
+    ctx.body = this.config;
   }
   async rsa() {
     const newkey = new NodeRSA({

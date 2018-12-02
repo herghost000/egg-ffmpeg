@@ -142,11 +142,11 @@ export function param2Obj(url) {
   }
   return JSON.parse(
     '{"' +
-    decodeURIComponent(search)
-      .replace(/"/g, '\\"')
-      .replace(/&/g, '","')
-      .replace(/=/g, '":"') +
-    '"}'
+      decodeURIComponent(search)
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"') +
+      '"}'
   )
 }
 
@@ -193,42 +193,43 @@ export function toggleClass(element, className) {
   element.className = classString
 }
 
-export const pickerOptions = [{
-  text: '今天',
-  onClick(picker) {
-    const end = new Date()
-    const start = new Date(new Date().toDateString())
-    end.setTime(start.getTime())
-    picker.$emit('pick', [start, end])
+export const pickerOptions = [
+  {
+    text: '今天',
+    onClick(picker) {
+      const end = new Date()
+      const start = new Date(new Date().toDateString())
+      end.setTime(start.getTime())
+      picker.$emit('pick', [start, end])
+    }
+  },
+  {
+    text: '最近一周',
+    onClick(picker) {
+      const end = new Date(new Date().toDateString())
+      const start = new Date()
+      start.setTime(end.getTime() - 3600 * 1000 * 24 * 7)
+      picker.$emit('pick', [start, end])
+    }
+  },
+  {
+    text: '最近一个月',
+    onClick(picker) {
+      const end = new Date(new Date().toDateString())
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      picker.$emit('pick', [start, end])
+    }
+  },
+  {
+    text: '最近三个月',
+    onClick(picker) {
+      const end = new Date(new Date().toDateString())
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      picker.$emit('pick', [start, end])
+    }
   }
-},
-{
-  text: '最近一周',
-  onClick(picker) {
-    const end = new Date(new Date().toDateString())
-    const start = new Date()
-    start.setTime(end.getTime() - 3600 * 1000 * 24 * 7)
-    picker.$emit('pick', [start, end])
-  }
-},
-{
-  text: '最近一个月',
-  onClick(picker) {
-    const end = new Date(new Date().toDateString())
-    const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-    picker.$emit('pick', [start, end])
-  }
-},
-{
-  text: '最近三个月',
-  onClick(picker) {
-    const end = new Date(new Date().toDateString())
-    const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-    picker.$emit('pick', [start, end])
-  }
-}
 ]
 
 export function getTime(type) {
@@ -242,7 +243,7 @@ export function getTime(type) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
-  const later = function () {
+  const later = function() {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
 
@@ -259,7 +260,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 
-  return function (...args) {
+  return function(...args) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
@@ -336,7 +337,7 @@ export function urlencode(data) {
   for (var key in data) {
     var value = data[key]
     if (value.constructor === Array) {
-      value.forEach(function (_value) {
+      value.forEach(function(_value) {
         _result.push(key + '=' + _value)
       })
     } else {
@@ -348,20 +349,22 @@ export function urlencode(data) {
 }
 
 export function randnum(len, radix) {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(
+    ''
+  )
   const gp = []
   let i = 0
   radix = radix || chars.length
   if (len) {
-    for (i = 0; i < len; i++) gp[i] = chars[0 | Math.random() * radix]
+    for (i = 0; i < len; i++) gp[i] = chars[0 | (Math.random() * radix)]
   } else {
     let r
     gp[8] = gp[13] = gp[18] = gp[23] = '-'
     gp[14] = '4'
     for (i = 0; i < 36; i++) {
       if (!gp[i]) {
-        r = 0 | Math.random() * 16
-        gp[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
+        r = 0 | (Math.random() * 16)
+        gp[i] = chars[i === 19 ? (r & 0x3) | 0x8 : r]
       }
     }
   }

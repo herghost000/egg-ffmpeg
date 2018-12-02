@@ -24,8 +24,7 @@ export function updateUser(id, data) {
   return request({
     url: `/api/v2/user/${id}`,
     method: 'PUT',
-    data,
-    encrypt: true
+    data
   })
 }
 

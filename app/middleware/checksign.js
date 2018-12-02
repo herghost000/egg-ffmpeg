@@ -8,6 +8,7 @@ module.exports = () => {
     const method = ctx.request.method.toLowerCase();
     const sign = ctx.get('X-Sign');
     const key = ctx.get('X-Key');
+    let decryptKey;
     if (!sign) {
       ctx.body = {
         code: 404,
@@ -19,7 +20,7 @@ module.exports = () => {
       const decryptSign = ctx.helper.rsaDecrypt(sign);
       const [ params2Md5, t ] = decryptSign.split('.');
       const curtime = +new Date();
-      const activeTime = (curtime - (+t)) / 1000;
+      const activeTime = (curtime - +t) / 1000;
       if (activeTime > ctx.app.config.api.signActiveTime) {
         ctx.body = {
           code: 404,
@@ -35,17 +36,25 @@ module.exports = () => {
         params = ctx.request.body || {};
         if (key) {
           try {
-            const decryptKey = ctx.helper.rsaDecrypt(key);
-            console.log(888, ctx.helper.aesDecrypt(params.body, decryptKey));
+            decryptKey = ctx.helper.rsaDecrypt(key);
+            ctx.request.body = JSON.parse(
+              ctx.helper.aesDecrypt(params.body, decryptKey)
+            );
           } catch (e) {
-            console.log(e);
+            ctx.body = {
+              code: 404,
+              message: '解签异常',
+            };
+            return void 0;
           }
         }
       }
-      const serverParams2Md5 = md5(JSON.stringify({
-        ...params,
-        t,
-      }));
+      const serverParams2Md5 = md5(
+        JSON.stringify({
+          ...params,
+          t,
+        })
+      );
       if (serverParams2Md5 !== params2Md5) {
         ctx.body = {
           code: 404,
@@ -61,5 +70,10 @@ module.exports = () => {
       return void 0;
     }
     await next();
+    if (key) {
+      ctx.body = {
+        body: ctx.helper.aesEncrypt(JSON.stringify(ctx.body), decryptKey),
+      };
+    }
   };
 };

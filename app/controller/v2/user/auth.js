@@ -3,22 +3,20 @@ const Controller = require('egg').Controller;
 
 class UserAuthController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
+      include: [
+        {
+          model: ctx.model.UserMenu,
+        },
+      ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -32,15 +30,13 @@ class UserAuthController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const {
-      name,
-      menu_id,
-    } = ctx.request.body;
-    const created_at = new Date();
+    const { name, menu_id } = ctx.request.body;
     const auth = await ctx.model.UserAuth.create({
       name,
-      created_at,
     });
+    for (const i in auth) {
+      console.log(i);
+    }
     auth.setUser_menu(menu_id);
     ctx.body = {
       code: 200,
@@ -53,27 +49,24 @@ class UserAuthController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = ctx.helper.toInt(ctx.params.id);
-    const type = await ctx.model.UserAuth.findById(id);
-    if (!type) {
+    const auth = await ctx.model.UserAuth.findById(id);
+    if (!auth) {
       ctx.status = {
         code: 404,
-        data: type,
+        data: auth,
         message: '未找到需要编辑的用户！',
       };
       return;
     }
 
-    const {
+    const { name, menu_id } = ctx.request.body;
+    await auth.update({
       name,
-    } = ctx.request.body;
-    const updated_at = new Date();
-    await type.update({
-      name,
-      updated_at,
     });
+    auth.setUser_menu(menu_id);
     ctx.body = {
       code: 201,
-      data: type || {},
+      data: auth || {},
       message: '用户信息编辑成功！',
     };
   }

@@ -3,22 +3,15 @@ const Controller = require('egg').Controller;
 
 class UserMenuController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -42,7 +35,6 @@ class UserMenuController extends Controller {
       pid,
       sort,
     } = ctx.request.body;
-    const created_at = new Date();
     const type = await ctx.model.UserMenu.create({
       name,
       url,
@@ -52,7 +44,6 @@ class UserMenuController extends Controller {
       icon,
       pid,
       sort,
-      created_at,
     });
     ctx.body = {
       code: 200,
@@ -65,11 +56,11 @@ class UserMenuController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = ctx.helper.toInt(ctx.params.id);
-    const type = await ctx.model.UserMenu.findById(id);
-    if (!type) {
+    const menu = await ctx.model.UserMenu.findById(id);
+    if (!menu) {
       ctx.status = {
         code: 404,
-        data: type,
+        data: menu,
         message: '未找到需要编辑的用户！',
       };
       return;
@@ -77,15 +68,27 @@ class UserMenuController extends Controller {
 
     const {
       name,
+      url,
+      component,
+      redirect,
+      title,
+      icon,
+      pid = null,
+      sort,
     } = ctx.request.body;
-    const updated_at = new Date();
-    await type.update({
+    await menu.update({
       name,
-      updated_at,
+      url,
+      component,
+      redirect,
+      title,
+      icon,
+      pid,
+      sort,
     });
     ctx.body = {
       code: 201,
-      data: type || {},
+      data: menu || {},
       message: '菜单编辑成功！',
     };
   }

@@ -24,7 +24,7 @@
       <el-button @click="dialogVisible = false">取 消</el-button>
       <el-button v-if="isEdit"
                  type="primary"
-                 @click="dialogVisible = false">更 新</el-button>
+                 @click="onUpdateClick">更 新</el-button>
       <el-button v-else
                  type="primary"
                  @click="onCreateClick">创 建</el-button>
@@ -43,13 +43,27 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    source: {
+      type: Object,
+      default: function() {return {}}
     }
+  },
+  watch: {
+source:{
+      deep: true,
+      handler(value) {
+        const {user_menu = {}} = value
+        this.form = value
+        this.menuSelected = [user_menu.pid,user_menu.id]
+      }
+    },
   },
   data () {
     return {
       form: {
         name: null,
-        menuid: null
+        menu_id: null
       },
       menuSelected: [],
       menuOptions: []
@@ -80,15 +94,38 @@ export default {
     })
   },
   methods: {
-    ...mapActions({ queryUserMenu: 'QueryUserMenu' }),
-    handleMenu (value) {
-      console.log(value)
-    },
+    ...mapActions({ queryUserMenu: 'QueryUserMenu',createUserAuth:'CreateUserAuth',updateUserAuth:'UpdateUserAuth' }),
     onMenuChange (value) {
-      this.form.menuid = this.menuSelected[1]
+      this.form.menu_id = this.menuSelected[1]
     },
     onCreateClick () {
       console.log(this.form)
+      this.createUserAuth(this.form).then((res)=>{
+        this.$message({
+          type: 'success',
+          message: res.message
+        });
+        this.dialogVisible = false
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err
+        });
+      })
+    },
+    onUpdateClick() {
+      this.updateUserAuth(this.form).then((res)=>{
+        this.$message({
+          type: 'success',
+          message: res.message
+        });
+        this.dialogVisible = false
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err
+        });
+      })
     }
   }
 }

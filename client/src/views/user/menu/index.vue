@@ -46,12 +46,7 @@
       <el-table-column align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.edit"
-                     type="success"
-                     size="small"
-                     icon="el-icon-circle-check-outline"
-                     @click="confirmEdit(scope.row)">确定</el-button>
-          <el-button v-else
+          <el-button
                      size="mini"
                      icon="el-icon-edit-outline"
                      class="operate-btn"
@@ -72,7 +67,8 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
-    <menu-detail v-model="visible" :is-create="true"></menu-detail>
+    <menu-detail v-model="visible" :is-edit="false"></menu-detail>
+    <menu-detail v-model="visibleEdit" :is-edit="true" :source="sourceEdit"></menu-detail>
   </div>
 </template>
 <script>
@@ -95,14 +91,16 @@ export default {
         limit: 5,
         total: 0
       },
-      visible: false
+      visible: false,
+      visibleEdit: false,
+      sourceEdit: {}
     }
   },
   created () {
     this.getList()
   },
   methods: {
-    ...mapActions({ queryUserMenu: 'QueryUserMenu', createUserMenu: 'CreateUserMenu', updateUserMenu: 'UpdateUserMenu', destoryUserMenu: 'DestoryUserMenu' }),
+    ...mapActions({ queryUserMenu: 'QueryUserMenu', createUserMenu: 'CreateUserMenu', destoryUserMenu: 'DestoryUserMenu' }),
     getList () {
       this.listLoading = true
       this.queryUserMenu({
@@ -139,17 +137,8 @@ export default {
       })
     },
     confirmEdit (row) {
-      row.edit = false
-      row.originalName = row.name
-      this.updateUserMenu(row).then(res => {
-        const { data } = res
-        if (Object.isNotEmpty(data)) {
-          this.$message({
-            message: '编辑成功',
-            type: 'success'
-          })
-        }
-      })
+      this.sourceEdit = row
+      this.visibleEdit = true
     },
     handleDelete (index, row) {
 

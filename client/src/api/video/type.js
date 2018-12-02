@@ -11,8 +11,7 @@ export function createType(data) {
   return request({
     url: '/api/v2/video/type',
     method: 'POST',
-    data,
-    encrypt: true
+    data
   })
 }
 

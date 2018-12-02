@@ -9,6 +9,8 @@
       <el-form-item>
         <el-button type="primary"
                    @click="onSearch">查询</el-button>
+        <el-button type="primary"
+                   @click="onCreate">创建</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="listData"
@@ -56,7 +58,8 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
-    <auth-detail v-model="visible"></auth-detail>
+    <auth-detail v-model="visible" :is-edit="false"></auth-detail>
+    <auth-detail v-model="visibleEdit" :is-edit="true" :source="sourceEdit"></auth-detail>
   </div>
 </template>
 <script>
@@ -78,7 +81,9 @@ export default {
         limit: 5,
         total: 0
       },
-      visible: false
+      visible: false,
+      visibleEdit: false,
+      sourceEdit: {}
     }
   },
   created () {
@@ -122,7 +127,8 @@ export default {
       })
     },
     confirmEdit (row) {
-      this.visible = true
+      this.sourceEdit = row
+      this.visibleEdit = true
     },
     handleDelete (index, row) {
 
@@ -149,6 +155,9 @@ export default {
     },
     onSearch () {
       this.getList()
+    },
+    onCreate() {
+      this.visible = true
     }
   }
 }

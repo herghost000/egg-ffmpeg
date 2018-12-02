@@ -9,27 +9,27 @@
                   placeholder="事例：视频管理"></el-input>
       </el-form-item>
       <el-form-item label="路由路径">
-        <el-input v-model="form.name"
+        <el-input v-model="form.url"
                   placeholder="事例：/video"></el-input>
       </el-form-item>
-      <el-form-item label="路由路径">
-        <el-input v-model="form.name"
-                  placeholder="事例：/video"></el-input>
+      <el-form-item label="定向路径">
+        <el-input v-model="form.redirect"
+                  placeholder="事例：/video/setting"></el-input>
       </el-form-item>
       <el-form-item label="组件名称">
-        <el-input v-model="form.name"
+        <el-input v-model="form.title"
                   placeholder="事例：Video"></el-input>
       </el-form-item>
       <el-form-item label="组件路径">
-        <el-input v-model="form.name"
+        <el-input v-model="form.component"
                   placeholder="事例：views/layout/Layout"></el-input>
       </el-form-item>
       <el-form-item label="菜单图标">
-        <el-input v-model="form.name"
+        <el-input v-model="form.icon"
                   placeholder="事例：example"></el-input>
       </el-form-item>
       <el-form-item label="菜单排序">
-        <el-input-number v-model="form.sort" controls-position="right" @change="handleChange" :min="1"></el-input-number>
+        <el-input-number v-model="form.sort" controls-position="right" :min="1"></el-input-number>
         
       </el-form-item>
       <el-form-item label="所属菜单">
@@ -37,7 +37,6 @@
                      :show-all-levels="false"
                      :options="menuOptions"
                      v-model="menuSelected"
-                     @change="onMenuChange"
                      placeholder="试试搜索 ：)"
                      filterable
                      clearable></el-cascader>
@@ -48,7 +47,7 @@
       <el-button @click="dialogVisible = false">取 消</el-button>
       <el-button v-if="isEdit"
                  type="primary"
-                 @click="dialogVisible = false">更 新</el-button>
+                 @click="onUpdateClick">更 新</el-button>
       <el-button v-else
                  type="primary"
                  @click="onCreateClick">创 建</el-button>
@@ -67,18 +66,42 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    source: {
+      type: Object,
+      default: function() {return {}}
     }
   },
   data () {
     return {
       form: {
-        name: null,
-        menuid: null,
-        sort: 1
+        name:'',
+        url:'',
+        component:'',
+        redirect:'',
+        title:'',
+        icon:'',
+        pid:null,
+        sort:1,
       },
       menuSelected: [],
-      menuOptions: []
+      menuOptions: [],
     }
+  },
+  watch: {
+    menuSelected:{
+      deep: true,
+      handler(value) {
+        this.form.pid = value[0]
+      }
+    },
+    source:{
+      deep: true,
+      handler(value) {
+        this.form = value
+        this.menuSelected = [value.pid]
+      }
+    },
   },
   computed: {
     dialogVisible: {
@@ -97,15 +120,35 @@ export default {
     })
   },
   methods: {
-    ...mapActions({ queryUserMenu: 'QueryUserMenu' }),
-    handleMenu (value) {
-      console.log(value)
-    },
-    onMenuChange (value) {
-      this.form.menuid = this.menuSelected[1]
-    },
+    ...mapActions({ queryUserMenu: 'QueryUserMenu',createUserMenu:'CreateUserMenu', updateUserMenu: 'UpdateUserMenu' }),
     onCreateClick () {
+      this.createUserMenu(this.form).then((res)=>{
+        this.$message({
+          type: 'success',
+          message: res.message
+        });
+        this.dialogVisible = false
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err
+        });
+      })
+    },
+    onUpdateClick() {
       console.log(this.form)
+      this.updateUserMenu(this.form).then((res)=>{
+        this.$message({
+          type: 'success',
+          message: res.message
+        });
+        this.dialogVisible = false
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err
+        });
+      })
     }
   }
 }

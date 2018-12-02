@@ -30,6 +30,7 @@ service.interceptors.request.use(
       )
     } else {
       let newParams = config.data || {}
+      config.encrypt = true
       if (config.encrypt) {
         const key = randnum(32, 16)
         config.headers['X-Key'] = encrypt(key)

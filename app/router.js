@@ -11,7 +11,7 @@ module.exports = app => {
 
   const checktoken = app.middleware.checktoken();
   const checksign = app.middleware.checksign();
-  router.get('/xxxc/b/:lllc', controller.home.index);
+  router.get('/', controller.home.index);
   router.get('/rsa', controller.home.rsa);
   router.get('/crossdomain.xml', controller.home.video.crossdomain);
 

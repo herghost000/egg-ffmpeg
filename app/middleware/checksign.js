@@ -23,7 +23,7 @@ module.exports = () => {
       if (activeTime > ctx.app.config.api.signActiveTime) {
         ctx.body = {
           code: 404,
-          message: '签名已过期',
+          message: '签名超时，请重新处理',
         };
         return void 0;
       }
@@ -33,14 +33,14 @@ module.exports = () => {
         params = ctx.query || {};
       } else {
         params = ctx.request.body || {};
-        if (key) {
-          try {
-            const decryptKey = ctx.helper.rsaDecrypt(key);
-            console.log(888, ctx.helper.aesDecrypt(params.body, decryptKey));
-          } catch (e) {
-            console.log(e);
-          }
-        }
+        // if (key) {
+        //   try {
+        //     const decryptKey = ctx.helper.rsaDecrypt(key);
+        //     console.log(888, ctx.helper.aesDecrypt(params.body, decryptKey));
+        //   } catch (e) {
+        //     console.log(e);
+        //   }
+        // }
       }
       const serverParams2Md5 = md5(JSON.stringify({
         ...params,

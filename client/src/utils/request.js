@@ -47,14 +47,14 @@ service.interceptors.request.use(
         t
       }))}.${t}`)
 
-      if (config.encrypt) {
-        const key = randnum(32, 16)
-        config.headers['X-Key'] = encrypt(key)
-        config.key = key
-        config.data = {
-          body: aesEncrypt(JSON.stringify(newParams), key)
-        }
-      }
+      // if (config.encrypt) {
+      //   const key = randnum(32, 16)
+      //   config.headers['X-Key'] = encrypt(key)
+      //   config.key = key
+      //   config.data = {
+      //     body: aesEncrypt(JSON.stringify(newParams), key)
+      //   }
+      // }
     }
     return config
   },

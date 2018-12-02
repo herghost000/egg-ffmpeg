@@ -24,7 +24,7 @@ module.exports = () => {
       if (activeTime > ctx.app.config.api.signActiveTime) {
         ctx.body = {
           code: 404,
-          message: '签名已过期',
+          message: '签名超时，请重新处理',
         };
         return void 0;
       }

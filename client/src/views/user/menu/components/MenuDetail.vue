@@ -1,6 +1,7 @@
 <template>
   <el-dialog :title="isEdit?'菜单编辑':'菜单创建'"
-             :visible.sync="dialogVisible">
+             :visible.sync="dialogVisible"
+             @closed="dialogClosed">
     <el-form ref="form"
              :model="form"
              label-width="80px">
@@ -29,8 +30,10 @@
                   placeholder="事例：example"></el-input>
       </el-form-item>
       <el-form-item label="菜单排序">
-        <el-input-number v-model="form.sort" controls-position="right" :min="1"></el-input-number>
-        
+        <el-input-number v-model="form.sort"
+                         controls-position="right"
+                         :min="1"></el-input-number>
+
       </el-form-item>
       <el-form-item label="所属菜单">
         <el-cascader :props="{value: 'id',label: 'title'}"
@@ -56,48 +59,52 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+const defaultForm = {
+  name: '',
+  url: '',
+  component: '',
+  redirect: '',
+  title: '',
+  icon: '',
+  pid: null,
+  sort: 1,
+}
+const props = {
+  value: {
+    type: Boolean,
+    default: false
+  },
+  isEdit: {
+    type: Boolean,
+    default: false
+  },
+  source: {
+    type: Object,
+    default: function () { return {} }
+  }
+}
 export default {
   name: 'MenuDetail',
-  props: {
-    value: {
-      type: Boolean,
-      default: false
-    },
-    isEdit: {
-      type: Boolean,
-      default: false
-    },
-    source: {
-      type: Object,
-      default: function() {return {}}
-    }
-  },
+  props,
   data () {
     return {
       form: {
-        name:'',
-        url:'',
-        component:'',
-        redirect:'',
-        title:'',
-        icon:'',
-        pid:null,
-        sort:1,
+        ...defaultForm
       },
       menuSelected: [],
       menuOptions: [],
     }
   },
   watch: {
-    menuSelected:{
+    menuSelected: {
       deep: true,
-      handler(value) {
+      handler (value) {
         this.form.pid = value[0]
       }
     },
-    source:{
+    source: {
       deep: true,
-      handler(value) {
+      handler (value) {
         this.form = value
         this.menuSelected = [value.pid]
       }
@@ -120,9 +127,9 @@ export default {
     })
   },
   methods: {
-    ...mapActions({ queryUserMenu: 'QueryUserMenu',createUserMenu:'CreateUserMenu', updateUserMenu: 'UpdateUserMenu' }),
+    ...mapActions({ queryUserMenu: 'QueryUserMenu', createUserMenu: 'CreateUserMenu', updateUserMenu: 'UpdateUserMenu' }),
     onCreateClick () {
-      this.createUserMenu(this.form).then((res)=>{
+      this.createUserMenu(this.form).then((res) => {
         this.$message({
           type: 'success',
           message: res.message
@@ -135,9 +142,8 @@ export default {
         });
       })
     },
-    onUpdateClick() {
-      console.log(this.form)
-      this.updateUserMenu(this.form).then((res)=>{
+    onUpdateClick () {
+      this.updateUserMenu(this.form).then((res) => {
         this.$message({
           type: 'success',
           message: res.message
@@ -149,6 +155,12 @@ export default {
           message: err
         });
       })
+    },
+    dialogClosed () {
+      this.form = {
+        ...defaultForm
+      }
+      this.menuSelected = []
     }
   }
 }

@@ -1,24 +1,26 @@
 <template>
-  <el-dialog :title="isEdit?'权限编辑':'权限创建'"
+  <el-dialog :title="isEdit?'角色编辑':'角色创建'"
              :visible.sync="dialogVisible"
-             @closed="dialogClosed">
+             @closed="dialogClosed"
+             class="dialog">
     <el-form ref="form"
              :model="form"
              label-width="40px">
       <el-form-item label="名称">
         <el-input v-model="form.name"
-                  placeholder="请输入权限名称"></el-input>
+                  placeholder="请输入角色名称"></el-input>
       </el-form-item>
-      <el-form-item label="菜单">
-        <el-cascader :props="{value: 'id',label: 'title'}"
-                     :show-all-levels="false"
-                     :options="menuOptions"
-                     v-model="menuSelected"
-                     @change="onMenuChange"
-                     placeholder="试试搜索 ：)"
-                     filterable
-                     clearable></el-cascader>
+      <el-form-item label="权限">
+        <el-transfer filterable
+                     :props="{label: 'name',key: 'id'}"
+                     :titles="['未选权限', '已选权限']"
+                     :filter-method="filterMethod"
+                     filter-placeholder="请输入权限拼音"
+                     v-model="authids"
+                     :data="authdata">
+        </el-transfer>
       </el-form-item>
+
     </el-form>
     <span slot="footer"
           class="dialog-footer">
@@ -35,13 +37,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-const defaultForm = {
-  name: null,
-  menu_id: null
-}
-
 export default {
-  name: 'AuthDetail',
+  name: 'RoleDetail',
   props: {
     value: {
       type: Boolean,
@@ -60,19 +57,21 @@ export default {
     source: {
       deep: true,
       handler (value) {
-        const { user_menu = {} } = value
+        const { user_auths = {} } = value
         this.form = value
-        this.menuSelected = [user_menu.pid, user_menu.id]
+        this.authids = user_auths.map(item => {
+          return item.id
+        })
       }
     },
   },
   data () {
     return {
       form: {
-        ...defaultForm
+        name: '',
       },
-      menuSelected: [],
-      menuOptions: []
+      authdata: [],
+      authids: []
     }
   },
   computed: {
@@ -86,27 +85,21 @@ export default {
     },
   },
   created () {
-    this.queryUserMenu().then(res => {
+    this.queryUserAuth().then(res => {
       const { data: { rows = [] } } = res
-      const pmenus = rows.filter(_ => !_.pid)
-      this.menuOptions = pmenus.map(pmenu => {
-        const cmenus = rows.filter(menu => pmenu.id === menu.pid)
-        cmenus.unshift({
-          ...pmenu
-        })
-        pmenu.children = cmenus
-        return pmenu
-      })
+      this.authdata = rows
     })
   },
   methods: {
-    ...mapActions({ queryUserMenu: 'QueryUserMenu', createUserAuth: 'CreateUserAuth', updateUserAuth: 'UpdateUserAuth' }),
-    onMenuChange (value) {
-      this.form.menu_id = this.menuSelected[1]
+    ...mapActions({ queryUserAuth: 'QueryUserAuth', createUserRole: 'CreateUserRole', updateUserRole: 'UpdateUserRole' }),
+    filterMethod (query, item) {
+      return item.name.indexOf(query) > -1
     },
     onCreateClick () {
-      console.log(this.form)
-      this.createUserAuth(this.form).then((res) => {
+      this.createUserRole({
+        ...this.form,
+        authids: this.authids
+      }).then((res) => {
         this.$message({
           type: 'success',
           message: res.message
@@ -120,7 +113,10 @@ export default {
       })
     },
     onUpdateClick () {
-      this.updateUserAuth(this.form).then((res) => {
+      this.updateUserRole({
+        ...this.form,
+        authids: this.authids
+      }).then((res) => {
         this.$message({
           type: 'success',
           message: res.message
@@ -134,13 +130,21 @@ export default {
       })
     },
     dialogClosed () {
-      this.form = {
-        ...defaultForm
+      if (!this.isEdit) {
+        this.form = {
+          name: ''
+        }
+        this.authids = []
       }
-      this.menuSelected = []
     }
   }
 }
 </script>
+<style scoped>
+.dialog >>> .el-dialog {
+  min-width: 280px;
+  max-width: 578px;
+}
+</style>
 <style scoped lang="scss">
 </style>

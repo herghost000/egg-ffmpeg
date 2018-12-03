@@ -11,6 +11,9 @@ class UserRoleController extends Controller {
       Op,
     } = app.Sequelize;
     const query = {
+      include: [{
+        model: ctx.model.UserAuth,
+      }],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
@@ -34,15 +37,15 @@ class UserRoleController extends Controller {
     const ctx = this.ctx;
     const {
       name,
+      authids = [],
     } = ctx.request.body;
-    const created_at = new Date();
-    const type = await ctx.model.UserRole.create({
+    const role = await ctx.model.UserRole.create({
       name,
-      created_at,
     });
+    role.setUser_auths(authids);
     ctx.body = {
       code: 200,
-      data: type || {},
+      data: role || {},
       message: '用户创建成功！',
     };
   }
@@ -51,11 +54,11 @@ class UserRoleController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = ctx.helper.toInt(ctx.params.id);
-    const type = await ctx.model.UserRole.findById(id);
-    if (!type) {
+    const role = await ctx.model.UserRole.findById(id);
+    if (!role) {
       ctx.status = {
         code: 404,
-        data: type,
+        data: role,
         message: '未找到需要编辑的用户！',
       };
       return;
@@ -63,15 +66,15 @@ class UserRoleController extends Controller {
 
     const {
       name,
+      authids = [],
     } = ctx.request.body;
-    const updated_at = new Date();
-    await type.update({
+    await role.update({
       name,
-      updated_at,
     });
+    role.setUser_auths(authids);
     ctx.body = {
       code: 201,
-      data: type || {},
+      data: role || {},
       message: '用户信息编辑成功！',
     };
   }

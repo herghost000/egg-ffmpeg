@@ -2,6 +2,69 @@
 const Controller = require('egg').Controller;
 const NodeRSA = require('node-rsa');
 const sharp = require('sharp');
+const os = require('os');
+const osu = require('node-os-utils');
+console.log(osu);
+const netstat = osu.netstat;
+
+function cpuIAverage(i) {
+  let cpu,
+    cpus,
+    idle,
+    len,
+    total,
+    totalIdle,
+    totalTick,
+    type;
+  totalIdle = 0;
+  totalTick = 0;
+  cpus = os.cpus();
+  cpu = cpus[i];
+  for (type in cpu.times) {
+    totalTick += cpu.times[type];
+  }
+  totalIdle = cpu.times.idle;
+  idle = totalIdle;
+  total = totalTick;
+  return {
+    idle,
+    total,
+    avg: ((total - idle) / total) * 100,
+    kx: (idle / total) * 100,
+  };
+}
+
+function cpusInfo() {
+  const cpus = os.cpus();
+  let totalTick = 0;
+  let totalUser = 0;
+  let totalSys = 0;
+  let totalIdle = 0;
+  let totalIrq = 0;
+  const totalUse = 0;
+
+  cpus.forEach(cpu => {
+    for (const i in cpu.times) {
+      totalTick += cpu.times[i];
+    }
+    totalUser += cpu.times.user;
+    totalSys += cpu.times.sys;
+    totalIdle += cpu.times.idle;
+    totalIrq += cpu.times.irq;
+  });
+  const totalUserRatio = (totalUser * 100) / totalTick;
+  const totalSysrRatio = (totalSys * 100) / totalTick;
+  const totalIdleRatio = (totalIdle * 100) / totalTick;
+  const totalIrqRatio = (totalIrq * 100) / totalTick;
+  const totalUseRatio = 100 - totalIdleRatio;
+  return {
+    totalUserRatio,
+    totalSysrRatio,
+    totalIdleRatio,
+    totalIrqRatio,
+    totalUseRatio,
+  };
+}
 
 class HomeController extends Controller {
   async index() {
@@ -97,7 +160,21 @@ class HomeController extends Controller {
     //   .sharpen()
     //   .png()
     //   .toFile('sharp/output.jpg');
-    return this.ctx.render('home.tpl');
+    // return this.ctx.render('home.tpl');
+    const freemem = os.freemem() / 1024 / 1024 / 1024;
+    const totalmem = os.totalmem() / 1024 / 1024 / 1024;
+    const usedmem = totalmem - freemem;
+    const useratio = (usedmem / totalmem) * 100;
+    ctx.body = {
+      memory: {
+        freemem,
+        totalmem,
+        usedmem,
+        useratio,
+      },
+      cpu: cpusInfo(),
+      x: await netstat.stats(),
+    };
   }
   async rsa() {
     const newkey = new NodeRSA({

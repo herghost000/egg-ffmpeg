@@ -3,36 +3,6 @@ const Controller = require('egg').Controller;
 const NodeRSA = require('node-rsa');
 const sharp = require('sharp');
 const os = require('os');
-const osu = require('node-os-utils');
-console.log(osu);
-const netstat = osu.netstat;
-
-function cpuIAverage(i) {
-  let cpu,
-    cpus,
-    idle,
-    len,
-    total,
-    totalIdle,
-    totalTick,
-    type;
-  totalIdle = 0;
-  totalTick = 0;
-  cpus = os.cpus();
-  cpu = cpus[i];
-  for (type in cpu.times) {
-    totalTick += cpu.times[type];
-  }
-  totalIdle = cpu.times.idle;
-  idle = totalIdle;
-  total = totalTick;
-  return {
-    idle,
-    total,
-    avg: ((total - idle) / total) * 100,
-    kx: (idle / total) * 100,
-  };
-}
 
 function cpusInfo() {
   const cpus = os.cpus();
@@ -41,7 +11,6 @@ function cpusInfo() {
   let totalSys = 0;
   let totalIdle = 0;
   let totalIrq = 0;
-  const totalUse = 0;
 
   cpus.forEach(cpu => {
     for (const i in cpu.times) {
@@ -173,7 +142,6 @@ class HomeController extends Controller {
         useratio,
       },
       cpu: cpusInfo(),
-      x: await netstat.stats(),
     };
   }
   async rsa() {

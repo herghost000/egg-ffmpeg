@@ -3,36 +3,7 @@ const Controller = require('egg').Controller;
 const NodeRSA = require('node-rsa');
 const sharp = require('sharp');
 const os = require('os');
-const osu = require('node-os-utils');
-console.log(osu);
-const netstat = osu.netstat;
-
-function cpuIAverage(i) {
-  let cpu,
-    cpus,
-    idle,
-    len,
-    total,
-    totalIdle,
-    totalTick,
-    type;
-  totalIdle = 0;
-  totalTick = 0;
-  cpus = os.cpus();
-  cpu = cpus[i];
-  for (type in cpu.times) {
-    totalTick += cpu.times[type];
-  }
-  totalIdle = cpu.times.idle;
-  idle = totalIdle;
-  total = totalTick;
-  return {
-    idle,
-    total,
-    avg: ((total - idle) / total) * 100,
-    kx: (idle / total) * 100,
-  };
-}
+const fs = require('fs');
 
 function cpusInfo() {
   const cpus = os.cpus();
@@ -41,7 +12,6 @@ function cpusInfo() {
   let totalSys = 0;
   let totalIdle = 0;
   let totalIrq = 0;
-  const totalUse = 0;
 
   cpus.forEach(cpu => {
     for (const i in cpu.times) {
@@ -68,7 +38,10 @@ function cpusInfo() {
 
 class HomeController extends Controller {
   async index() {
-    const { ctx, app } = this;
+    const {
+      ctx,
+      app,
+    } = this;
     // set
     // await app.redis.set('foo', 'bar');
     // await app.redis.set('user.herghost.token', 6666);
@@ -106,75 +79,78 @@ class HomeController extends Controller {
     //     },
     //   })
     //   .toFile('sharp/output.png');
-    // 600 800 480000
-    // const imgList = [
-    //   {
-    //     url: 'sharp/input.jpg',
-    //     ratio: 6 288000
-    //   },
-    //   {
-    //     url: 'sharp/input.jpg',
-    //     ratio: 2 96000
-    //   },
-    //   {
-    //     url: 'sharp/input.jpg',
-    //     ratio: 2 96000
-    //   },
 
-    // ];
-    // const bgw = 600
-    // const bgh = 800
+    const limit = 4;
+    const imgList = [{
+      left: 0,
+      top: 0,
+      overlay: sharp('sharp/1.jpg').resize(300, 400),
+    }, {
+      left: 300,
+      top: 0,
+      overlay: sharp('sharp/2.jpg').resize(300, 200),
+    }, {
+      left: 300,
+      top: 200,
+      overlay: sharp('sharp/3.jpg').resize(300, 200),
+    }, {
+      left: 0,
+      top: 400,
+      overlay: sharp('sharp/5.jpg').resize(600, 400),
+    }];
+    const base = sharp({
+      create: {
+        width: 600,
+        height: 800,
+        channels: 4,
+        background: {
+          r: 0,
+          g: 0,
+          b: 0,
+          alpha: 0,
+        },
+      },
+    }).png().toBuffer();
+    const result = await imgList.reduce(async (input, item) => {
+      let {
+        overlay,
+        top,
+        left,
+      } = item;
+      overlay = await overlay.toBuffer();
+      return input.then(data => {
+        return sharp(data)
+          .overlayWith(overlay, {
+            top,
+            left,
+          })
+          .sharpen()
+          .png()
+          .toBuffer();
+      });
+    }, base);
 
-    // const pic1bf = await sharp('sharp/input.jpg').resize(300, 400)
-    //   .toBuffer();
-    // const pic2bf = await sharp('sharp/input2.jpg').resize(300, 200)
-    //   .toBuffer();
-    // const bgbf = await sharp({
-    //   create: {
-    //     width: 600,
-    //     height: 800,
-    //     channels: 4,
-    //     background: {
-    //       r: 255,
-    //       g: 0,
-    //       b: 0,
-    //       alpha: 0.5,
-    //     },
-    //   },
-    // }).png().toBuffer();
-
-    // const cpbf1 = await sharp(bgbf)
-    //   .overlayWith(pic1bf, {
-    //     top: 0,
-    //     left: 0,
-    //   })
-    //   .sharpen()
-    //   .png()
-    //   .toBuffer();
-
-    // sharp(cpbf1)
-    //   .overlayWith(pic2bf, {
-    //     top: 0,
-    //     left: 300,
-    //   })
-    //   .sharpen()
-    //   .png()
-    //   .toFile('sharp/output.jpg');
+    const pbuf = await sharp(result).flatten()
+      .webp()
+      .toBuffer();
+    fs.writeFileSync('sharp/output.webp', pbuf);
+    // .toFile('sharp/output.jpg');
     // return this.ctx.render('home.tpl');
     const freemem = os.freemem() / 1024 / 1024 / 1024;
     const totalmem = os.totalmem() / 1024 / 1024 / 1024;
     const usedmem = totalmem - freemem;
     const useratio = (usedmem / totalmem) * 100;
-    ctx.body = {
-      memory: {
-        freemem,
-        totalmem,
-        usedmem,
-        useratio,
-      },
-      cpu: cpusInfo(),
-      x: await netstat.stats(),
-    };
+    ctx.set('Content-Type', 'image/webp');
+    ctx.body = pbuf;
+    // {
+    //   memory: {
+    //     freemem,
+    //     totalmem,
+    //     usedmem,
+    //     useratio,
+    //   },
+    //   cpu: cpusInfo(),
+    // };
   }
   async rsa() {
     const newkey = new NodeRSA({

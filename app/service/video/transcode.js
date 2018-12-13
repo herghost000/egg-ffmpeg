@@ -263,7 +263,6 @@ function transcode(
     '-strict -2',
   ]);
   if (vf && !util.isArray(vf)) {
-    console.log('vf::', vf);
     fp.addOption('-vf', vf);
   }
   fp.output(trans_path)
@@ -335,7 +334,7 @@ function trans2chunk(video_path, chunk_path, size, bv, bufsize, maxrate, vf) {
       console.log('Cannot process video: ' + video_path + err.message);
     })
     .on('end', function() {
-      console.log('complate 6666');
+      console.log('complate');
     })
     .run();
 }

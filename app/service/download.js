@@ -21,6 +21,11 @@ class DownLoadService extends Service {
     ctx.body = fs.createReadStream(filePath);
   }
 
+  async online(filePath) {
+    const ctx = this.ctx;
+    ctx.body = fs.createReadStream(filePath);
+  }
+
   async range(path) {
     const {
       ctx,

@@ -4,10 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const {
-    router,
-    controller,
-  } = app;
+  const { router, controller } = app;
 
   const checktoken = app.middleware.checktoken();
   const checksign = app.middleware.checksign();
@@ -15,7 +12,13 @@ module.exports = app => {
   router.get('/rsa', controller.home.rsa);
   router.get('/crossdomain.xml', controller.home.video.crossdomain);
 
-  router.resources('user', '/api/v2/user', checktoken, checksign, controller.v2.user.user);
+  router.resources(
+    'user',
+    '/api/v2/user',
+    checktoken,
+    checksign,
+    controller.v2.user.user
+  );
   router.get(
     'user',
     '/api/v2/userauth',
@@ -23,7 +26,12 @@ module.exports = app => {
     checksign,
     controller.v2.user.user.auth
   );
-  router.post('login', '/api/v2/user/login', checksign, controller.v2.user.user.login);
+  router.post(
+    'login',
+    '/api/v2/user/login',
+    checksign,
+    controller.v2.user.user.login
+  );
 
   router.resources(
     'user-role',
@@ -102,6 +110,7 @@ module.exports = app => {
   router.get('/video/link/:dirname/:filename.ts', controller.home.video.ts);
   router.get('/video/link/:dirname/ts.key', controller.home.video.key);
   router.get('/video/share/:id', controller.home.video.share);
+  router.get('/video/thumb/:id', controller.home.video.thumb);
   // http://localhost:9528/video/play/26fe23d0ec9211e8a46e97b69cfa585a/03c7c0ace395d80182db07ae2c30f034/ts.key
   // http://localhost:9528/video/link/26fe23d0ec9211e8a46e97b69cfa585a/03c7c0ace395d80182db07ae2c30f034/ts.key
 };

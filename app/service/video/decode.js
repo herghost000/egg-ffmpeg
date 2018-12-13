@@ -5,9 +5,7 @@ class VideoDecodeService extends Service {
   async findAndCountAll(playload) {}
 
   async create(name) {
-    const {
-      ctx,
-    } = this;
+    const { ctx } = this;
     const created_at = new Date();
     const updated_at = created_at;
     const status_id = 1;
@@ -17,9 +15,13 @@ class VideoDecodeService extends Service {
     const chunk_path = `${this.config.transcode.baseDir}${
       this.config.transcode.targetDir
     }${name}.m3u8`;
+    const thumb_path = `${this.config.transcode.baseDir}${
+      this.config.transcode.targetDir
+    }${name.split('/')[0]}/thumbs/output.webp`;
     const decode = await ctx.model.VideoDecode.create({
       trans_path,
       chunk_path,
+      thumb_path,
       status_id,
       created_at,
       updated_at,

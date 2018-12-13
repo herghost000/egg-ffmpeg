@@ -58,14 +58,14 @@ module.exports = () => {
       if (serverParams2Md5 !== params2Md5) {
         ctx.body = {
           code: 404,
-          message: '签名被篡改，已记录你的ip',
+          message: '签名被篡改',
         };
         return void 0;
       }
     } catch (error) {
       ctx.body = {
         code: 404,
-        message: '签名异常',
+        message: `签名异常:${error}`,
       };
       return void 0;
     }

@@ -3,7 +3,7 @@ const Controller = require('egg').Controller;
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const url = require('url');
-
+const fs = require('fs');
 class VideoController extends Controller {
   async play() {
     const ctx = this.ctx;
@@ -22,7 +22,10 @@ class VideoController extends Controller {
       .replace(/\s/gim, '')
       .split('|')
       .indexOf(host);
-    console.log(9999, atWhitList);
+    if (!token) {
+      ctx.body = null;
+      return void 0;
+    }
     if (atWhitList === -1) {
       const { access } = await new Promise(resolve => {
         jwt.verify(token, antikey, function(err, decoded) {
@@ -83,8 +86,8 @@ class VideoController extends Controller {
   }
   async share() {
     const ctx = this.ctx;
-    const { id } = ctx.params;
-
+    let { id } = ctx.params;
+    id = ctx.helper.rsaDecrypt(ctx.helper.aesDecrypt(id, 'id'));
     const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
     if (!video.data) {
       ctx.body = {
@@ -128,6 +131,25 @@ class VideoController extends Controller {
       surface_plot,
       dsc,
     });
+  }
+  async thumb() {
+    const ctx = this.ctx;
+    let { id } = ctx.params;
+    id = ctx.helper.rsaDecrypt(ctx.helper.aesDecrypt(id, 'id'));
+    const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
+    if (!video.data) {
+      ctx.body = {
+        code: 404,
+        data: false,
+        message: '图片未找到',
+      };
+      return void 0;
+    }
+    const {
+      video_decode: { thumb_path },
+    } = video.data;
+    ctx.set('Content-Type', 'image/webp');
+    ctx.body = fs.createReadStream(thumb_path);
   }
 }
 //

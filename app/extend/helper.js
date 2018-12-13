@@ -2,12 +2,11 @@
 const crypto = require('crypto');
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
-const {
-  write,
-} = require('await-stream-ready');
+const { write } = require('await-stream-ready');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const NodeRSA = require('node-rsa');
+const sharp = require('sharp');
 
 function duplicates(arr) {
   const same = [];
@@ -98,6 +97,18 @@ function toInt(str) {
   return parseInt(str, 10) || 0;
 }
 
+function readdir(path, options = {}) {
+  return new Promise(resolve => {
+    fs.readdir(path, options, function(err, files) {
+      if (err) {
+        resolve(false);
+      } else {
+        resolve(files);
+      }
+    });
+  });
+}
+
 function getStat(path) {
   return new Promise(resolve => {
     fs.stat(path, (err, stats) => {
@@ -184,6 +195,85 @@ function covertSep(_path) {
 }
 
 module.exports = {
+  async generateThumbs(path, ext, name) {
+    const files = await readdir(path);
+    const imgList = [];
+    const resizeArr = [
+      {
+        left: 0,
+        top: 0,
+        width: 300,
+        height: 400,
+      },
+      {
+        left: 300,
+        top: 0,
+        width: 300,
+        height: 200,
+      },
+      {
+        left: 300,
+        top: 200,
+        width: 300,
+        height: 200,
+      },
+      {
+        left: 0,
+        top: 400,
+        width: 600,
+        height: 400,
+      },
+    ];
+    if (files) {
+      for (let i = 0; i < 4; i++) {
+        const file = files[i];
+        const sfileExt = file.split('.')[1];
+        if (ext === sfileExt) {
+          const { left, top, width, height } = resizeArr[i];
+          imgList.push({
+            left,
+            top,
+            overlay: sharp(`${path}/${file}`).resize(width, height),
+          });
+        }
+      }
+    }
+    const base = sharp({
+      create: {
+        width: 600,
+        height: 800,
+        channels: 4,
+        background: {
+          r: 0,
+          g: 0,
+          b: 0,
+          alpha: 0,
+        },
+      },
+    })
+      .png()
+      .toBuffer();
+    const result = await imgList.reduce(async (input, item) => {
+      let { overlay, top, left } = item;
+      overlay = await overlay.toBuffer();
+      return input.then(data => {
+        return sharp(data)
+          .overlayWith(overlay, {
+            top,
+            left,
+          })
+          .sharpen()
+          .png()
+          .toBuffer();
+      });
+    }, base);
+
+    const pbuf = await sharp(result)
+      .flatten()
+      .webp()
+      .toBuffer();
+    fs.writeFileSync(`${path}/${name}.webp`, pbuf);
+  },
   async save(baseDir, uploadPath, stream) {
     const datestr = new Date()
       .toLocaleDateString()
@@ -214,12 +304,7 @@ module.exports = {
     };
   },
   async chunkSave(baseDir, uploadPath, stream) {
-    let {
-      name,
-      total,
-      index,
-      key,
-    } = stream.fields;
+    let { name, total, index, key } = stream.fields;
     name = name || '';
     name = encodeURIComponent(name);
     name = `${md5(path.parse(name).name)}${path.parse(name).ext}`;

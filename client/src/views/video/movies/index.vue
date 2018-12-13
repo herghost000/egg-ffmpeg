@@ -148,6 +148,20 @@
                size="mini"
                :model="formShare"
                label-width="120px">
+        <el-form-item label="封面链接">
+
+          <el-alert :closable="false"
+                    :title="`${videoSettingData.host}${formShare.surface_plot}`"
+                    type="info">
+          </el-alert>
+        </el-form-item>
+        <el-form-item label="合图链接">
+
+          <el-alert :closable="false"
+                    :title="`${videoSettingData.host}/video/thumb/${formShare.id}`"
+                    type="info">
+          </el-alert>
+        </el-form-item>
         <el-form-item label="分享链接">
 
           <el-alert :closable="false"
@@ -171,7 +185,8 @@
   </div>
 </template>
 <script>
-
+import { encrypt } from '@/utils/rsa'
+import { aesEncrypt } from '@/utils'
 import waves from '@/directive/waves/index.js' // 水波纹指令
 import { mapActions, mapGetters } from 'vuex'
 import clipboard from '@/directive/clipboard/index.js' // use clipboard by v-directive
@@ -277,7 +292,8 @@ export default {
     },
     handleShare (index, row) {
       this.dialogShareVisible = true
-      this.formShare = row
+      console.log(row)
+      this.formShare = { ...row, id: aesEncrypt(encrypt(`${row.id}`), 'id') }
     },
     clipboardSuccess () {
       this.$message({
@@ -306,5 +322,8 @@ export default {
 .surface_plot:hover {
   /* transform: scale(1.5, 1.5);
     filter: contrast(150%); */
+}
+.el-alert {
+  word-break: break-all;
 }
 </style>

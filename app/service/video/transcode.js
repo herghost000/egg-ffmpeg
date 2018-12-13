@@ -9,14 +9,7 @@ class TransCodeService extends Service {
   async trans(id) {
     const ctx = this.ctx;
     const {
-      data: {
-        host,
-        ratio,
-        miaoqie,
-        watermark,
-        tsencry,
-        screenshots,
-      },
+      data: { host, ratio, miaoqie, watermark, tsencry, screenshots },
     } = await ctx.service.video.setting.find();
     const listItem = await ctx.service.video.list.find(id);
     if (!listItem.data) {
@@ -26,11 +19,7 @@ class TransCodeService extends Service {
         message: '未找到相关视频信息',
       };
     }
-    const {
-      video_path,
-      decode_id,
-      video_decode,
-    } = listItem.data;
+    const { video_path, decode_id, video_decode } = listItem.data;
     if (!decode_id || (decode_id && !video_decode)) {
       return {
         code: 404,
@@ -38,11 +27,7 @@ class TransCodeService extends Service {
         message: '未找到转码信息，未生成或被删除',
       };
     }
-    const {
-      trans_path,
-      chunk_path,
-      status_id,
-    } = video_decode;
+    const { trans_path, chunk_path, status_id } = video_decode;
     if (!video_path) {
       return {
         code: 404,
@@ -113,7 +98,9 @@ class TransCodeService extends Service {
     }
     if (watermark) {
       vf.push(
-        `movie=${this.config.upload.staticPrefix}${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`
+        `movie=${
+          this.config.upload.staticPrefix
+        }${watermark} [watermark]; [in][watermark] overlay=main_w-overlay_w`
       );
     }
     if (srtpath) {
@@ -172,6 +159,9 @@ class TransCodeService extends Service {
           status_id: 7,
         });
       },
+      generateThumbs(path, ext, name) {
+        ctx.helper.generateThumbs(path, ext, name);
+      },
     };
 
     ffmpeg.ffprobe(video_path, (err, metadata) => {
@@ -195,11 +185,12 @@ class TransCodeService extends Service {
               maxrate,
               vf,
               tsencry,
-              cbs
+              cbs,
+              screenshots
             );
           } else {
             ctx.helper.copyFile(video_path, trans_path);
-            chunk(video_path, chunk_path, tsencry, cbs);
+            chunk(video_path, chunk_path, tsencry, cbs, screenshots);
           }
         } else {
           transcode(
@@ -212,7 +203,8 @@ class TransCodeService extends Service {
             maxrate,
             vf,
             tsencry,
-            cbs
+            cbs,
+            screenshots
           );
         }
       } else {
@@ -226,7 +218,8 @@ class TransCodeService extends Service {
           maxrate,
           vf,
           tsencry,
-          cbs
+          cbs,
+          screenshots
         );
       }
     });
@@ -248,7 +241,8 @@ function transcode(
   maxrate,
   vf,
   tsencry,
-  cbs
+  cbs,
+  count
 ) {
   const fp = ffmpeg(video_path).addOptions([
     '-s ' + size,
@@ -275,12 +269,12 @@ function transcode(
     })
     .on('end', function() {
       cbs.transEnd();
-      chunk(trans_path, chunk_path, tsencry, cbs);
+      chunk(trans_path, chunk_path, tsencry, cbs, count);
     })
     .run();
 }
 
-function chunk(trans_path, chunk_path, tsencry, cbs) {
+function chunk(trans_path, chunk_path, tsencry, cbs, count) {
   const fp = ffmpeg(trans_path).addOptions([
     '-start_number 0',
     '-hls_time 10',
@@ -294,7 +288,7 @@ function chunk(trans_path, chunk_path, tsencry, cbs) {
   fp.output(chunk_path)
     .on('start', function() {
       cbs.chunkStart();
-      screenshots(trans_path, chunk_path);
+      screenshots(trans_path, chunk_path, cbs, count);
     })
     .on('error', function(err) {
       cbs.chunkError();
@@ -339,12 +333,21 @@ function trans2chunk(video_path, chunk_path, size, bv, bufsize, maxrate, vf) {
     .run();
 }
 
-function screenshots(video_path, chunk_path, count = 4) {
-  ffmpeg(video_path).screenshots({
-    count,
-    filename: '%i.jpg',
-    folder: path.dirname(chunk_path),
-  });
+function screenshots(video_path, chunk_path, cbs, count = 4) {
+  ffmpeg(video_path)
+    .screenshots({
+      count: 4,
+      filename: '%i.jpg',
+      folder: `${path.dirname(chunk_path)}/thumbs`,
+    })
+    .on('end', function() {
+      cbs.generateThumbs &&
+        cbs.generateThumbs(
+          `${path.dirname(chunk_path)}/thumbs`,
+          'jpg',
+          'output'
+        );
+    });
 }
 
 module.exports = TransCodeService;

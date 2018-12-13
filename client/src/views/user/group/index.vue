@@ -9,6 +9,8 @@
       <el-form-item>
         <el-button type="primary"
                    @click="onSearch">查询</el-button>
+        <el-button type="primary"
+                   @click="onCreate">创建</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="listData"
@@ -36,20 +38,15 @@
       <el-table-column align="center"
                        label="操作">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.edit"
-                     type="success"
-                     size="small"
-                     icon="el-icon-circle-check-outline"
-                     @click="confirmEdit(scope.row)">确定</el-button>
-          <el-button v-else
-                     type="primary"
-                     size="small"
-                     icon="el-icon-edit"
-                     @click="scope.row.edit=!scope.row.edit">编辑</el-button>
-          <el-button size="small"
+          <el-button size="mini"
+                     icon="el-icon-setting"
+                     class="operate-btn"
+                     @click="confirmEdit(scope.row)"></el-button>
+          <el-button size="mini"
                      type="danger"
                      icon="el-icon-delete"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                     class="operate-btn"
+                     @click="handleDelete(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -61,13 +58,17 @@
                    layout="total, sizes, prev, pager, next, jumper"
                    :total="query.total">
     </el-pagination>
+    <group-detail v-model="visible" :is-edit="false"></group-detail>
+    <group-detail v-model="visibleEdit" :is-edit="true" :source="sourceEdit"></group-detail>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import { deepClone } from '@/utils/index'
+import GroupDetail from './components/GroupDetail'
 
 export default {
+  components: { GroupDetail },
   data () {
     return {
       listLoading: false,
@@ -80,7 +81,10 @@ export default {
         offset: 0,
         limit: 5,
         total: 0
-      }
+      },
+      visible: false,
+      visibleEdit: false,
+      sourceEdit: {}
     }
   },
   created () {
@@ -124,17 +128,8 @@ export default {
       })
     },
     confirmEdit (row) {
-      row.edit = false
-      row.originalName = row.name
-      this.updateUserGroup(row).then(res => {
-        const { data } = res
-        if (Object.isNotEmpty(data)) {
-          this.$message({
-            message: '编辑成功',
-            type: 'success'
-          })
-        }
-      })
+      this.sourceEdit = row
+      this.visibleEdit = true
     },
     handleDelete (index, row) {
 
@@ -161,6 +156,9 @@ export default {
     },
     onSearch () {
       this.getList()
+    },
+    onCreate() {
+      this.visible = true
     }
   }
 }

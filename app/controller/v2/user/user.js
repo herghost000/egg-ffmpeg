@@ -6,9 +6,7 @@ class UserController extends Controller {
   async logout() {
     const ctx = this.ctx;
     const redis = this.app.redis;
-    const {
-      username,
-    } = ctx.session;
+    const { username } = ctx.session;
     redis.del(`user.${username}.token`);
     ctx.cookies.set('X-Token', '');
     ctx.session = null;
@@ -20,10 +18,7 @@ class UserController extends Controller {
   async login() {
     const ctx = this.ctx;
     const redis = this.app.redis;
-    let {
-      username,
-      password,
-    } = ctx.request.body;
+    let { username, password } = ctx.request.body;
 
     password = ctx.helper.rsaDecrypt(password);
 
@@ -43,13 +38,15 @@ class UserController extends Controller {
       };
       return void 0;
     }
-    const token = jwt.sign({
-      id: 1,
-      username,
-    },
-    this.config.login.sign, {
-      expiresIn: this.config.login.tokenExpiresIn,
-    }
+    const token = jwt.sign(
+      {
+        id: 1,
+        username,
+      },
+      this.config.login.sign,
+      {
+        expiresIn: this.config.login.tokenExpiresIn,
+      }
     );
     await redis.set(`user.${username}.token`, token);
     redis.expire(`user.${username}.token`, this.config.login.tokenMaxAge);
@@ -62,9 +59,7 @@ class UserController extends Controller {
     };
   }
   async auth() {
-    const {
-      ctx,
-    } = this;
+    const { ctx } = this;
     const id = jwt.decode(ctx.get('X-Token')).id;
     if (!id) {
       ctx.body = {
@@ -75,18 +70,21 @@ class UserController extends Controller {
     }
     const query = {
       attributes: [ 'id', 'name', 'avatar' ],
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-        include: [{
-          model: ctx.model.UserMenu,
-        }],
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+          include: [
+            {
+              model: ctx.model.UserMenu,
+            },
+          ],
+        },
       ],
       where: {
         id,
@@ -100,39 +98,35 @@ class UserController extends Controller {
     };
   }
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
       attributes: [ 'id', 'name', 'avatar' ],
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
+    const users = await ctx.model.User.findAndCountAll(query);
+    users.count = users.rows.length;
     ctx.body = {
       code: 200,
-      data: await ctx.model.User.findAndCountAll(query),
+      data: users,
       message: '用户查询成功',
     };
   }
@@ -168,20 +162,19 @@ class UserController extends Controller {
 
   async edit() {
     const ctx = this.ctx;
-    const {
-      id,
-    } = ctx.params;
+    const { id } = ctx.params;
 
     const user = await this.ctx.model.User.findOne({
-      include: [{
-        model: ctx.model.UserRole,
-      },
-      {
-        model: ctx.model.UserGroup,
-      },
-      {
-        model: ctx.model.UserAuth,
-      },
+      include: [
+        {
+          model: ctx.model.UserRole,
+        },
+        {
+          model: ctx.model.UserGroup,
+        },
+        {
+          model: ctx.model.UserAuth,
+        },
       ],
       where: {
         id,

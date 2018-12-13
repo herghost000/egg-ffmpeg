@@ -3,22 +3,21 @@ const Controller = require('egg').Controller;
 
 class UserGroupController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    const {
-      Op,
-    } = app.Sequelize;
+    const { ctx, app } = this;
+    const { Op } = app.Sequelize;
     const query = {
+      include: [
+        {
+          model: ctx.model.UserRole,
+          required: false,
+        },
+      ],
       where: {
         name: {
           [Op.like]: ctx.query.name ? `%${ctx.query.name}%` : '%%',
         },
       },
-      order: [
-        [ 'id', 'desc' ],
-      ],
+      order: [[ 'id', 'desc' ]],
       offset: ctx.helper.toInt(ctx.query.offset),
       limit: ctx.helper.toInt(ctx.query.limit),
     };
@@ -32,18 +31,15 @@ class UserGroupController extends Controller {
   async create() {
     // post posts
     const ctx = this.ctx;
-    const {
+    const { name, roleids = [] } = ctx.request.body;
+    const group = await ctx.model.UserGroup.create({
       name,
-    } = ctx.request.body;
-    const created_at = new Date();
-    const type = await ctx.model.UserGroup.create({
-      name,
-      created_at,
     });
+    group.setUser_roles(roleids);
     ctx.body = {
       code: 200,
-      data: type || {},
-      message: '用户创建成功！',
+      data: group || {},
+      message: '用户组创建成功！',
     };
   }
 
@@ -51,28 +47,25 @@ class UserGroupController extends Controller {
     // put posts/:id
     const ctx = this.ctx;
     const id = ctx.helper.toInt(ctx.params.id);
-    const type = await ctx.model.UserGroup.findById(id);
-    if (!type) {
+    const group = await ctx.model.UserGroup.findById(id);
+    if (!group) {
       ctx.status = {
         code: 404,
-        data: type,
-        message: '未找到需要编辑的用户！',
+        data: group,
+        message: '未找到需要编辑的用户组！',
       };
       return;
     }
+    const { name, roleids = [] } = ctx.request.body;
 
-    const {
+    await group.update({
       name,
-    } = ctx.request.body;
-    const updated_at = new Date();
-    await type.update({
-      name,
-      updated_at,
     });
+    group.setUser_roles(roleids);
     ctx.body = {
       code: 201,
-      data: type || {},
-      message: '用户信息编辑成功！',
+      data: group || {},
+      message: '用户组信息编辑成功！',
     };
   }
 

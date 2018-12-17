@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <title>rsa生成</title>
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 <ul>
   <li>替换后端config/config.default.js config.rsa = {public:'',private:''}的公钥与私钥</li>
-  <li>替换前端私钥</li>
+  <li>替换前端公钥client/src/utils/rsa.js</li>
 </ul>
 <div>
   <span>公钥:</span>

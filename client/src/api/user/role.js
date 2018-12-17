@@ -11,7 +11,8 @@ export function createUserRole(data) {
   return request({
     url: '/api/v2/user/role',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -19,13 +20,15 @@ export function updateUserRole(id, data) {
   return request({
     url: `/api/v2/user/role/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
 export function destoryUserRole(id) {
   return request({
     url: `/api/v2/user/role/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

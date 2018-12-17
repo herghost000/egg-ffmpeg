@@ -5,13 +5,13 @@
              class="dialog">
     <el-form ref="form"
              :model="form"
-             label-width="40px">
+             label-width="60px">
       <el-form-item label="名称">
         <el-input v-model="form.name"
                   placeholder="请输入分组名称"></el-input>
       </el-form-item>
-      <el-form-item label="菜单">
-        <el-cascader :props="{value: 'id',label: 'title'}"
+      <el-form-item label="所属组">
+        <el-cascader :props="{value: 'id',label: 'name'}"
                      :show-all-levels="false"
                      :options="menuOptions"
                      v-model="menuSelected"
@@ -79,10 +79,12 @@ export default {
     return {
       form: {
         name: '',
+        pid: null
       },
       authdata: [],
       roleids: [],
-      
+      menuSelected: [],
+      menuOptions: []
     }
   },
   computed: {
@@ -100,11 +102,23 @@ export default {
       const { data: { rows = [] } } = res
       this.authdata = rows
     })
+    this.queryUserGroup().then(res => {
+      const { data: { rows = [] } } = res
+      const pmenus = rows.filter(_ => !_.pid)
+      this.menuOptions = pmenus.map(pmenu => {
+        const cmenus = rows.filter(menu => pmenu.id === menu.pid)
+        cmenus.unshift({
+          ...pmenu
+        })
+        pmenu.children = cmenus
+        return pmenu
+      })
+    })
   },
   methods: {
-    ...mapActions({ queryUserRole: 'QueryUserRole', createUserGroup: 'CreateUserGroup', updateUserGroup: 'UpdateUserGroup' }),
-    filterMethod (query, item) {
-      return item.name.indexOf(query) > -1
+    ...mapActions({ queryUserRole: 'QueryUserRole', queryUserGroup: 'QueryUserGroup', createUserGroup: 'CreateUserGroup', updateUserGroup: 'UpdateUserGroup' }),
+    onMenuChange (value) {
+      this.form.pid = this.menuSelected[1]
     },
     onCreateClick () {
       this.createUserGroup({
@@ -147,7 +161,10 @@ export default {
         }
         this.roleids = []
       }
-    }
+    },
+    filterMethod (query, item) {
+      return item.name.indexOf(query) > -1
+    },
   }
 }
 </script>

@@ -11,7 +11,8 @@ export function createUserGroup(data) {
   return request({
     url: '/api/v2/user/group',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -19,13 +20,15 @@ export function updateUserGroup(id, data) {
   return request({
     url: `/api/v2/user/group/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
 export function destoryUserGroup(id) {
   return request({
     url: `/api/v2/user/group/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

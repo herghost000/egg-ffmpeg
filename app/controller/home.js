@@ -1,9 +1,7 @@
 'use strict';
 const Controller = require('egg').Controller;
 const NodeRSA = require('node-rsa');
-const sharp = require('sharp');
 const os = require('os');
-const fs = require('fs');
 
 function cpusInfo() {
   const cpus = os.cpus();
@@ -38,9 +36,11 @@ function cpusInfo() {
 
 class HomeController extends Controller {
   async index() {
-    const { ctx, app } = this;
-    await ctx.helper.generateThumbs('sharp', 'jpg', 'output');
-    ctx.body = {};
+    const {
+      ctx,
+      app,
+    } = this;
+    ctx.status = 204;
   }
   async rsa() {
     const newkey = new NodeRSA({

@@ -11,7 +11,8 @@ export function createType(data) {
   return request({
     url: '/api/v2/video/type',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -19,13 +20,15 @@ export function updateType(id, data) {
   return request({
     url: `/api/v2/video/type/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
 export function destoryType(id) {
   return request({
     url: `/api/v2/video/type/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

@@ -10,7 +10,8 @@ export function createSetting(data) {
   return request({
     url: '/api/v2/video/setting',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -18,6 +19,7 @@ export function updateSetting(id, data) {
   return request({
     url: `/api/v2/video/setting/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }

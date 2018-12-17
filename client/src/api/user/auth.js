@@ -11,7 +11,8 @@ export function createUserAuth(data) {
   return request({
     url: '/api/v2/user/auth',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -19,13 +20,15 @@ export function updateUserAuth(id, data) {
   return request({
     url: `/api/v2/user/auth/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
 export function destoryUserAuth(id) {
   return request({
     url: `/api/v2/user/auth/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

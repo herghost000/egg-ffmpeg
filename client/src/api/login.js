@@ -7,7 +7,8 @@ export function login(username, password) {
     data: {
       username,
       password
-    }
+    },
+    encrypt: true
   })
 }
 

@@ -16,7 +16,8 @@ export function createUser(data) {
   return request({
     url: '/api/v2/user',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -24,7 +25,8 @@ export function updateUser(id, data) {
   return request({
     url: `/api/v2/user/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -37,6 +39,7 @@ export function editUser(id) {
 export function destoryUser(id) {
   return request({
     url: `/api/v2/user/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

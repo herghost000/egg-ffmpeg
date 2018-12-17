@@ -11,7 +11,8 @@ export function createUserMenu(data) {
   return request({
     url: '/api/v2/user/menu',
     method: 'POST',
-    data
+    data,
+    encrypt: true
   })
 }
 
@@ -19,13 +20,15 @@ export function updateUserMenu(id, data) {
   return request({
     url: `/api/v2/user/menu/${id}`,
     method: 'PUT',
-    data
+    data,
+    encrypt: true
   })
 }
 
 export function destoryUserMenu(id) {
   return request({
     url: `/api/v2/user/menu/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
+    encrypt: true
   })
 }

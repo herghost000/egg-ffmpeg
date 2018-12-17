@@ -12,6 +12,7 @@
 			<previousPage>上一集</previousPage>
 			<nextPage>下一集</nextPage>
 			<definition>点击选择清晰度</definition>
+			<subtitle>选择字幕</subtitle>
 		</buttonOver>
 		<volumeSliderOver>
 			音量：[$volume]%
@@ -41,4 +42,5 @@
 			<formatError>视频格式错误</formatError>
 		</error>
 		<definition>自动</definition>
+		<subtitle>默认</subtitle>
 	</language>

@@ -217,6 +217,105 @@
 			</backgroundCoor>
 			<event>click</event><!--控制点击显示清晰度列表还是鼠标经过默认按钮显示清晰度列表，click=点击，over=经过显示-->
 		</definition>
+		<!--多字幕切换组件样式-->
+		<subtitle>
+			<defaultButton><!--控制栏上的按钮样式-->
+				<backgroundColor>0x333333</backgroundColor><!--背景颜色-->
+				<overBackgroundColor>0x0787FF</overBackgroundColor><!--鼠标经过时背景颜色-->
+				<backgroundAlpha>0.8</backgroundAlpha>
+				<border>0</border>
+				<borderColor>0x333333</borderColor>
+				<radius>6</radius>
+				<width>70</width>
+				<height>27</height>
+				<align>center</align><!--文字对方方式,left,center,right-->
+				<padding>5</padding><!--只在左对齐和右对齐时有效，如左对齐时则表示离左边的距离-->
+				<size>14</size><!--字体大小-->
+				<font>Microsoft YaHei,\5FAE\8F6F\96C5\9ED1,微软雅黑</font><!--字体-->
+				<textColor>0xFFFFFF</textColor><!--字体颜色-->
+				<overTextColor>0xFFFFFF</overTextColor><!--字体颜色-->
+				<bold>false</bold><!--是否为粗体-->
+				<alpha>1</alpha><!--文字透明度-->
+			</defaultButton>
+			<background><!--清晰度按钮列表的背景-->
+				<backgroundColor>0x333333</backgroundColor>
+				<backgroundAlpha>0.8</backgroundAlpha>
+				<border>0</border>
+				<borderColor>0x333333</borderColor>
+				<radius>10</radius>
+				<paddingLeft>15</paddingLeft>
+				<paddingTop>10</paddingTop>
+				<paddingRight>15</paddingRight>
+				<paddingBottom>10</paddingBottom>
+				<triangleWidth>15</triangleWidth><!--倒三角的顶部宽-->
+				<triangleHeight>10</triangleHeight><!--倒三角的中线高-->
+				<triangleBackgroundColor>0x333333</triangleBackgroundColor><!--倒三角的背景色-->
+				<triangleBorder>0</triangleBorder><!--倒三角的边框粗细-->
+				<triangleBorderColor>0xFFFFFF</triangleBorderColor><!--倒三角的边框颜色-->
+				<triangleAlpha>0.8</triangleAlpha><!--倒三角的透明度-->
+				<triangleDeviationX>0</triangleDeviationX><!--倒三角默认是在提示框下方水平居中的，这里可以使之在水平方向进行偏移-->
+				<triangleDeviationY>0</triangleDeviationY><!--倒三角默认是在提示框下方的，这里可以使之在垂直方向进行偏移-->
+			</background>
+			<button><!--列表按钮普通样式-->
+				<backgroundColor>0x333333</backgroundColor><!--背景颜色-->
+				<overBackgroundColor>0x0787FF</overBackgroundColor><!--鼠标经过时背景颜色-->
+				<backgroundAlpha>0.8</backgroundAlpha>
+				<border>0</border>
+				<borderColor>0x333333</borderColor>
+				<radius>6</radius>
+				<width>70</width>
+				<height>27</height>
+				<align>center</align><!--文字对方方式,left,center,right-->
+				<padding>5</padding><!--只在左对齐和右对齐时有效，如左对齐时则表示离左边的距离-->
+				<size>14</size><!--字体大小-->
+				<font>Microsoft YaHei,\5FAE\8F6F\96C5\9ED1,微软雅黑</font><!--字体-->
+				<textColor>0xFFFFFF</textColor><!--字体颜色-->
+				<overTextColor>0xFFFFFF</overTextColor><!--字体颜色-->
+				<bold>false</bold><!--是否为粗体-->
+				<alpha>1</alpha><!--文字透明度-->
+			</button>
+			<buttonHighlight><!--列表按钮高亮样式-->
+				<backgroundColor>0x005CB2</backgroundColor><!--背景颜色-->
+				<overBackgroundColor>0x0787FF</overBackgroundColor><!--鼠标经过时背景颜色-->
+				<backgroundAlpha>0.8</backgroundAlpha>
+				<border>0</border>
+				<borderColor>0x333333</borderColor>
+				<radius>6</radius>
+				<width>70</width>
+				<height>27</height>
+				<align>center</align><!--文字对方方式,left,center,right-->
+				<padding>5</padding><!--只在左对齐和右对齐时有效，如左对齐时则表示离左边的距离-->
+				<size>14</size><!--字体大小-->
+				<font>Microsoft YaHei,\5FAE\8F6F\96C5\9ED1,微软雅黑</font><!--字体-->
+				<textColor>0xFFFFFF</textColor><!--字体颜色-->
+				<overTextColor>0xFFFFFF</overTextColor><!--字体颜色-->
+				<bold>false</bold><!--是否为粗体-->
+				<alpha>1</alpha><!--文字透明度-->
+			</buttonHighlight>
+			<separate><!--按钮列表中间间隔线样式-->
+				<marginLeft>5</marginLeft><!--离左边的距离-->
+				<marginTop>5</marginTop><!--离上方按钮的距离-->
+				<marginRight>5</marginRight><!--离右边的距离-->
+				<marginBottom>5</marginBottom><!--离下方按钮的距离-->
+				<color>0xFFFFFF</color><!--颜色-->
+				<alpha>0</alpha><!--透明度-->
+				<height>1</height><!--粗细度-->
+			</separate>
+			<defaultButtonCoor><!--控制栏上清晰度按钮的位置-->
+				<align>right</align>
+				<vAlign>top</vAlign>
+				<offsetX>-119</offsetX>
+				<offsetY>6</offsetY>
+			</defaultButtonCoor>
+			<backgroundCoor><!--按钮列表背景的位置-->
+				<align>right</align>
+				<vAlign>bottom</vAlign>
+				<offsetX>-130</offsetX>
+				<offsetY>-35</offsetY>
+				<height>true</height><!--这里的height是一个特例，因为清晰度列表背景框的Y需要减去背景框的高度-->
+			</backgroundCoor>
+			<event>click</event><!--控制点击显示清晰度列表还是鼠标经过默认按钮显示清晰度列表，click=点击，over=经过显示-->
+		</subtitle>
 		<!--音量调节栏的配置-->
 		<volumeSchedule>
 			<backgroundImg>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAFCAYAAAAZiY8XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjY5RUEzNjQ1MDMxRDExRTY5OERCOEQ3NUNBQzJDMDlCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjY5RUEzNjQ2MDMxRDExRTY5OERCOEQ3NUNBQzJDMDlCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjlFQTM2NDMwMzFEMTFFNjk4REI4RDc1Q0FDMkMwOUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjlFQTM2NDQwMzFEMTFFNjk4REI4RDc1Q0FDMkMwOUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6ONxAiAAAAT0lEQVR42mL8//+/HAMDwxwgtgdiNobhCX4B8UEgTmEEeng3kOHCMDLAAZCHPwMZPCPEw7+YgMQJhpEDjoE8nAzEe6DpfLiC31A/JgAEGAAcdRWT+8TTHQAAAABJRU5ErkJggg==</backgroundImg>
@@ -317,8 +416,7 @@
 		<custom>
 			<button>
 				<!--上一集，下一集按钮-->
-				<!--
-				<previousPage>
+				<!--<previousPage>
 					<mouseOut>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAmCAYAAABH/4KQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6REQ4MkZGRDhBMDJDMTFFNzg2OTFDQUU1NDE2RTY4MzEiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6REQ4MkZGRDdBMDJDMTFFNzg2OTFDQUU1NDE2RTY4MzEiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RTBBNTcyMkVBMDI5MTFFN0JDMkJEREJGNDE1NjZBMEMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RTBBNTcyMkZBMDI5MTFFN0JDMkJEREJGNDE1NjZBMEMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5kvQCrAAAA5ElEQVR42mL8//8/w2AEiYmJZ5gYBjEYddyo40YdN+q4UccxMPzHgikBAkC8fjCGXAEQ3wfiAGIUs9DJUQpAPB+IHQZbmmsA4vOkOozWIWcADS2DwZRbQQm+HhpaBpQYRO2Qc4CGlsJgKudAodUPxPup5TBqhVwANLQEBmsNwThYq68N0KicOFhD7gO09HcE4oeDteI/AC0+Ggdrq+QDtFYwBOKLg7XJdAEpFD8O1vZcA9SRBwdrY/MBtPYoJCUU6d2emwAtdjZSq4ZgpEGGCRiMITfa+xp13KjjRh036jgkABBgANGvJgCBX5adAAAAAElFTkSuQmCC</mouseOut>
 					<mouseOver>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAmCAYAAABH/4KQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkQxMzUwN0U3QTAyQzExRTc5OUNCREY1MUQ1OTU3MDc0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkQxMzUwN0U4QTAyQzExRTc5OUNCREY1MUQ1OTU3MDc0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RDEzNTA3RTVBMDJDMTFFNzk5Q0JERjUxRDU5NTcwNzQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RDEzNTA3RTZBMDJDMTFFNzk5Q0JERjUxRDU5NTcwNzQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6/2gCZAAABXElEQVR42uyY0VGDQBCGd8EQAzykBErADrADLIEKxAKAizSgFdCCdqDvzqgVqB3EGSFC5NZL3pw8aMgls+PcvjHDwH8fe/v/BxIRcKwkSR4sYFxGnBFnxBlx/13c0W83HJfNhoW0uYeD3yho6lhN1WbuGSty48smdbB+USuLtZDTUmIRjK2+AqAIEfn0nDOrhYP9IwBG2ntuaI3ER6goVQpUqITtZ0MMani7OUcCsffdutXDykVky6YCguAgo+SvtEZWXVgkU0CNi9254cs6BllXCDjl6RCok5dGcV3m3XTSCyTRNU9yAufLwk97tE7V1RtL4//KJnetdEN1oJvxTCWKYld4Qko6UYnhmWVkWgr/qcu9NUUCemeZ51YUO2krC6N7nmFTTF7b3FfGjxfbUDxonmtz92o1dtSnvtXiEJ+Zuzlgs53+r8wB3JgdOXP6MuKMOCPOiPtZ3wIMAB3ebzh1vcaxAAAAAElFTkSuQmCC</mouseOver>
 					<align>left</align>

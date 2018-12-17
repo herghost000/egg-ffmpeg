@@ -4,6 +4,28 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 const fs = require('fs');
+
+async function atWhitList(ctx) {
+  const referer = ctx.get('Referer');
+  const {
+    host,
+  } = url.parse(referer);
+  const setting = await ctx.service.video.setting.find();
+  const {
+    antiwhite,
+  } = setting.data;
+
+  const whitList = antiwhite
+    .replace(/\s/gim, '')
+    .split('|');
+  return whitList.some(value => {
+    if (value.indexOf(host) !== -1) {
+      return true;
+    }
+    return false;
+  });
+}
+
 class VideoController extends Controller {
   async play() {
     const ctx = this.ctx;
@@ -18,30 +40,11 @@ class VideoController extends Controller {
     const {
       token,
     } = ctx.query;
-    const referer = ctx.get('Referer');
-    let {
-      host,
-    } = url.parse(referer);
     const setting = await ctx.service.video.setting.find();
     const {
-      antiwhite,
       antikey,
     } = setting.data;
-    host = ctx.helper.url2host(host);
-    const whitList = antiwhite
-      .replace(/\s/gim, '')
-      .split('|');
-    const atWhitList = whitList.some(value => {
-      if (value.indexOf(host) !== -1) {
-        return true;
-      }
-      return false;
-    });
-    if (!token) {
-      ctx.body = null;
-      return void 0;
-    }
-    if (!atWhitList) {
+    if (!atWhitList()) {
       const {
         access,
       } = await new Promise(resolve => {

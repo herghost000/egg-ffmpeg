@@ -2,11 +2,16 @@
 const crypto = require('crypto');
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
-const { write } = require('await-stream-ready');
+const {
+  write,
+} = require('await-stream-ready');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const NodeRSA = require('node-rsa');
 const sharp = require('sharp');
+const {
+  URL,
+} = require('url');
 
 function duplicates(arr) {
   const same = [];
@@ -30,6 +35,14 @@ function duplicates(arr) {
 function host(ctx) {
   ctx = ctx || this.ctx;
   return ctx.helper.urlFor().slice(0, ctx.helper.urlFor().length - 1);
+}
+
+function url2host(url) {
+  const isurl = url.indexOf('http') !== -1 || url.indexOf('https') !== -1;
+  if (!isurl) {
+    url = `http://${url}`;
+  }
+  return new URL(url).host;
 }
 
 function randomkey() {
@@ -198,38 +211,42 @@ module.exports = {
   async generateThumbs(path, ext, name) {
     const files = await readdir(path);
     const imgList = [];
-    const resizeArr = [
-      {
-        left: 0,
-        top: 0,
-        width: 300,
-        height: 400,
-      },
-      {
-        left: 300,
-        top: 0,
-        width: 300,
-        height: 200,
-      },
-      {
-        left: 300,
-        top: 200,
-        width: 300,
-        height: 200,
-      },
-      {
-        left: 0,
-        top: 400,
-        width: 600,
-        height: 400,
-      },
+    const resizeArr = [{
+      left: 0,
+      top: 0,
+      width: 300,
+      height: 400,
+    },
+    {
+      left: 300,
+      top: 0,
+      width: 300,
+      height: 200,
+    },
+    {
+      left: 300,
+      top: 200,
+      width: 300,
+      height: 200,
+    },
+    {
+      left: 0,
+      top: 400,
+      width: 600,
+      height: 400,
+    },
     ];
     if (files) {
       for (let i = 0; i < 4; i++) {
         const file = files[i];
         const sfileExt = file.split('.')[1];
         if (ext === sfileExt) {
-          const { left, top, width, height } = resizeArr[i];
+          const {
+            left,
+            top,
+            width,
+            height,
+          } = resizeArr[i];
           imgList.push({
             left,
             top,
@@ -254,7 +271,11 @@ module.exports = {
       .png()
       .toBuffer();
     const result = await imgList.reduce(async (input, item) => {
-      let { overlay, top, left } = item;
+      let {
+        overlay,
+        top,
+        left,
+      } = item;
       overlay = await overlay.toBuffer();
       return input.then(data => {
         return sharp(data)
@@ -304,7 +325,12 @@ module.exports = {
     };
   },
   async chunkSave(baseDir, uploadPath, stream) {
-    let { name, total, index, key } = stream.fields;
+    let {
+      name,
+      total,
+      index,
+      key,
+    } = stream.fields;
     name = name || '';
     name = encodeURIComponent(name);
     name = `${md5(path.parse(name).name)}${path.parse(name).ext}`;
@@ -372,6 +398,7 @@ module.exports = {
       complate: false,
     };
   },
+  url2host,
   host,
   mkdirs,
   toInt,

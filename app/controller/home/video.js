@@ -11,23 +11,40 @@ class VideoController extends Controller {
   }
   async link() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
-    const { token } = ctx.query;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
+    const {
+      token,
+    } = ctx.query;
     const referer = ctx.get('Referer');
-    const { host } = url.parse(referer);
+    let {
+      host,
+    } = url.parse(referer);
     const setting = await ctx.service.video.setting.find();
-    const { antiwhite, antikey } = setting.data;
-
-    const atWhitList = antiwhite
+    const {
+      antiwhite,
+      antikey,
+    } = setting.data;
+    host = ctx.helper.url2host(host);
+    const whitList = antiwhite
       .replace(/\s/gim, '')
-      .split('|')
-      .indexOf(host);
+      .split('|');
+    const atWhitList = whitList.some(value => {
+      if (value.indexOf(host) !== -1) {
+        return true;
+      }
+      return false;
+    });
     if (!token) {
       ctx.body = null;
       return void 0;
     }
-    if (atWhitList === -1) {
-      const { access } = await new Promise(resolve => {
+    if (!atWhitList) {
+      const {
+        access,
+      } = await new Promise(resolve => {
         jwt.verify(token, antikey, function(err, decoded) {
           if (err) {
             return resolve(false);
@@ -52,7 +69,10 @@ class VideoController extends Controller {
   }
   async ts() {
     const ctx = this.ctx;
-    const { dirname, filename } = ctx.params;
+    const {
+      dirname,
+      filename,
+    } = ctx.params;
     const realname = `${filename}.ts`;
     const filePath = path.join(
       this.config.transcode.baseDir,
@@ -64,7 +84,9 @@ class VideoController extends Controller {
   }
   async key() {
     const ctx = this.ctx;
-    const { dirname } = ctx.params;
+    const {
+      dirname,
+    } = ctx.params;
     const realname = 'ts.key';
     const filePath = path.join(
       this.config.transcode.baseDir,
@@ -72,21 +94,18 @@ class VideoController extends Controller {
       dirname,
       realname
     );
-    // const referer = ctx.get('Referer');
-    // if (referer !== '6666') {
-    //   ctx.body = null;
-    // } else {
     this.service.download.range(filePath);
-    // }
   }
   async crossdomain() {
-    this.service.download.normal(
-      `${this.config.upload.baseDir}js/crossdomain.xml`
+    this.service.download.online(
+      `${this.config.upload.baseDir}js/crossdomain.xml`, 'application/xml'
     );
   }
   async share() {
     const ctx = this.ctx;
-    let { id } = ctx.params;
+    let {
+      id,
+    } = ctx.params;
     id = ctx.helper.rsaDecrypt(ctx.helper.aesDecrypt(id, 'id'));
     const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
     if (!video.data) {
@@ -101,7 +120,10 @@ class VideoController extends Controller {
       name,
       surface_plot,
       dsc,
-      video_decode: { status_id, chunk_path },
+      video_decode: {
+        status_id,
+        chunk_path,
+      },
     } = video.data;
     const sp = chunk_path.split('/');
     const filename = sp.pop();
@@ -115,15 +137,16 @@ class VideoController extends Controller {
       return void 0;
     }
     const setting = await ctx.service.video.setting.find();
-    const { antikey, host } = setting.data;
-    const token = jwt.sign(
-      {
-        access: 'view',
-      },
+    const {
       antikey,
-      {
-        expiresIn: '1h',
-      }
+      host,
+    } = setting.data;
+    const token = jwt.sign({
+      access: 'view',
+    },
+    antikey, {
+      expiresIn: '24h',
+    }
     );
     return ctx.render('share.tpl', {
       video_url: `${host}/video/link/${dirname}/${filename}?token=${token}`,
@@ -134,7 +157,9 @@ class VideoController extends Controller {
   }
   async thumb() {
     const ctx = this.ctx;
-    let { id } = ctx.params;
+    let {
+      id,
+    } = ctx.params;
     id = ctx.helper.rsaDecrypt(ctx.helper.aesDecrypt(id, 'id'));
     const video = await ctx.service.video.list.find(ctx.helper.toInt(id));
     if (!video.data) {
@@ -146,7 +171,9 @@ class VideoController extends Controller {
       return void 0;
     }
     const {
-      video_decode: { thumb_path },
+      video_decode: {
+        thumb_path,
+      },
     } = video.data;
     ctx.set('Content-Type', 'image/webp');
     ctx.body = fs.createReadStream(thumb_path);

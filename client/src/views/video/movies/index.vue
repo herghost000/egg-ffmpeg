@@ -162,6 +162,13 @@
                     type="info">
           </el-alert>
         </el-form-item>
+        <el-form-item label="视频链接">
+
+          <el-alert :closable="false"
+                    :title="`${videoSettingData.host}/video/play/${formShare.chunk_path}`"
+                    type="info">
+          </el-alert>
+        </el-form-item>
         <el-form-item label="分享链接">
 
           <el-alert :closable="false"
@@ -292,8 +299,15 @@ export default {
     },
     handleShare (index, row) {
       this.dialogShareVisible = true
-      console.log(row)
+      let chunk_path = ''
+      let path = ''
+      if (row.video_decode) {
+        chunk_path = row.video_decode.chunk_path || ''
+         path = chunk_path.split('/').splice(2).join('/')
+      }
+      
       this.formShare = { ...row, id: aesEncrypt(encrypt(`${row.id}`), 'id') }
+      this.formShare.chunk_path = path
     },
     clipboardSuccess () {
       this.$message({

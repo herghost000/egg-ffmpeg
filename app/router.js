@@ -4,10 +4,7 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const {
-    router,
-    controller,
-  } = app;
+  const { router, controller } = app;
 
   const checktoken = app.middleware.checktoken();
   const checksign = app.middleware.checksign();
@@ -108,7 +105,9 @@ module.exports = app => {
   );
 
   router.get('/crossdomain.xml', controller.home.video.crossdomain);
-  router.get('/video/play/:dirname/:filename', controller.home.video.play);
+  router.get('/video/play/:dirname/:filename.m3u8', controller.home.video.play);
+  router.get('/video/play/:dirname/:filename.ts', controller.home.video.ts);
+  router.get('/video/play/:dirname/ts.key', controller.home.video.key);
   router.get('/video/link/:dirname/:filename.m3u8', controller.home.video.link);
   router.get('/video/link/:dirname/:filename.ts', controller.home.video.ts);
   router.get('/video/link/:dirname/ts.key', controller.home.video.key);

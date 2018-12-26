@@ -1,10 +1,13 @@
 'use strict';
 
 module.exports = app => {
-  const { STRING, INTEGER, DATE } = app.Sequelize;
+  const {
+    STRING,
+    INTEGER,
+    DATE,
+  } = app.Sequelize;
   const UserGroup = app.model.define(
-    'user_group',
-    {
+    'user_group', {
       id: {
         type: INTEGER,
         primaryKey: true,
@@ -14,8 +17,7 @@ module.exports = app => {
       pid: INTEGER,
       created_at: DATE,
       updated_at: DATE,
-    },
-    {
+    }, {
       deletedAt: 'deleted_at',
       paranoid: true,
     }

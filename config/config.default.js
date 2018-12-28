@@ -19,7 +19,11 @@ module.exports = appInfo => {
     httpOnly: true,
     encrypt: true,
   };
-  config.middleware = [ 'changeheaders' ];
+  config.middleware = [ 'compress', 'changeheaders' ];
+
+  config.compress = {
+    threshold: 2048,
+  };
 
   config.multipart = {
     fileExtensions: [ '.mov' ],

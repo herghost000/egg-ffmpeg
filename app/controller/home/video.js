@@ -35,6 +35,7 @@ class VideoController extends Controller {
       dirname,
       realname
     );
+    ctx.set('Access-Control-Allow-Origin', '*');
     this.service.download.range(filePath);
   }
   async link() {
@@ -77,6 +78,7 @@ class VideoController extends Controller {
       dirname,
       realname
     );
+    ctx.set('Access-Control-Allow-Origin', '*');
     this.service.download.range(filePath);
   }
   async key() {
@@ -89,9 +91,12 @@ class VideoController extends Controller {
       dirname,
       realname
     );
+    ctx.set('Access-Control-Allow-Origin', '*');
     this.service.download.range(filePath);
   }
   async crossdomain() {
+    const ctx = this.ctx;
+    ctx.set('Access-Control-Allow-Origin', '*');
     this.service.download.online(
       `${this.config.upload.baseDir}js/crossdomain.xml`,
       'application/xml'

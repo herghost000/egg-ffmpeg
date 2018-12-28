@@ -8,9 +8,7 @@ class HomeController extends Controller {
       ctx,
       app,
     } = this;
-    return ctx.render('share.tpl', {
-      video_url: 'blob:http://v.youku.com/51dae59b-8baf-436a-9c1e-701557a1732f',
-    });
+    return ctx.body = app.config;
   }
 
   async rsa() {

@@ -1,5 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  app.model.sync();
+  app.model.sync({
+    alter: true,
+  });
 };

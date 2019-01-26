@@ -4,11 +4,8 @@ const NodeRSA = require('node-rsa');
 
 class HomeController extends Controller {
   async index() {
-    const {
-      ctx,
-      app,
-    } = this;
-    return ctx.body = app.config;
+    const { ctx, app } = this;
+    ctx.body = await ctx.service.video.list.destory(1);
   }
 
   async rsa() {
@@ -26,6 +23,5 @@ class HomeController extends Controller {
       private: private_key,
     });
   }
-
 }
 module.exports = HomeController;

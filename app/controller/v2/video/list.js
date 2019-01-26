@@ -3,9 +3,7 @@ const Controller = require('egg').Controller;
 
 class VideoListController extends Controller {
   async index() {
-    const {
-      ctx,
-    } = this;
+    const { ctx } = this;
 
     ctx.body = await this.ctx.service.video.list.findAndCountAll(ctx.query);
   }
@@ -19,6 +17,11 @@ class VideoListController extends Controller {
   async transcode() {
     const ctx = this.ctx;
     ctx.body = await ctx.service.video.transcode.trans(ctx.request.body.id);
+  }
+
+  async destroy() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.video.list.destroy(ctx.params.id);
   }
 }
 

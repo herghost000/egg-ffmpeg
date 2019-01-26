@@ -1,4 +1,10 @@
-import { queryList, createList, updateList, transcode } from '@/api/video/list'
+import {
+  queryList,
+  createList,
+  updateList,
+  transcode,
+  destroy
+} from '@/api/video/list'
 
 const app = {
   state: {
@@ -56,6 +62,10 @@ const app = {
             reject(error)
           })
       })
+    },
+    async destroy({ commit }, id) {
+      const res = await destroy(id)
+      return res
     }
   }
 }

@@ -241,6 +241,7 @@ export default {
     clearInterval(this.searchInterval)
   },
   methods: {
+    ...mapActions(['destroy']),
     ...mapActions({ querySetting: 'QuerySetting', queryType: 'QueryType', queryVideoList: 'QueryVideoList', transcode: 'Transcode' }),
     getList () {
       this.listLoading = true
@@ -276,7 +277,23 @@ export default {
       console.log(index, row);
     },
     handleDelete (index, row) {
-      console.log(index, row);
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.listData.splice(index, 1)
+        this.destroy(row.id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleTransAndChunk (index, row) {
       this.transcode({
@@ -303,9 +320,9 @@ export default {
       let path = ''
       if (row.video_decode) {
         chunk_path = row.video_decode.chunk_path || ''
-         path = chunk_path.split('/').splice(2).join('/')
+        path = chunk_path.split('/').splice(2).join('/')
       }
-      
+
       this.formShare = { ...row, id: aesEncrypt(encrypt(`${row.id}`), 'id') }
       this.formShare.chunk_path = path
     },

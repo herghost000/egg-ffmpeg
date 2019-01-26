@@ -32,3 +32,9 @@ export function transcode(data) {
     encrypt: true
   })
 }
+export function destroy(id) {
+  return request({
+    url: `/api/v2/video/list/${id}`,
+    method: 'DELETE'
+  })
+}
